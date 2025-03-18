@@ -4,10 +4,10 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>cn.com.wenyl</groupId>
-    <artifactId>bs-boot</artifactId>
+    <artifactId>DLT698-API</artifactId>
     <version>1.0-SNAPSHOT</version>
-    <name>bs-boot</name>
-    <description>bs-boot</description>
+    <name>DLT698-API</name>
+    <description>DLT698-API</description>
 
     <packaging>pom</packaging>
     <properties>

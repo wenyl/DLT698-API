@@ -6,7 +6,7 @@
 
     <parent>
         <groupId>cn.com.wenyl</groupId>
-        <artifactId>bs-boot</artifactId>
+        <artifactId>DLT698-API</artifactId>
         <version>1.0-SNAPSHOT</version>
     </parent>
     <artifactId>bs-boot-third-party</artifactId>
