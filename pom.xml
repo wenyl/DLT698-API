@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>cn.com.wenyl</groupId>
+    <artifactId>bs-boot</artifactId>
+    <version>1.0-SNAPSHOT</version>
+    <name>bs-boot</name>
+    <description>bs-boot</description>
+
+    <packaging>pom</packaging>
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+
+        <!--    springboot版本    -->
+        <spring-boot.version>2.6.11</spring-boot.version>
+
+        <!--    jdk版本    -->
+        <java.version>11</java.version>
+
+        <!--    常用工具    -->
+        <lombok.version>1.18.22</lombok.version>
+        <commons.lang.version>2.6</commons.lang.version>
+        <httpcore.version>4.4.15</httpcore.version>
+        <validation.version>2.0.1.Final</validation.version>
+
+        <!--    数据库交互    -->
+        <mybatisplus.version>3.3.1</mybatisplus.version>
+        <dynamic-datasource-spring-boot-starter.version>3.2.0</dynamic-datasource-spring-boot-starter.version>
+        <mysql-connector-java.version>8.0.27</mysql-connector-java.version>
+
+        <!--    权限管理    -->
+        <shiro-spring-boot.version>1.13.0</shiro-spring-boot.version>
+        <jwt.version>3.3.0</jwt.version>
+
+        <!--    接口文档    -->
+        <swagger.version>2.9.2</swagger.version>
+
+        <netty.version>4.1.68.Final</netty.version>
+    </properties>
+    <modules>
+        <module>bs-boot-common</module>
+        <module>bs-boot-third-party</module>
+        <module>bs-boot-system</module>
+    </modules>
+
+
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-dependencies</artifactId>
+                <version>${spring-boot.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
+    <!--  配置阿里云仓库  -->
+    <repositories>
+        <repository>
+            <id>aliyun</id>
+            <url>https://maven.aliyun.com/repository/public</url>
+            <releases>
+                <enabled>true</enabled>
+            </releases>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+        </repository>
+    </repositories>
+    <!--  配置阿里云插件仓库  -->
+    <pluginRepositories>
+        <pluginRepository>
+            <id>aliyun-plugin</id>
+            <url>https://maven.aliyun.com/repository/public</url>
+            <releases>
+                <enabled>true</enabled>
+            </releases>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+        </pluginRepository>
+    </pluginRepositories>
+
+    <build>
+        <plugins>
+            <!-- 指定JDK编译版本 -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <configuration>
+                    <source>11</source>
+                    <target>11</target>
+                    <encoding>UTF-8</encoding>
+                </configuration>
+            </plugin>
+        </plugins>
+        <resources>
+            <resource>
+                <directory>src/main/resources</directory>
+                <filtering>true</filtering>
+            </resource>
+            <resource>
+                <directory>src/main/java</directory>
+                <includes>
+                    <include>**/*.xml</include>
+                    <include>**/*.json</include>
+                    <include>**/*.ftl</include>
+                </includes>
+            </resource>
+        </resources>
+    </build>
+
+</project>

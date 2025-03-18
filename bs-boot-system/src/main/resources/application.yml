@@ -1,0 +1,6 @@
+spring:
+  application:
+    name: bs-boot-system
+  profiles:
+    active: dev
+#    active: prod

@@ -1,0 +1,8 @@
+package ${entity.basePackage}.${entity.entityPackage}.mapper;
+
+import ${entity.basePackage}.${entity.entityPackage}.entity.${entity.className};
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+
+public interface ${entity.className}Mapper extends BaseMapper<${entity.className}> {
+
+}

@@ -1,0 +1,83 @@
+import request from '@/utils/request'
+import {QueryParams,${entity.className}} from "@/api/${entity.packagePath}/${entity.classAttrName}Type";
+
+export function list(queryParams?: QueryParams) {
+    return new Promise<void>((resolve, reject) => {
+        return request({
+            url:'/${entity.packagePath}/${entity.classAttrName}/list',
+            params:queryParams,
+            method: 'get'
+        }).then((res?:any)=>{
+            resolve(res)
+        }).catch((error)=>{
+            reject(error)
+        })
+    });
+}
+
+export function queryById(id?:any){
+    return new Promise<void>((resolve, reject) => {
+        return request({
+            url:'/${entity.packagePath}/${entity.classAttrName}/queryById?id='+id,
+            method: 'get'
+        }).then((res?:any)=>{
+            resolve(res)
+        }).catch((error)=>{
+            reject(error)
+        })
+    });
+}
+
+export function updateById(${entity.classAttrName}?:${entity.className}){
+    return new Promise<void>((resolve, reject) => {
+        return request({
+            url:'/${entity.packagePath}/${entity.classAttrName}/updateById',
+            data:${entity.classAttrName},
+            method: 'POST'
+        }).then((res?:any)=>{
+            resolve(res)
+        }).catch((error)=>{
+            reject(error)
+        })
+    });
+}
+
+export function removeByIds(ids?:any){
+    return new Promise<void>((resolve, reject) => {
+        return request({
+            url:'/${entity.packagePath}/${entity.classAttrName}/removeByIds?ids='+ids,
+            method: 'delete'
+        }).then((res?:any)=>{
+            resolve(res)
+        }).catch((error)=>{
+            reject(error)
+        })
+    });
+}
+
+export function removeById(id?:any){
+    return new Promise<void>((resolve, reject) => {
+        return request({
+            url:'/${entity.packagePath}/${entity.classAttrName}/removeById?id='+id,
+            method: 'delete'
+        }).then((res?:any)=>{
+            resolve(res)
+        }).catch((error)=>{
+            reject(error)
+        })
+    });
+}
+
+export function save(${entity.classAttrName}?:${entity.className}){
+    return new Promise<void>((resolve, reject) => {
+        return request({
+            url:'/${entity.packagePath}/${entity.classAttrName}/save',
+            data:${entity.classAttrName},
+            method: 'post'
+        }).then((res?:any)=>{
+            resolve(res)
+        }).catch((error)=>{
+            reject(error)
+        })
+    });
+}

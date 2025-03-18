@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>cn.com.wenyl</groupId>
+        <artifactId>bs-boot</artifactId>
+        <version>1.0-SNAPSHOT</version>
+    </parent>
+    <artifactId>bs-boot-third-party</artifactId>
+    <version>1.0-SNAPSHOT</version>
+    <packaging>pom</packaging>
+    <description>存放第三方组件</description>
+    <modules>
+        <module>code-generator</module>
+    </modules>
+
+    <dependencies>
+        <dependency>
+            <groupId>cn.com.wenyl</groupId>
+            <artifactId>bs-boot-common</artifactId>
+            <version>1.0-SNAPSHOT</version>
+        </dependency>
+    </dependencies>
+
+</project>

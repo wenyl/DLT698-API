@@ -1,0 +1,83 @@
+server:
+  port: 8082
+  servlet:
+    context-path: /bs
+spring:
+  mvc:
+    pathmatch:
+      matching-strategy: ant_path_matcher
+  servlet:
+    multipart:
+      max-file-size: 10MB
+      max-request-size: 10MB
+  #json 时间戳统一转换
+  jackson:
+    date-format: yyyy-MM-dd HH:mm:ss
+    time-zone: GMT+8
+  jpa:
+    open-in-view: false
+  aop:
+    proxy-target-class: true
+  datasource:
+    dynamic:
+      enabled: true #启用动态数据源，默认true
+      druid:
+        stat-view-servlet:
+          enabled: true
+          loginUsername: admin
+          loginPassword: 123456
+          allow:
+        web-stat-filter:
+          enabled: true
+        initial-size: 5
+        min-idle: 5
+        maxActive: 20
+        maxWait: 60000
+        timeBetweenEvictionRunsMillis: 60000
+        minEvictableIdleTimeMillis: 300000
+        validationQuery: SELECT 1
+        testWhileIdle: true
+        testOnBorrow: false
+        testOnReturn: false
+        poolPreparedStatements: true
+        maxPoolPreparedStatementPerConnectionSize: 20
+        filters: stat,wall,slf4j
+        connectionProperties: druid.stat.mergeSql\=true;druid.stat.slowSqlMillis\=5000
+      primary: master
+      datasource:
+        master:
+          url: jdbc:mysql://127.0.0.1:3306/bs-boot?characterEncoding=UTF-8&useUnicode=true&useSSL=false&tinyInt1isBit=false&allowPublicKeyRetrieval=true&serverTimezone=Asia/Shanghai&rewriteBatchedStatements=true&allowMultiQueries=true
+          username: root
+          password: root
+          driver-class-name: com.mysql.cj.jdbc.Driver
+  redis:
+    database: 3
+    host: localhost
+    # password:
+    port: 6379
+    jedis:
+      pool:
+        max-active: 8   #最大连接数据库连接数,设 -1 为没有限制
+        max-idle: 8     #最大等待连接中的数量,设 0 为没有限制
+        max-wait: -1ms  #最大建立连接等待时间。如果超过此时间将接到异常。设为-1表示无限制。
+        min-idle: 0     #最小等待连接中的数量,设 0 为没有限制
+      shutdown-timeout: 100ms
+#mybatis plus 设置
+mybatis-plus:
+  mapper-locations: classpath*:cn/com/wenyl/bs/**/xml/*Mapper.xml
+  global-config:
+    # 关闭MP3.0自带的banner
+    banner: false
+    db-config:
+      #主键类型
+      id-type: ASSIGN_ID
+      # 默认数据库表下划线命名
+      table-underline: true
+  configuration:
+    # 打印SQL。开发环境启用
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+    # 处理查询空值
+    call-setters-on-nulls: true
+
+
+

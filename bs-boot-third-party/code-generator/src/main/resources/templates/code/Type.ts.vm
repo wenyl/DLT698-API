@@ -1,0 +1,39 @@
+/**
+ * 登录请求参数
+ */
+export interface QueryParams extends PageParams{
+
+}
+
+/**
+ * 实体信息
+ */
+export interface ${entity.className}{
+#foreach ($column in $entity.columns)
+#if($column.dbColumnType == 'date' || $column.dbColumnType == 'datetime')
+    $column.javaAttrName?:Date,
+#end
+#if($column.dbColumnType == 'varchar' || $column.dbColumnType == 'text' || $column.dbColumnType == 'longtext')
+    $column.javaAttrName?:string,
+#end
+#if($column.dbColumnType == 'int' || $column.dbColumnType == 'tinyint' || $column.dbColumnType == 'float' || $column.dbColumnType == 'double' || $column.dbColumnType == 'decimal')
+    $column.javaAttrName?:number,
+#end
+#end
+}
+/**
+ * 表单信息
+ */
+export interface ${entity.className}Form{
+#foreach ($column in $entity.columns)
+#if(($column.dbColumnType == 'date' || $column.dbColumnType == 'datetime') && $column.javaAttrName != 'createTime' && $column.javaAttrName != 'updateTime')
+    $column.javaAttrName?:Date,
+#end
+#if(($column.dbColumnType == 'varchar' || $column.dbColumnType == 'text' || $column.dbColumnType == 'longtext') && $column.javaAttrName != 'createBy' && $column.javaAttrName != 'updateBy')
+    $column.javaAttrName?:string,
+#end
+#if($column.dbColumnType == 'int' || $column.dbColumnType == 'tinyint' || $column.dbColumnType == 'float' || $column.dbColumnType == 'double' || $column.dbColumnType == 'decimal')
+    $column.javaAttrName?:number,
+#end
+#end
+}

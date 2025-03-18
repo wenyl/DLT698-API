@@ -1,0 +1,44 @@
+package ${entity.basePackage}.${entity.entityPackage}.entity;
+
+#foreach ($column in $entity.columns)
+#if($column.javaTypePackage)
+import $column.javaTypePackage;
+#end
+#end
+import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableId;
+import com.baomidou.mybatisplus.annotation.TableName;
+import lombok.Data;
+import java.io.Serializable;
+import com.fasterxml.jackson.annotation.JsonFormat;
+import org.springframework.format.annotation.DateTimeFormat;
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
+/**
+ * ${entity.tableComment}
+ */
+@Data
+@TableName("${entity.tableName}")
+@ApiModel(value="${entity.className}对象", description="${entity.tableComment}")
+public class ${entity.className} implements Serializable {
+    private static final long serialVersionUID = 1L;
+#foreach ($column in $entity.columns)
+
+    /**
+     * $column.dbColumnComment
+     */
+#if($column.isPrimaryKey)
+    @TableId(type = IdType.ASSIGN_ID)
+#end
+#if($column.dbColumnType == 'date')
+    @JsonFormat(timezone = "GMT+8",pattern = "yyyy-MM-dd")
+    @DateTimeFormat(pattern="yyyy-MM-dd")
+#elseif($column.dbColumnType == 'datetime')
+    @JsonFormat(timezone = "GMT+8",pattern = "yyyy-MM-dd HH:mm:ss")
+    @DateTimeFormat(pattern="yyyy-MM-dd HH:mm:ss")
+#else
+#end
+    @ApiModelProperty(value = "${column.dbColumnComment}")
+    private $column.javaType $column.javaAttrName;
+#end
+}
