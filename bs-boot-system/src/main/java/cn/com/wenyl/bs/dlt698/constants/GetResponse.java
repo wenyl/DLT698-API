@@ -2,6 +2,9 @@ package cn.com.wenyl.bs.dlt698.constants;
 
 import lombok.Getter;
 
+/**
+ * 读取响应
+ */
 @Getter
 public enum GetResponse {
     GET_RESPONSE_NORMAL((byte)0x01,1,"请求读取一个对象属性");

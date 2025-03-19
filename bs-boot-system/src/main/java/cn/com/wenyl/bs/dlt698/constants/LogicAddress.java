@@ -1,5 +1,8 @@
 package cn.com.wenyl.bs.dlt698.constants;
 
+/**
+ * 逻辑地址范围
+ */
 public class LogicAddress {
     public static final int NOT_HAS_LOGIC_ADDRESS = 1;
     public static final int ZERO = 0;

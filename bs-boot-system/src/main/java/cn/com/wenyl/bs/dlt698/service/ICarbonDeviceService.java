@@ -1,8 +1,6 @@
 package cn.com.wenyl.bs.dlt698.service;
 
 
-import cn.com.wenyl.bs.dlt698.entity.FrameData;
-import org.json.JSONObject;
 
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeoutException;
@@ -15,5 +13,12 @@ public interface ICarbonDeviceService {
      *
      * @return 设备地址
      */
-    JSONObject getCarbonDeviceAddress() throws RuntimeException,TimeoutException, ExecutionException, InterruptedException ;
+    Object getCarbonDeviceAddress() throws RuntimeException,TimeoutException, ExecutionException, InterruptedException ;
+
+    /**
+     * 链接指定碳表
+     * @param carbonDeviceAddress 碳表地址
+     * @return 链接信息
+     */
+    Object connectCarbonDevice(String carbonDeviceAddress);
 }

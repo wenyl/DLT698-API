@@ -1,8 +1,11 @@
 package cn.com.wenyl.bs.dlt698.service;
 
 
-import cn.com.wenyl.bs.dlt698.entity.CSInfo;
+import cn.com.wenyl.bs.dlt698.entity.ControlDomain;
 
+/**
+ * 控制域构建服务
+ */
 public interface ControlDomainBuildService {
     /**
      * 获取控制字
@@ -14,5 +17,5 @@ public interface ControlDomainBuildService {
      * bit6: 启动标志PRM
      * bit7: 传输方向DIR
      */
-    byte buildControlDomain(CSInfo csinfo);
+    byte buildControlDomain(ControlDomain controlDomain);
 }

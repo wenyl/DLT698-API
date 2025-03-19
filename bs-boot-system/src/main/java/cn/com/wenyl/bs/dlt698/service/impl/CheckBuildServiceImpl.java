@@ -5,15 +5,22 @@ import cn.com.wenyl.bs.dlt698.service.CheckBuildService;
 import cn.com.wenyl.bs.dlt698.utils.FrameCheckUtils;
 import org.springframework.stereotype.Service;
 
+import java.nio.ByteBuffer;
+
 @Service("checkBuildService")
 public class CheckBuildServiceImpl implements CheckBuildService {
     @Override
-    public void buildHCS(byte[] headFrame,int length) {
-        FrameCheckUtils.tryCS16(headFrame, length);
+    public byte[] buildHCS(byte[] headFrame) {
+        ByteBuffer buffer = ByteBuffer.allocate(headFrame.length+2);
+        buffer.put(headFrame);
+        return FrameCheckUtils.tryCS16(buffer.array(), headFrame.length);
     }
 
+
     @Override
-    public void buildFCS(byte[] bodyFrame,int length) {
-        FrameCheckUtils.tryCS16(bodyFrame, length);
+    public byte[] buildFCS(byte[] bodyFrame) {
+        ByteBuffer buffer = ByteBuffer.allocate(bodyFrame.length+2);
+        buffer.put(bodyFrame);
+        return FrameCheckUtils.tryCS16(buffer.array(), bodyFrame.length);
     }
 }

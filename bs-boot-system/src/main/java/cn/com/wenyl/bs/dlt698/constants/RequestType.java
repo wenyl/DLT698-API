@@ -2,6 +2,9 @@ package cn.com.wenyl.bs.dlt698.constants;
 
 import lombok.Getter;
 
+/**
+ * 请求方向
+ */
 @Getter
 public enum RequestType {
     CLIENT_RESPONSE_SERVER(0,0), //客户机对服务器上报的响应

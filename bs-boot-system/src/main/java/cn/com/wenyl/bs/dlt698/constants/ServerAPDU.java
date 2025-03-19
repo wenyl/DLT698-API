@@ -2,6 +2,9 @@ package cn.com.wenyl.bs.dlt698.constants;
 
 import lombok.Getter;
 
+/**
+ * 服务器应用层数据单元
+ */
 @Getter
 public enum ServerAPDU {
     GET_RESPONSE((byte)0x85,133,"响应读取");

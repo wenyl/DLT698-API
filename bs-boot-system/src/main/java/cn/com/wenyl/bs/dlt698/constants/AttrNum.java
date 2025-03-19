@@ -2,6 +2,9 @@ package cn.com.wenyl.bs.dlt698.constants;
 
 import lombok.Getter;
 
+/**
+ * 属性编号及类型
+ */
 @Getter
 public enum AttrNum {
     ATTR_4001_02((byte)0x02,"属性编号02,类型：oct-string(8位字节串)");

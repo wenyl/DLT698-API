@@ -1,5 +1,8 @@
 package cn.com.wenyl.bs.dlt698.constants;
 
+/**
+ * 时间标签常用标识
+ */
 public class TimeTag {
     /**
      * 无时间标签

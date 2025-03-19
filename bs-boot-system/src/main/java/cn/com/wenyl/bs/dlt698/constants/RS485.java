@@ -1,7 +1,8 @@
 package cn.com.wenyl.bs.dlt698.constants;
 
-import com.fazecast.jSerialComm.SerialPort;
-
+/**
+ * 485通信参数
+ */
 public class RS485 {
     public static final String PART_NAME = "COM3";
     public static final int BAUD_RATE = 9600;

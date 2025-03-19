@@ -1,8 +1,11 @@
 package cn.com.wenyl.bs.dlt698.service;
 
 
-import cn.com.wenyl.bs.dlt698.entity.CSInfo;
+import cn.com.wenyl.bs.dlt698.entity.AddressDomain;
 
+/**
+ * 地址域构建服务
+ */
 public interface AddressDomainBuildService {
 
     /**
@@ -23,9 +26,9 @@ public interface AddressDomainBuildService {
 
     /**
      * 生成地址域数据
-     * @param csinfo 服务器地址类型(0-3)
+     * @param addressDomain 服务器地址信息
      * @return 地址域数据
      */
-    byte[] buildAddressDomain(CSInfo csinfo);
+    byte[] buildAddressDomain(AddressDomain addressDomain);
 
 }

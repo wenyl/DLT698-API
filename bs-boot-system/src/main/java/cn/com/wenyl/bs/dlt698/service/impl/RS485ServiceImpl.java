@@ -4,16 +4,10 @@ import cn.com.wenyl.bs.dlt698.constants.RS485;
 import cn.com.wenyl.bs.dlt698.service.RS485Service;
 import cn.com.wenyl.bs.dlt698.utils.HexUtils;
 import cn.com.wenyl.bs.dlt698.utils.SerialCommUtils;
-import com.fazecast.jSerialComm.SerialPort;
-import com.fazecast.jSerialComm.SerialPortDataListener;
-import com.fazecast.jSerialComm.SerialPortEvent;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
-import java.io.ByteArrayOutputStream;
-import java.util.Arrays;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
@@ -37,15 +31,19 @@ public class RS485ServiceImpl implements RS485Service {
             if(!serial.openPort()){
                 throw new RuntimeException("串口打开失败: " + RS485.PART_NAME);
             }
+            log.info("发送数据帧-{}", HexUtils.bytesToHex(data));
             serial.sendData(data);
-            return future.get(3, TimeUnit.MINUTES).getBody();
+            return future.get(3, TimeUnit.SECONDS).getBody();
         }catch (TimeoutException e) {
             log.error("rs485通信等待超时");
             future.completeExceptionally(e);
             throw e; // 超时
         } catch (ExecutionException | InterruptedException e) {
+            Thread.currentThread().interrupt();  // 恢复中断状态
             future.completeExceptionally(e);
             throw e; // 其他异常
+        } finally {
+            serial.closePort();
         }
     }
 }

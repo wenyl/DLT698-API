@@ -2,6 +2,9 @@ package cn.com.wenyl.bs.dlt698.constants;
 
 import lombok.Getter;
 
+/**
+ * 错误信息
+ */
 @Getter
 public enum Error {
     _0(0,"成功"),_1(1,"硬件失效"),_2(2,"暂时失效")

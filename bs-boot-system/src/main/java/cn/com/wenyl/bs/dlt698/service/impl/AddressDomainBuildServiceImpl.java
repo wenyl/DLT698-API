@@ -1,18 +1,18 @@
 package cn.com.wenyl.bs.dlt698.service.impl;
 
 
-import cn.com.wenyl.bs.dlt698.entity.CSInfo;
+import cn.com.wenyl.bs.dlt698.entity.AddressDomain;
 import cn.com.wenyl.bs.dlt698.service.AddressDomainBuildService;
 import org.springframework.stereotype.Service;
 
 @Service("addressDomainBuildService")
 public class AddressDomainBuildServiceImpl implements AddressDomainBuildService {
     @Override
-    public byte[] buildAddressDomain(CSInfo csinfo) {
-        int saType = csinfo.getAType();
-        int la = csinfo.getLa();
-        byte[] sa = csinfo.getSa();
-        byte ca = csinfo.getCa();
+    public byte[] buildAddressDomain(AddressDomain addressDomain) {
+        int saType = addressDomain.getAddressType();
+        int la = addressDomain.getLogicAddress();
+        byte[] sa = addressDomain.getServerAddress();
+        byte ca = addressDomain.getClientAddress();
 
         // 计算地址域总长度
         int totalLength = 1; // 特征字节

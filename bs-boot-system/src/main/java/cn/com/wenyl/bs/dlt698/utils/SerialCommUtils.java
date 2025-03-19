@@ -30,7 +30,10 @@ public class SerialCommUtils {
         }
         return instance;
     }
-    // 数据接收回调接口
+
+    /**
+     * 数据接收回调接口
+     */
     public interface DataReceivedListener {
         void onDataReceived(byte[] data);
     }
@@ -69,11 +72,14 @@ public class SerialCommUtils {
 
             }
         });
-
-        System.out.println("串口已打开: " + RS485.PART_NAME);
+        log.info("串口已打开: {}",RS485.PART_NAME);
         return true;
 
     }
+
+    /**
+     * 获取帧数据 0x68开头0x16结尾
+     */
     private void getFrame() {
         byte[] buffer = receiveBuffer.toByteArray();
         if(buffer.length == 0){
@@ -136,14 +142,13 @@ public class SerialCommUtils {
     /**
      * 发送数据（字节数组）
      * @param data 待发送的字节数组
-     * @return 实际发送的字节数，-1 表示失败
      */
-    public int sendData(byte[] data) {
+    public void sendData(byte[] data) throws RuntimeException{
         if (serialPort == null || !serialPort.isOpen()) {
-            System.err.println("串口未打开");
-            return -1;
+            log.error("串口未打开");
+            throw new RuntimeException("串口未打开");
         }
-        return serialPort.writeBytes(data, data.length);
+        serialPort.writeBytes(data, data.length);
     }
 
 

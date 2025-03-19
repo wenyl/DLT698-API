@@ -1,5 +1,8 @@
 package cn.com.wenyl.bs.dlt698.constants;
 
+/**
+ * 地址类型
+ */
 public class AddressType {
     // 单地址
     public static final int SINGLE_ADDRESS = 0;

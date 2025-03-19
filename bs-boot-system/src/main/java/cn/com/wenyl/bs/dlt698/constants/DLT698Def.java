@@ -1,11 +1,17 @@
 package cn.com.wenyl.bs.dlt698.constants;
 
+/**
+ * 698协议常量
+ */
 public class DLT698Def {
 
     // 开始和结束标识
     public static final byte START_MARK = 0x68;
     public static final byte END_MARK = 0x16;
 
+    // 长度单位
+    public static final String BYTE = "byte";
+    public static final String KB = "kb";
     // 基础请求/响应类型
     public static final int LINK_REQUEST = 1;
     public static final int LINK_RESPONSE = 129;

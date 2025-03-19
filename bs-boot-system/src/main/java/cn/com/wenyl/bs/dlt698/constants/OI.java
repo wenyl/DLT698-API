@@ -2,6 +2,9 @@ package cn.com.wenyl.bs.dlt698.constants;
 
 import lombok.Getter;
 
+/**
+ * OI接口地址
+ */
 @Getter
 public enum OI {
     MAIL_ADDRESS(new byte[]{(byte) 0x40, (byte) 0x01},"获取通信地址");

@@ -1,8 +1,9 @@
 package cn.com.wenyl.bs.dlt698.constants;
 
+/**
+ * 属性编号特征
+ */
 public class AttributeNumberFeatures {
-
-
     /**
      * 属性2 特征0
      */

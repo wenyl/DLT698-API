@@ -2,12 +2,17 @@ package cn.com.wenyl.bs.dlt698.constants;
 
 import lombok.Getter;
 
+/**
+ * 返回值类型
+ */
 @Getter
 public enum DataType {
-    _09((byte)0x09,"数据类型：oct-string");
+    STRING(String.class,(byte)0x09,"数据类型：oct-string");
+    private final Class aClass;
     private final byte sign;
     private final String desc;
-    DataType(byte sign, String desc){
+    DataType(Class aClass,byte sign, String desc){
+        this.aClass = aClass;
         this.sign = sign;
         this.desc = desc;
     }

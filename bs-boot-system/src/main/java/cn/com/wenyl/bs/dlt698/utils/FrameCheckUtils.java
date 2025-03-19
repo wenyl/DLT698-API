@@ -1,5 +1,8 @@
 package cn.com.wenyl.bs.dlt698.utils;
 
+/**
+ * 校验帧的HCS和FCS数据
+ */
 public class FrameCheckUtils {
 
     // FCS查找表（已修正逗号并转换为Java数组）

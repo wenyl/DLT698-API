@@ -1,5 +1,8 @@
 package cn.com.wenyl.bs.dlt698.constants;
 
+/**
+ * 常用的PIID
+ */
 public class PIID {
     /**
      * 一般优先级 服务序号0

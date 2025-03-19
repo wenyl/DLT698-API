@@ -1,5 +1,8 @@
 package cn.com.wenyl.bs.dlt698.service;
 
+/**
+ * 长度域构建服务
+ */
 public interface LengthDomainBuildService {
 
     /**
