@@ -14,7 +14,7 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeoutException;
 @Slf4j
 @Service("carbonDeviceService")
-public class CarbonDeviceServiceImpl implements ICarbonDeviceService {
+public class CarbonDeviceServiceImpl implements CarbonDeviceService {
     @Resource
     private FrameBuildProcessor frameBuildProcessor;
 
@@ -32,7 +32,7 @@ public class CarbonDeviceServiceImpl implements ICarbonDeviceService {
                 RequestType.CLIENT_REQUEST,AddressType.DISTRIBUTION_ADDRESS,LogicAddress.ZERO,Address.DISTRIBUTION_ADDRESS,
                 Address.CLIENT_ADDRESS);
 
-        GetRequestNormalData userData = new GetRequestNormalData(PIID.ZERO_ZERO,OI.MAIL_ADDRESS, AttrNum.ATTR_4001_02,AttributeIndex.ZERO,TimeTag.NO_TIME_TAG);
+        GetRequestNormalData userData = new GetRequestNormalData(PIID.ZERO_ZERO,OI.MAIL_ADDRESS, AttrNum.ATTR_02,AttributeIndex.ZERO,TimeTag.NO_TIME_TAG);
         getRequestNormalFrame.setData(userData);
         byte[] bytes = builder.buildFrame(getRequestNormalFrame);
         try{

@@ -8,7 +8,8 @@ import lombok.Getter;
 @Getter
 public enum ClientAPDU {
     CONNECT_REQUEST((byte)0x02,2,"建立应用连接请求"),
-    GET_REQUEST((byte)0x05,5,"读取请求");
+    GET_REQUEST((byte)0x05,5,"读取请求"),
+    SET_REQUEST((byte)0x06,6,"设置请求");
     private final byte sign;
     private final int signNum;
     private final String desc;

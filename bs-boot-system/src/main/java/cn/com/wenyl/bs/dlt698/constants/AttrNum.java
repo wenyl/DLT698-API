@@ -7,7 +7,7 @@ import lombok.Getter;
  */
 @Getter
 public enum AttrNum {
-    ATTR_4001_02((byte)0x02,"属性编号02,类型：oct-string(8位字节串)");
+    ATTR_02((byte)0x02,"属性编号02");
     private final byte sign;
     private final String desc;
     AttrNum(byte sign, String desc){

@@ -55,8 +55,13 @@ public class GetResponseNormalFrameParser extends BaseFrameParserImpl<GetRespons
 
         GetResultType getResultType = GetResultType.getResultTypeBySign(userDataBytes[7]);
         if(getResultType != null){
+            if(getResultType.equals(GetResultType.ERROR)){
+                log.info("请求错误{}", GetResultType.ERROR.getDesc());
+                throw new RuntimeException(GetResultType.ERROR.getDesc());
+            }
             normalData.setGetResultType(getResultType);
         }
+
         DataType dataTypeBySign = DataType.getDataTypeBySign(userDataBytes[8]);
         if(dataTypeBySign != null){
             normalData.setDataType(dataTypeBySign);

@@ -7,7 +7,9 @@ import lombok.Getter;
  */
 @Getter
 public enum ServerAPDU {
-    GET_RESPONSE((byte)0x85,133,"响应读取"),CONNECT_RESPONSE((byte)0x82,130,"应用链接响应");
+    CONNECT_RESPONSE((byte)0x82,130,"建立应用连接响应"),
+    GET_RESPONSE((byte)0x85,133,"响应读取"),
+    SET_RESPONSE((byte)86,134,"响应设置");
     private final byte sign;
     private final int signNum;
     private final String desc;

@@ -7,7 +7,8 @@ import lombok.Getter;
  */
 @Getter
 public enum GetResultType {
-    DATA((byte)0x01,1,"结果类型:(数据)");
+    DATA((byte)0x01,1,"结果类型:(数据)"),
+    ERROR((byte)0x00,0,"结果类型:(错误)");
     private final byte sign;
     private final int signNum;
     private final String desc;

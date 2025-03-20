@@ -7,7 +7,9 @@ import lombok.Getter;
  */
 @Getter
 public enum OI {
-    MAIL_ADDRESS(new byte[]{(byte) 0x40, (byte) 0x01},"获取通信地址");
+    MAIL_ADDRESS(new byte[]{(byte) 0x40, (byte) 0x01},"获取通信地址"),
+    FORWARD_CARBON_EMISSION(new byte[]{(byte)0x20,(byte)0x80},"正向碳排放量"),
+    REVERSE_CARBON_EMISSION(new byte[]{(byte)0x20,(byte)0x90},"反向碳排放量");
     private final byte[] sign;
     private final String desc;
     OI(byte[] sign, String desc){

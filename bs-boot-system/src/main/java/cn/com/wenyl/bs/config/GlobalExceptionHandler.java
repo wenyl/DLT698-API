@@ -3,6 +3,7 @@ package cn.com.wenyl.bs.config;
 import cn.com.wenyl.bs.exceptions.GeneratorCodeException;
 import cn.com.wenyl.bs.utils.R;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang.StringUtils;
 import org.apache.http.HttpStatus;
 import org.apache.shiro.authz.AuthorizationException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -36,6 +37,6 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(value = Exception.class)
     public R<?> handleException(Exception e){
         log.error(e.getMessage(), e);
-        return R.error("操作失败,请联系管理员");
+        return R.error(StringUtils.isBlank(e.getMessage())?"操作失败,请联系管理员":e.getMessage());
     }
 }
