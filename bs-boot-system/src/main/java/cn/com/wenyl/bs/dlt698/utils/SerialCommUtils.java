@@ -48,7 +48,7 @@ public class SerialCommUtils {
     public boolean openPort() {
         serialPort = SerialPort.getCommPort(RS485.PART_NAME);
         if (!serialPort.openPort()) {
-            log.error("串口打开失败: " + RS485.PART_NAME);
+            log.error("串口打开失败: {}",RS485.PART_NAME);
             return false;
         }
         // 配置串口参数
@@ -107,7 +107,6 @@ public class SerialCommUtils {
                     lengthByte[0] = buffer[i + 1];
                     lengthByte[1] = buffer[i + 2];
                     frameLength = this.parseLengthDomain(lengthByte);
-                    log.info("数据帧长度"+frameLength);
                     endIndex = startIndex + frameLength-1; // 计算正确的帧结束位置
                     break;
                 }
@@ -115,16 +114,13 @@ public class SerialCommUtils {
         }
 
         if (startIndex == -1) {
-            System.out.println("无效帧数据: " + HexUtils.bytesToHex(buffer));
+            log.error("无效帧数据: {},重置缓冲区",HexUtils.bytesToHex(buffer));
             receiveBuffer.reset();
             return;
         }
 
         if (endIndex == -1 || endIndex >= buffer.length) {
-            System.out.println("数据不完整，等待更多数据");
-            System.out.println(endIndex);
-            System.out.println(buffer.length);
-            System.out.println(HexUtils.bytesToHex(buffer));
+            log.info("数据不完整，等待更多数据");
             return; // 数据不完整，等待更多数据
         }
         System.out.println(endIndex);
@@ -146,60 +142,11 @@ public class SerialCommUtils {
             getFrame();
         } else {
             // 帧结束符不正确
-            System.out.println("帧尾错误: " + HexUtils.bytesToHex(buffer));
+            log.error("帧尾错误: {}", HexUtils.bytesToHex(buffer));
             receiveBuffer.reset();
         }
     }
 
-
-//    private void getFrame() {
-//        byte[] buffer = receiveBuffer.toByteArray();
-//        if(buffer.length == 0){
-//            return;
-//        }
-//        int startIndex = -1;
-//        int endIndex = -1;
-//
-//        // 查找帧头 0x68
-//        for (int i = 0; i < buffer.length; i++) {
-//            if (buffer[i] == (byte) 0x68) {
-//                startIndex = i;
-//            }
-//            if (buffer[i] == (byte) 0x16) {
-//                endIndex = i;
-//                break;
-//            }
-//        }
-//        if(startIndex == -1){
-//            System.out.println("无效帧数据:"+ HexUtils.bytesToHex(buffer));
-//            receiveBuffer.reset();
-//            return;
-//        }
-//        if(endIndex == -1){
-//            return;
-//        }
-//        if(endIndex > startIndex) {
-//            // 提取完整帧
-//            byte[] frame = Arrays.copyOfRange(buffer, startIndex, endIndex+1);
-//
-//            // 触发回调
-//            if (dataListener != null) {
-//                dataListener.onDataReceived(frame);
-//            }
-//
-//            // 移除已处理的数据
-//            byte[] remaining = Arrays.copyOfRange(buffer, endIndex+1, buffer.length);
-//            receiveBuffer.reset();
-//            receiveBuffer.write(remaining, 0, remaining.length);
-//
-//            // 递归检查剩余数据是否包含其他帧
-//            getFrame();
-//        }else{
-//            // 未找到帧头，清空无效数据
-//            System.out.println("帧头与帧尾标识异常"+HexUtils.bytesToHex(buffer));
-//            receiveBuffer.reset();
-//        }
-//    }
 
     /**
      * 关闭串口
@@ -207,7 +154,7 @@ public class SerialCommUtils {
     public void closePort() {
         if (serialPort != null && serialPort.isOpen()) {
             serialPort.closePort();
-            System.out.println("串口已关闭: " + RS485.PART_NAME);
+            log.info("串口已关闭: " + RS485.PART_NAME);
         }
     }
 
