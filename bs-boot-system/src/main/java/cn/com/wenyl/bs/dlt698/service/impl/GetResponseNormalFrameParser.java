@@ -66,6 +66,7 @@ public class GetResponseNormalFrameParser extends BaseFrameParserImpl<GetRespons
         if(dataTypeBySign != null){
             normalData.setDataType(dataTypeBySign);
         }
+        // todo 有些类型是没有长度的
         normalData.setLength(userDataBytes[9]);
 
         byte[] result = new byte[normalData.getLength()];
@@ -86,6 +87,8 @@ public class GetResponseNormalFrameParser extends BaseFrameParserImpl<GetRespons
                 Object ret = HexUtils.bytesToHex(data);
                 log.info("数据解析为{}", ret);
                 return ret;
+            case LONG64_UNSIGNED:
+
             default:
                 log.error("未知的数据类型{}",dataType);
         }

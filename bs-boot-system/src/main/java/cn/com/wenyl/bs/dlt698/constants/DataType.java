@@ -9,7 +9,8 @@ import lombok.Getter;
 public enum DataType {
     OCT_STRING(String.class,(byte)0x09,"数据类型:octet-string,8位字节串"),
     VISIBLE_STRING(String.class,(byte)0x0A,"数据类型:visible-string,ASCII字符串"),
-    INTEGER(Integer.class,(byte)0x0F,"数据类型:integer,8位整数");
+    INTEGER(Integer.class,(byte)0x0F,"数据类型:integer,8位整数"),
+    LONG64_UNSIGNED(Long.class,(byte)0x15,"数据类型:integer,8位整数");
     private final Class aClass;
     private final byte sign;
     private final String desc;

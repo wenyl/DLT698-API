@@ -115,7 +115,7 @@ public class SerialCommUtils {
 
         if (startIndex == -1) {
             log.error("无效帧数据: {},重置缓冲区",HexUtils.bytesToHex(buffer));
-            receiveBuffer.reset();
+//            receiveBuffer.reset();
             return;
         }
 
