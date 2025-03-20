@@ -7,7 +7,7 @@ import cn.com.wenyl.bs.dlt698.entity.dto.FrameDto;
  * 基础帧解析服务
  * @param <T> 帧数据
  */
-public interface BaseFrameParser<T extends Frame> {
+public interface BaseFrameParser<T extends Frame,G extends LinkUserData> {
     /**
      * 将帧字节数据解析为帧数据
      * @param frameBytes 帧字节数据
@@ -17,11 +17,19 @@ public interface BaseFrameParser<T extends Frame> {
     T parseFrame(byte[] frameBytes) throws RuntimeException;
 
     /**
+     * 提取公用的frameDto数据，不对链路用户数据做任何处理，直接 返回
+     * @param frameBytes 完整帧数据
+     * @return frameDto数据
+     * @throws RuntimeException 异常
+     */
+    FrameDto getFrameDto(byte[] frameBytes) throws RuntimeException;
+
+    /**
      * 解析帧的用户链路数据
      * @param userDataBytes 用户链路数据字节信息
      * @return 用户链路数据
      */
-    LinkUserData parseLinkUserData(byte[] userDataBytes);
+    G parseLinkUserData(byte[] userDataBytes);
 
     /**
      * 解析帧的控制域数据

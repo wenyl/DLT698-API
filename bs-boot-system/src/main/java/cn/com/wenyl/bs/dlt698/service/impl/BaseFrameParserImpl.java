@@ -14,9 +14,31 @@ import java.nio.ByteBuffer;
 import java.util.Arrays;
 
 @Slf4j
-public abstract class BaseFrameParserImpl<T extends Frame> implements BaseFrameParser<T> {
+public abstract class BaseFrameParserImpl<T extends Frame,G extends LinkUserData> implements BaseFrameParser<T,G> {
     public abstract T parseFrame(byte[] frameBytes)  throws RuntimeException;
-    public abstract LinkUserData parseLinkUserData(byte[] userDataBytes);
+    @Override
+    public FrameDto getFrameDto(byte[] frameBytes) throws RuntimeException {
+        FrameDto frameDto = parseFrameHead(frameBytes);
+
+        byte[] hcs = getHCS(frameBytes,frameDto.getOffset());
+        frameDto.setHcs(hcs);
+        frameDto.setOffset(frameDto.getOffset()+hcs.length);
+        if(!checkFrameHCS(frameDto)){
+            throw new RuntimeException("hcs校验失败"+HexUtils.bytesToHex(hcs));
+        }
+
+        byte[] userData = getUserData(frameBytes,frameDto.getOffset());
+        frameDto.setUserData(userData);
+        frameDto.setOffset(frameDto.getOffset()+userData.length);
+
+        byte[] fcs = getFCS(frameBytes,frameDto.getOffset());
+        frameDto.setFcs(fcs);
+        if(!checkFrameFCS(frameDto)){
+            throw new RuntimeException("fcs校验失败"+HexUtils.bytesToHex(fcs));
+        }
+        return frameDto;
+    }
+    public abstract G parseLinkUserData(byte[] userDataBytes);
 
     public ControlDomain parseControlDomain(byte frameBytes) {
         return null;

@@ -2,7 +2,9 @@ package cn.com.wenyl.bs.dlt698.utils;
 
 
 
+import cn.com.wenyl.bs.dlt698.constants.DLT698Def;
 import cn.com.wenyl.bs.dlt698.constants.RS485;
+import cn.com.wenyl.bs.dlt698.entity.LengthDomain;
 import com.fazecast.jSerialComm.SerialPort;
 import com.fazecast.jSerialComm.SerialPortDataListener;
 import com.fazecast.jSerialComm.SerialPortEvent;
@@ -10,6 +12,7 @@ import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.ByteArrayOutputStream;
+import java.nio.ByteBuffer;
 import java.util.Arrays;
 
 @Slf4j
@@ -77,38 +80,57 @@ public class SerialCommUtils {
 
     }
 
+    private int parseLengthDomain(byte[] lengthBytes){
+        return (ByteBuffer.wrap(new byte[]{lengthBytes[1],lengthBytes[0] }).getShort() & 0x3FFF) + 2;
+    }
     /**
      * 获取帧数据 0x68开头0x16结尾
      */
     private void getFrame() {
         byte[] buffer = receiveBuffer.toByteArray();
-        if(buffer.length == 0){
+        if (buffer.length == 0) {
             return;
         }
+
         int startIndex = -1;
         int endIndex = -1;
+        int frameLength = -1;
 
         // 查找帧头 0x68
-        for (int i = 0; i < buffer.length; i++) {
+        for (int i = 0; i < buffer.length - 2; i++) {
             if (buffer[i] == (byte) 0x68) {
                 startIndex = i;
-            }
-            if (buffer[i] == (byte) 0x16) {
-                endIndex = i;
-                break;
+
+                // 确保至少有 3 个字节可用（0x68 + 长度 + 其他数据）
+                if (i + 2 < buffer.length) {
+                    byte[] lengthByte = new byte[2];
+                    lengthByte[0] = buffer[i + 1];
+                    lengthByte[1] = buffer[i + 2];
+                    frameLength = this.parseLengthDomain(lengthByte);
+                    log.info("数据帧长度"+frameLength);
+                    endIndex = startIndex + frameLength-1; // 计算正确的帧结束位置
+                    break;
+                }
             }
         }
-        if(startIndex == -1){
-            System.out.println("无效帧数据:"+ HexUtils.bytesToHex(buffer));
+
+        if (startIndex == -1) {
+            System.out.println("无效帧数据: " + HexUtils.bytesToHex(buffer));
             receiveBuffer.reset();
             return;
         }
-        if(endIndex == -1){
-            return;
+
+        if (endIndex == -1 || endIndex >= buffer.length) {
+            System.out.println("数据不完整，等待更多数据");
+            System.out.println(endIndex);
+            System.out.println(buffer.length);
+            System.out.println(HexUtils.bytesToHex(buffer));
+            return; // 数据不完整，等待更多数据
         }
-        if(endIndex > startIndex) {
-            // 提取完整帧
-            byte[] frame = Arrays.copyOfRange(buffer, startIndex, endIndex+1);
+        System.out.println(endIndex);
+        if (buffer[endIndex] == (byte) 0x16) {
+            // 取出完整帧
+            byte[] frame = Arrays.copyOfRange(buffer, startIndex, endIndex + 1);
 
             // 触发回调
             if (dataListener != null) {
@@ -116,18 +138,68 @@ public class SerialCommUtils {
             }
 
             // 移除已处理的数据
-            byte[] remaining = Arrays.copyOfRange(buffer, endIndex+1, buffer.length);
+            byte[] remaining = Arrays.copyOfRange(buffer, endIndex + 1, buffer.length);
             receiveBuffer.reset();
             receiveBuffer.write(remaining, 0, remaining.length);
 
-            // 递归检查剩余数据是否包含其他帧
+            // 递归检查剩余数据
             getFrame();
-        }else{
-            // 未找到帧头，清空无效数据
-            System.out.println("帧头与帧尾标识异常"+HexUtils.bytesToHex(buffer));
+        } else {
+            // 帧结束符不正确
+            System.out.println("帧尾错误: " + HexUtils.bytesToHex(buffer));
             receiveBuffer.reset();
         }
     }
+
+
+//    private void getFrame() {
+//        byte[] buffer = receiveBuffer.toByteArray();
+//        if(buffer.length == 0){
+//            return;
+//        }
+//        int startIndex = -1;
+//        int endIndex = -1;
+//
+//        // 查找帧头 0x68
+//        for (int i = 0; i < buffer.length; i++) {
+//            if (buffer[i] == (byte) 0x68) {
+//                startIndex = i;
+//            }
+//            if (buffer[i] == (byte) 0x16) {
+//                endIndex = i;
+//                break;
+//            }
+//        }
+//        if(startIndex == -1){
+//            System.out.println("无效帧数据:"+ HexUtils.bytesToHex(buffer));
+//            receiveBuffer.reset();
+//            return;
+//        }
+//        if(endIndex == -1){
+//            return;
+//        }
+//        if(endIndex > startIndex) {
+//            // 提取完整帧
+//            byte[] frame = Arrays.copyOfRange(buffer, startIndex, endIndex+1);
+//
+//            // 触发回调
+//            if (dataListener != null) {
+//                dataListener.onDataReceived(frame);
+//            }
+//
+//            // 移除已处理的数据
+//            byte[] remaining = Arrays.copyOfRange(buffer, endIndex+1, buffer.length);
+//            receiveBuffer.reset();
+//            receiveBuffer.write(remaining, 0, remaining.length);
+//
+//            // 递归检查剩余数据是否包含其他帧
+//            getFrame();
+//        }else{
+//            // 未找到帧头，清空无效数据
+//            System.out.println("帧头与帧尾标识异常"+HexUtils.bytesToHex(buffer));
+//            receiveBuffer.reset();
+//        }
+//    }
 
     /**
      * 关闭串口

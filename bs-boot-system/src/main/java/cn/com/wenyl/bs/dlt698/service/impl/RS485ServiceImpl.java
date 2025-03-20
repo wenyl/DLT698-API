@@ -8,6 +8,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.Resource;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
@@ -16,11 +17,10 @@ import java.util.concurrent.TimeoutException;
 @Service("rs485ServiceImpl")
 @Slf4j
 public class RS485ServiceImpl implements RS485Service {
-
     @Override
     public byte[] sendByte(byte[] data) throws RuntimeException, TimeoutException,ExecutionException, InterruptedException {
-        CompletableFuture<ResponseEntity<byte[]>> future = new CompletableFuture<>();
         SerialCommUtils serial = SerialCommUtils.getInstance();
+        CompletableFuture<ResponseEntity<byte[]>> future = new CompletableFuture<>();
         try{
             // 设置数据接收的回调
             serial.setDataReceivedListener(receivedData -> {
@@ -33,7 +33,7 @@ public class RS485ServiceImpl implements RS485Service {
             }
             log.info("发送数据帧-{}", HexUtils.bytesToHex(data));
             serial.sendData(data);
-            return future.get(3, TimeUnit.SECONDS).getBody();
+            return future.get(5, TimeUnit.SECONDS).getBody();
         }catch (TimeoutException e) {
             log.error("rs485通信等待超时");
             future.completeExceptionally(e);

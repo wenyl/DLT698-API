@@ -7,7 +7,7 @@ import lombok.Getter;
  */
 @Getter
 public enum DataType {
-    STRING(String.class,(byte)0x09,"数据类型：oct-string");
+    OCT_STRING(String.class,(byte)0x09,"数据类型：oct-string,8位字节串"),VISIBLE_STRING(String.class,(byte)0x0A,"数据类型：visible-string,ASCII字符串") ;
     private final Class aClass;
     private final byte sign;
     private final String desc;

@@ -4,11 +4,10 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 
 /**
- * ConnectRequest类型的帧
+ * ConnectResponse类型的frame
  */
 @EqualsAndHashCode(callSuper = true)
 @Data
-public class ConnectRequestFrame extends Frame{
-    private ConnectRequestData connectRequestData;
-
+public class ConnectResponseFrame extends Frame{
+    private ConnectResponseData connectResponseData;
 }

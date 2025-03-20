@@ -10,18 +10,13 @@ class BCDUtilsTest {
     @Test
     void convertToBCD() {
         // 测试10进制字符串到压缩BCD码字节数组的转换
-        String decimalStr = "101010101010101010101010";
+        String decimalStr = "012502250001";
         byte[] bcdArray = BCDUtils.encodeBCD(decimalStr);
         System.out.println("10进制字符串: " + decimalStr);
         System.out.print("压缩BCD码字节数组: ");
         for (byte b : bcdArray) {
             System.out.print(String.format("%02X ", b));
         }
-        System.out.println();
-        byte[] bytes = BCDUtils.recoverOriginalBCD(decimalStr);
-        System.out.println(HexUtils.bytesToHex(bytes));
-
-
     }
 
     @Test

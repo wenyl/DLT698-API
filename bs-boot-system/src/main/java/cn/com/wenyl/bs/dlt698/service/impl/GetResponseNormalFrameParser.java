@@ -10,7 +10,7 @@ import org.springframework.stereotype.Service;
 
 @Slf4j
 @Service("getResponseNormalFrameParser")
-public class GetResponseNormalFrameParser extends BaseFrameParserImpl<GetResponseNormalFrame> implements BaseFrameParser<GetResponseNormalFrame> {
+public class GetResponseNormalFrameParser extends BaseFrameParserImpl<GetResponseNormalFrame,GetResponseNormalData> implements BaseFrameParser<GetResponseNormalFrame,GetResponseNormalData> {
     @Override
     public GetResponseNormalFrame parseFrame(byte[] frameBytes) throws RuntimeException{
         GetResponseNormalFrame frame  = new GetResponseNormalFrame();
@@ -19,31 +19,14 @@ public class GetResponseNormalFrameParser extends BaseFrameParserImpl<GetRespons
             log.error(errorInfo);
             throw new RuntimeException(errorInfo);
         }
-        FrameDto frameDto = super.parseFrameHead(frameBytes);
-
-        byte[] hcs = super.getHCS(frameBytes,frameDto.getOffset());
-        frameDto.setHcs(hcs);
-        frameDto.setOffset(frameDto.getOffset()+hcs.length);
-        if(!super.checkFrameHCS(frameDto)){
-            throw new RuntimeException("hcs校验失败"+HexUtils.bytesToHex(hcs));
-        }
-
-        byte[] userData = getUserData(frameBytes,frameDto.getOffset());
-        frameDto.setUserData(userData);
-        frameDto.setOffset(frameDto.getOffset()+userData.length);
-
-        byte[] fcs = super.getFCS(frameBytes,frameDto.getOffset());
-        frameDto.setFcs(fcs);
-        if(!super.checkFrameFCS(frameDto)){
-            throw new RuntimeException("fcs校验失败"+HexUtils.bytesToHex(fcs));
-        }
-        GetResponseNormalData getResponseNormalData = parseLinkUserData(userData);
+        FrameDto frameDto = super.getFrameDto(frameBytes);
+        GetResponseNormalData getResponseNormalData = this.parseLinkUserData(frameDto.getUserData());
         frame.setLengthDomain(frameDto.getLengthDomain());
         frame.setControlDomain(frameDto.getControlDomain());
         frame.setAddressDomain(frameDto.getAddressDomain());
-        frame.setHcs(hcs);
+        frame.setHcs(frameDto.getHcs());
         frame.setNormalData(getResponseNormalData);
-        frame.setFcs(fcs);
+        frame.setFcs(frameDto.getFcs());
         return frame;
     }
 
@@ -94,8 +77,10 @@ public class GetResponseNormalFrameParser extends BaseFrameParserImpl<GetRespons
         DataType dataType = frame.getNormalData().getDataType();
         byte[] data = frame.getNormalData().getData();
         switch (dataType){
-            case STRING:
-                return HexUtils.bytesToHex(data).replaceAll(" ","");
+            case OCT_STRING:
+                Object ret = HexUtils.bytesToHex(data);
+                log.info("数据解析为{}", ret);
+                return ret;
             default:
                 log.error("未知的数据类型{}",dataType);
         }

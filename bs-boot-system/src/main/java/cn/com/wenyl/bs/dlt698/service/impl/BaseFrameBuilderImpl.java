@@ -1,13 +1,21 @@
 package cn.com.wenyl.bs.dlt698.service.impl;
 
 
-import cn.com.wenyl.bs.dlt698.entity.Frame;
+import cn.com.wenyl.bs.dlt698.constants.*;
+import cn.com.wenyl.bs.dlt698.entity.*;
 import cn.com.wenyl.bs.dlt698.service.*;
+import cn.com.wenyl.bs.dlt698.utils.HexUtils;
 
 import javax.annotation.Resource;
+import javax.sound.midi.Soundbank;
+import java.lang.reflect.InvocationTargetException;
 import java.nio.ByteBuffer;
 
 public abstract class BaseFrameBuilderImpl<T extends Frame>  implements BaseFrameBuilder<T> {
+    private final Class<T> type;
+    public BaseFrameBuilderImpl(Class<T> type){
+        this.type = type;
+    }
     @Resource
     private ControlDomainBuildService controlDomainBuildService;
     @Resource
@@ -16,6 +24,29 @@ public abstract class BaseFrameBuilderImpl<T extends Frame>  implements BaseFram
     private LengthDomainBuildService lengthDomainBuildService;
     @Resource
     private CheckBuildService checkBuildService;
+    @Override
+    public byte[] buildFrame(byte[] frameHead, byte[] linkUserData) {
+        // 构建长度域，并初始化帧头，数据长度为帧头+apdu链路用户数据长度+2字节hcs校验信息+2字节fcs校验信息
+        byte[] lengthDomain = this.buildFrameLength(frameHead.length+linkUserData.length+4);
+        frameHead[0] = lengthDomain[0];
+        frameHead[1] = lengthDomain[1];
+        byte[] hcs = this.buildHCS(frameHead);
+
+        byte[] body = new byte[frameHead.length+2+linkUserData.length];
+        System.arraycopy(frameHead, 0, body, 0, frameHead.length);
+        System.arraycopy(hcs, 0, body, frameHead.length, hcs.length);
+        System.arraycopy(linkUserData, 0, body, frameHead.length+hcs.length, linkUserData.length);
+
+        byte[] fcs = this.buildFCS(body);
+
+        byte[] totalFrameData = new byte[body.length+fcs.length+2];
+        totalFrameData[0] = DLT698Def.START_MARK;
+        System.arraycopy(body, 0, totalFrameData, 1, body.length);
+        System.arraycopy(fcs, 0, totalFrameData, body.length+1, fcs.length);
+        totalFrameData[totalFrameData.length-1] = DLT698Def.END_MARK;
+        return totalFrameData;
+    }
+
     public byte[] buildFrameHead(Frame frame) {
         ByteBuffer buffer = ByteBuffer.allocate(32);
         buffer.put((byte)0);
@@ -30,15 +61,46 @@ public abstract class BaseFrameBuilderImpl<T extends Frame>  implements BaseFram
         return byteArray;
     }
     public abstract byte[] buildFrame(T frame);
-    public abstract byte[] buildLinkUserData(T frame);
+    @Override
+    public Frame getFrame(int functionCode, int scramblingCodeFlag,
+                      int frameFlag, RequestType requestType, int addressType,
+                      int logicAddress, byte[] serverAddress, byte clientAddress
+    ){
+        T t;
+        try {
+            t = type.getDeclaredConstructor().newInstance();
+        } catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
+            throw new RuntimeException("无法创建实例", e);
+        }
+        ControlDomain controlDomain = new ControlDomain();
+        controlDomain.setFunCode(functionCode);
+        controlDomain.setSc(scramblingCodeFlag);
+        controlDomain.setFrameFlg(frameFlag);
+        controlDomain.setPrm(requestType.getPrm());
+        controlDomain.setDir(requestType.getDir());
+        t.setControlDomain(controlDomain);
 
+        AddressDomain addressDomain = new AddressDomain();
+        addressDomain.setAddressType(addressType);
+        addressDomain.setLogicAddress(logicAddress);
+        addressDomain.setServerAddress(serverAddress);
+        addressDomain.setClientAddress(clientAddress);
+        t.setAddressDomain(addressDomain);
+        return t;
+    }
+    public abstract byte[] buildLinkUserData(T frame);
+    @Override
     public byte[] buildFrameLength(int length) {
         return lengthDomainBuildService.buildFrameLength(length);
     }
+    @Override
     public byte[] buildHCS(byte[] frameHead){
         return checkBuildService.buildHCS(frameHead);
     }
+    @Override
     public byte[] buildFCS(byte[] frameBody){
         return checkBuildService.buildFCS(frameBody);
     }
+
+
 }

@@ -1,6 +1,7 @@
 package cn.com.wenyl.bs.dlt698.service.impl;
 
 import cn.com.wenyl.bs.dlt698.entity.Frame;
+import cn.com.wenyl.bs.dlt698.entity.LinkUserData;
 import cn.com.wenyl.bs.dlt698.service.BaseFrameParser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -13,13 +14,14 @@ import java.util.Map;
 
 @Service
 @SuppressWarnings("unchecked")
-public class FrameParserFactory {
-    private static final Map<Class<? extends Frame>, BaseFrameParser<? extends Frame>> frameParserMap = new HashMap<>();
+public class FrameParserFactory<T extends Frame,G extends LinkUserData> {
+    private static final Map<Class<?>, BaseFrameParser<? extends Frame, ? extends LinkUserData>> frameParserMap = new HashMap<>();
+
 
     // 构造函数：自动注入所有的解析器并根据泛型类型推断帧类型
     @Autowired
-    public FrameParserFactory(List<BaseFrameParser<?>> frameParsers) {
-        for (BaseFrameParser<?> parser : frameParsers) {
+    public FrameParserFactory(List<BaseFrameParser<T,G>> frameParsers) {
+        for (BaseFrameParser<T,G> parser : frameParsers) {
             Type[] genericInterfaces = parser.getClass().getGenericInterfaces();
 
             // 确保解析器实现类实现了泛型接口并能够正确提取泛型类型
@@ -36,11 +38,18 @@ public class FrameParserFactory {
     }
 
     // 通过帧类型返回相应的解析器
-    public <T extends Frame> BaseFrameParser<T> getFrameParser(Class<T> frameType) {
-        BaseFrameParser<T> parser = (BaseFrameParser<T>) frameParserMap.get(frameType);
+    public BaseFrameParser<T, G> getFrameParser(Class<T> frameType) {
+        // 使用通配符获取解析器
+        BaseFrameParser<?, ?> parser = frameParserMap.get(frameType);
+
         if (parser == null) {
             throw new IllegalArgumentException("No parser found for " + frameType.getSimpleName());
         }
-        return parser;
+
+        // 强制转换为合适的类型
+        @SuppressWarnings("unchecked")
+        BaseFrameParser<T, G> typedParser = (BaseFrameParser<T, G>) parser;
+
+        return typedParser;
     }
 }

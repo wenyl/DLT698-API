@@ -10,4 +10,5 @@ import lombok.EqualsAndHashCode;
 @Data
 public class GetResponseNormalFrame extends Frame{
     private GetResponseNormalData normalData;
+
 }
