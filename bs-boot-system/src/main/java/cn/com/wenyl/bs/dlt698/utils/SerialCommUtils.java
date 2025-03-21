@@ -123,7 +123,6 @@ public class SerialCommUtils {
             log.info("数据不完整，等待更多数据");
             return; // 数据不完整，等待更多数据
         }
-        System.out.println(endIndex);
         if (buffer[endIndex] == (byte) 0x16) {
             // 取出完整帧
             byte[] frame = Arrays.copyOfRange(buffer, startIndex, endIndex + 1);

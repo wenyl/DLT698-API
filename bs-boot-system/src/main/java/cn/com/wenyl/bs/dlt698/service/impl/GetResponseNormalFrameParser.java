@@ -71,7 +71,7 @@ public class GetResponseNormalFrameParser extends BaseFrameParserImpl<GetRespons
         }
         normalData.setDataType(dataTypeBySign);
         int offset = 8;
-        if(dataTypeBySign.isHasLength()){
+        if(dataTypeBySign.getLength() == 0){
             offset = 9;
             normalData.setLength(userDataBytes[offset]);
         }else{
