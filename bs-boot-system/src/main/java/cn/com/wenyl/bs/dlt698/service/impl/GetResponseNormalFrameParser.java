@@ -8,6 +8,8 @@ import cn.com.wenyl.bs.dlt698.utils.HexUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.math.BigInteger;
+
 @Slf4j
 @Service("getResponseNormalFrameParser")
 public class GetResponseNormalFrameParser extends BaseFrameParserImpl<GetResponseNormalFrame,GetResponseNormalData> implements BaseFrameParser<GetResponseNormalFrame,GetResponseNormalData> {
@@ -63,14 +65,22 @@ public class GetResponseNormalFrameParser extends BaseFrameParserImpl<GetRespons
         }
 
         DataType dataTypeBySign = DataType.getDataTypeBySign(userDataBytes[8]);
-        if(dataTypeBySign != null){
-            normalData.setDataType(dataTypeBySign);
+        if(dataTypeBySign == null){
+            log.error("未知的数据类型{}", HexUtils.byteToHex(userDataBytes[8]));
+            throw new RuntimeException("未知的数据类型"+HexUtils.byteToHex(userDataBytes[8]));
         }
-        // todo 有些类型是没有长度的
-        normalData.setLength(userDataBytes[9]);
+        normalData.setDataType(dataTypeBySign);
+        int offset = 8;
+        if(dataTypeBySign.isHasLength()){
+            offset = 9;
+            normalData.setLength(userDataBytes[offset]);
+        }else{
+            // 长度需要减去FollowReport和TimeTag
+            normalData.setLength(userDataBytes.length-(offset+1)-2);
+        }
 
         byte[] result = new byte[normalData.getLength()];
-        System.arraycopy(userDataBytes,10,result,0,normalData.getLength());
+        System.arraycopy(userDataBytes,offset+1,result,0,normalData.getLength());
         normalData.setData(result);
 
         normalData.setTimeTag(userDataBytes[userDataBytes.length-1]);
@@ -79,16 +89,23 @@ public class GetResponseNormalFrameParser extends BaseFrameParserImpl<GetRespons
     }
 
     @Override
-    public Object getData(GetResponseNormalFrame frame) {
+    public Object getData(GetResponseNormalFrame frame) throws RuntimeException{
         DataType dataType = frame.getNormalData().getDataType();
         byte[] data = frame.getNormalData().getData();
-        switch (dataType){
+        Object ret;
+                switch (dataType){
             case OCT_STRING:
-                Object ret = HexUtils.bytesToHex(data);
+                ret = HexUtils.bytesToHex(data);
                 log.info("数据解析为{}", ret);
                 return ret;
             case LONG64_UNSIGNED:
-
+                if(data.length != 8){
+                    String msg = "long64_unsigned类型数据长度应该为8,当前数据"+HexUtils.bytesToHex(data);
+                    log.error(msg);
+                    throw new RuntimeException(msg);
+                }
+                ret =  new BigInteger(1,data);
+                return ret;
             default:
                 log.error("未知的数据类型{}",dataType);
         }

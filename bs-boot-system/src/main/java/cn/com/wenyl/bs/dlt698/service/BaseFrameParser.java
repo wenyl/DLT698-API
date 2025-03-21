@@ -145,5 +145,5 @@ public interface BaseFrameParser<T extends Frame,G extends LinkUserData> {
      * @param frame 帧信息
      * @return 实际数据
      */
-    Object getData(T frame);
+    Object getData(T frame) throws RuntimeException;
 }

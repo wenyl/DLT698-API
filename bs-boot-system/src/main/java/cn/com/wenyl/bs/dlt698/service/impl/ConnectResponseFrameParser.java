@@ -151,7 +151,7 @@ public class ConnectResponseFrameParser extends BaseFrameParserImpl<ConnectRespo
     }
 
     @Override
-    public Object getData(ConnectResponseFrame frame) {
+    public Object getData(ConnectResponseFrame frame) throws RuntimeException {
         ConnectResponseDto dto = new ConnectResponseDto();
         ConnectResponseData connectResponseData = frame.getConnectResponseData();
         dto.setOemID(new String(connectResponseData.getOemId(), StandardCharsets.US_ASCII));

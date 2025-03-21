@@ -190,5 +190,5 @@ public abstract class BaseFrameParserImpl<T extends Frame,G extends LinkUserData
         return oadData;
     }
 
-    public abstract Object getData(T frame);
+    public abstract Object getData(T frame) throws RuntimeException;
 }
