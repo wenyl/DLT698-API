@@ -22,7 +22,7 @@ public class SetRequestNormalFrameBuilder extends BaseFrameBuilderImpl<SetReques
     @Override
     public byte[] buildLinkUserData(SetRequestNormalFrame frame) {
         SetRequestNormalData userData = frame.getData();
-        ByteBuffer buffer = ByteBuffer.allocate(64);
+        ByteBuffer buffer = ByteBuffer.allocate(64+userData.getDataItem().length);
         buffer.put(userData.getApdu());
         buffer.put(userData.getOpera());
         buffer.put(userData.getPIID());

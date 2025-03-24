@@ -2,6 +2,7 @@ package cn.com.wenyl.bs.dlt698.service.impl;
 
 import cn.com.wenyl.bs.dlt698.constants.*;
 import cn.com.wenyl.bs.dlt698.entity.*;
+import cn.com.wenyl.bs.dlt698.entity.dto.CarbonFactorDto;
 import cn.com.wenyl.bs.dlt698.service.CarbonDeviceService;
 import cn.com.wenyl.bs.dlt698.service.CarbonFactorService;
 import cn.com.wenyl.bs.dlt698.service.RS485Service;
@@ -36,7 +37,6 @@ public class CarbonFactorServiceImpl implements CarbonFactorService {
     public Object set1CarbonFactor(String carbonDeviceAddress,Double carbonFactor)  throws ExecutionException, InterruptedException, TimeoutException {
         // 先链接电表
         carbonDeviceService.connectCarbonDevice(carbonDeviceAddress);
-        // 查询昨日碳排放累计量
         SetRequestNormalFrameBuilder builder = (SetRequestNormalFrameBuilder)frameBuildProcessor.getFrameBuilder(SetRequestNormalFrame.class);
 
         SetRequestNormalFrame setRequestNormalFrame = (SetRequestNormalFrame)builder.getFrame(FunctionCode.THREE, ScramblingCodeFlag.NOT_SCRAMBLING_CODE, FrameFlag.NOT_SUB_FRAME,
@@ -59,6 +59,34 @@ public class CarbonFactorServiceImpl implements CarbonFactorService {
         }
     }
 
+    @Override
+    public Object setCarbonFactors(CarbonFactorDto carbonFactorDto) throws ExecutionException, InterruptedException, TimeoutException {
+        // 先链接电表
+        carbonDeviceService.connectCarbonDevice(carbonFactorDto.getCarbonDeviceAddress());
+        SetRequestNormalFrameBuilder builder = (SetRequestNormalFrameBuilder)frameBuildProcessor.getFrameBuilder(SetRequestNormalFrame.class);
+
+        SetRequestNormalFrame setRequestNormalFrame = (SetRequestNormalFrame)builder.getFrame(FunctionCode.THREE, ScramblingCodeFlag.NOT_SCRAMBLING_CODE, FrameFlag.NOT_SUB_FRAME,
+                RequestType.CLIENT_REQUEST, AddressType.SINGLE_ADDRESS,LogicAddress.ZERO, BCDUtils.encodeBCD(carbonFactorDto.getCarbonDeviceAddress()),
+                Address.CLIENT_ADDRESS);
+        // todo 生成要设置的信息
+        byte[] data = buildSetCarbonFactorBytes(carbonFactorDto.getCarbonFactor());
+        SetRequestNormalData userData = new SetRequestNormalData(data,PIID.ZERO_ZERO,OI.SET_CARBON_FACTOR, AttrNum.ATTR_02,AttributeIndex.ZERO,TimeTag.NO_TIME_TAG);
+        setRequestNormalFrame.setData(userData);
+        byte[] bytes = builder.buildFrame(setRequestNormalFrame);
+        log.info(HexUtils.bytesToHex(bytes));
+        try{
+            byte[] returnFrame = rs485Service.sendByte(bytes);
+            log.info("收到数据帧{}", HexUtils.bytesToHex(returnFrame));
+
+            SetResponseNormalFrameParser parser = (SetResponseNormalFrameParser)frameParseProcessor.getFrameParser(SetResponseNormalFrame.class);
+            return parser.getData(parser.parseFrame(returnFrame));
+        } finally{
+            SerialCommUtils.getInstance().closePort();
+        }
+    }
+
+
+
     private byte[] buildSetCarbonFactorBytes(Double carbonFactor){
         if(carbonFactor == null){
             log.error("请输入电碳因子");
@@ -70,7 +98,7 @@ public class CarbonFactorServiceImpl implements CarbonFactorService {
         // 第一个元素为时间，长度7个字节
         byteBuffer.put(DataType.DATE_TIME_S.getSign());
         // 获取当天日期，并设置时间为 00:00:00 转换为 Date
-        LocalDateTime dateTime = LocalDateTime.of(LocalDate.now().minusDays(1), LocalTime.MIDNIGHT);
+        LocalDateTime dateTime = LocalDateTime.of(LocalDate.now(), LocalTime.MIDNIGHT);
         Date date = Date.from(dateTime.atZone(ZoneId.systemDefault()).toInstant());
         // 编码时间
         byte[] dateTimeSBytes = ASN1EncoderUtils.encodeDateTimeS(date);
@@ -78,7 +106,7 @@ public class CarbonFactorServiceImpl implements CarbonFactorService {
         // 第二个元素为时间间隔，时间单位占据一个字节，时间间隔值类型为long-unsigned占据两个字节
         byteBuffer.put(DataType.TI.getSign());
         byteBuffer.put(TimeUnit.DAY.getSign());
-        byteBuffer.put(new byte[]{(byte)0x00,(byte)0x01});// 时间间隔为1
+        byteBuffer.put(TimeInterval.ONE_HOUR.getSign());// 时间间隔为1
         // 第三个元素为数组，存储了设置的值
         byteBuffer.put(DataType.ARRAY.getSign());
         byteBuffer.put((byte)0x01);// 数组长度为1
@@ -90,7 +118,38 @@ public class CarbonFactorServiceImpl implements CarbonFactorService {
         byteBuffer.get(byteArray); // 从缓冲区读取到数组中
         return byteArray;
     }
-
+    private byte[] buildSetCarbonFactorBytes(double[] carbonFactor){
+        if(carbonFactor == null){
+            log.error("请输入电碳因子");
+            throw new RuntimeException("请输入电碳因子");
+        }
+        ByteBuffer byteBuffer = ByteBuffer.allocate(carbonFactor.length*3+32);
+        byteBuffer.put(DataType.STRUCTURE.getSign());
+        byteBuffer.put((byte)0x03);// 结构体元素个数
+        // 第一个元素为时间，长度7个字节
+        byteBuffer.put(DataType.DATE_TIME_S.getSign());
+        // 获取当天日期，并设置时间为 00:00:00 转换为 Date
+        LocalDateTime dateTime = LocalDateTime.of(LocalDate.now(), LocalTime.MIDNIGHT);
+        Date date = Date.from(dateTime.atZone(ZoneId.systemDefault()).toInstant());
+        // 编码时间
+        byte[] dateTimeSBytes = ASN1EncoderUtils.encodeDateTimeS(date);
+        byteBuffer.put(dateTimeSBytes);
+        // 第二个元素为时间间隔，时间单位占据一个字节，时间间隔值类型为long-unsigned占据两个字节
+        byteBuffer.put(DataType.TI.getSign());
+        byteBuffer.put(TimeUnit.MINUTE.getSign());
+        byteBuffer.put(TimeInterval.FIFTEEN_MINUTE.getSign());// 时间间隔为1
+        // 第三个元素为数组，存储了设置的值
+        byteBuffer.put(DataType.ARRAY.getSign());
+        byteBuffer.put((byte)(carbonFactor.length & 0xFF));// 数组长度为1
+        for (double v : carbonFactor) {
+            byteBuffer.put(DataType.LONG_UNSIGNED.getSign());
+            byteBuffer.put(ASN1EncoderUtils.encodeLongUnsigned(cover2Int(v)));
+        }
+        byte[] byteArray = new byte[byteBuffer.position()];
+        byteBuffer.rewind(); // 重置位置到0
+        byteBuffer.get(byteArray); // 从缓冲区读取到数组中
+        return byteArray;
+    }
     private int cover2Int(Double val){
         // 计算小数的位数（避免精度损失）
         String str = String.valueOf(val);

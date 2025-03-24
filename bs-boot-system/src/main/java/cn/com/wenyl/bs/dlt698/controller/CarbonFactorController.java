@@ -1,15 +1,12 @@
 package cn.com.wenyl.bs.dlt698.controller;
 
+import cn.com.wenyl.bs.dlt698.entity.dto.CarbonFactorDto;
 import cn.com.wenyl.bs.dlt698.service.CarbonFactorService;
 import cn.com.wenyl.bs.utils.R;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
-import org.apiguardian.api.API;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import java.util.concurrent.ExecutionException;
@@ -28,4 +25,15 @@ public class CarbonFactorController {
                                       @RequestParam("carbonFactor") @ApiParam("碳因子") Double carbonFactor) throws ExecutionException, InterruptedException, TimeoutException {
         return R.ok(carbonFactorService.set1CarbonFactor(carbonDeviceAddress,carbonFactor));
     }
+    @ApiOperation(value="碳因子-设置多个碳因子(昨日24/96个因子)", notes="碳因子-设置多个碳因子(昨日24/96个因子)")
+    @PutMapping("/setCarbonFactors")
+    public R<Object> setCarbonFactors(@RequestBody @ApiParam("24/96个碳因子") CarbonFactorDto carbonFactorDto) throws ExecutionException, InterruptedException, TimeoutException {
+
+        if(carbonFactorDto.getCarbonFactor() == null || carbonFactorDto.getCarbonFactor().length == 24 || carbonFactorDto.getCarbonFactor().length == 96){
+            return R.ok(carbonFactorService.setCarbonFactors(carbonFactorDto));
+
+        }
+        return R.error("需要24或者96个碳因子");
+    }
+
  }
