@@ -17,7 +17,6 @@ import java.util.concurrent.TimeoutException;
 public class CarbonDeviceServiceImpl implements CarbonDeviceService {
     @Resource
     private FrameBuildProcessor frameBuildProcessor;
-
     @Resource
     private FrameParseProcessor frameParseProcessor;
     @Resource

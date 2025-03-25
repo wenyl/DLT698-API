@@ -19,9 +19,10 @@ public enum DataType {
     VISIBLE_STRING(String.class,(byte)0x0A,"数据类型:visible-string,ASCII字符串",0),
     INTEGER(Integer.class,(byte)0x0F,"数据类型:integer,8位整数",1),
     LONG_UNSIGNED(Integer.class,(byte)0x12,"数据类型：integer,16位整数",2),
-    LONG64_UNSIGNED(Long.class,(byte)0x15,"数据类型:integer,8位整数",8),
+    LONG64_UNSIGNED(Long.class,(byte)0x15,"数据类型:integer,64位正整数",8),
     DATE_TIME_S(Date.class,(byte)0x1C,"数据类型:octet-string(SIZE(7))",7),
-    TI(TimeUnit.class,(byte)0x54,"数据类型:时间间隔TI(Time Interval)",0);
+    TI(TimeUnit.class,(byte)0x54,"数据类型:时间间隔TI(Time Interval)",0),
+    DOUBLE_LONG(Double.class,(byte)0x05,"数据类型:double-long,32位正整数",4);
     private final Class aClass;
     private final byte sign;
     private final String desc;

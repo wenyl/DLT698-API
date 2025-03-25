@@ -99,17 +99,24 @@ public class GetResponseNormalFrameParser extends BaseFrameParserImpl<GetRespons
                 log.info("数据解析为{}", ret);
                 return ret;
             case LONG64_UNSIGNED:
-                if(data.length != 8){
-                    String msg = "long64_unsigned类型数据长度应该为8,当前数据"+HexUtils.bytesToHex(data);
-                    log.error(msg);
-                    throw new RuntimeException(msg);
-                }
+                checkLength(dataType,data);
+                ret =  new BigInteger(1,data);
+                return ret;
+            case DOUBLE_LONG:
+                checkLength(dataType,data);
                 ret =  new BigInteger(1,data);
                 return ret;
             default:
                 log.error("未知的数据类型{}",dataType);
         }
         return null;
+    }
+    private void checkLength(DataType dataType,byte[] data) throws RuntimeException{
+        if(data.length != dataType.getLength()){
+            String msg = "double_long类型数据长度应该为4,当前数据"+HexUtils.bytesToHex(data);
+            log.error(msg);
+            throw new RuntimeException(msg);
+        }
     }
 
 }
