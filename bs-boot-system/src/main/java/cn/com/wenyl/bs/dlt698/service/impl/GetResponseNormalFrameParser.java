@@ -65,10 +65,6 @@ public class GetResponseNormalFrameParser extends BaseFrameParserImpl<GetRespons
         }
 
         DataType dataTypeBySign = DataType.getDataTypeBySign(userDataBytes[8]);
-        if(dataTypeBySign == null){
-            log.error("未知的数据类型{}", HexUtils.byteToHex(userDataBytes[8]));
-            throw new RuntimeException("未知的数据类型"+HexUtils.byteToHex(userDataBytes[8]));
-        }
         normalData.setDataType(dataTypeBySign);
         int offset = 8;
         if(dataTypeBySign.getLength() == 0){
@@ -78,7 +74,6 @@ public class GetResponseNormalFrameParser extends BaseFrameParserImpl<GetRespons
             // 长度需要减去FollowReport和TimeTag
             normalData.setLength(userDataBytes.length-(offset+1)-2);
         }
-
         byte[] result = new byte[normalData.getLength()];
         System.arraycopy(userDataBytes,offset+1,result,0,normalData.getLength());
         normalData.setData(result);
@@ -89,34 +84,9 @@ public class GetResponseNormalFrameParser extends BaseFrameParserImpl<GetRespons
     }
 
     @Override
-    public Object getData(GetResponseNormalFrame frame) throws RuntimeException{
-        DataType dataType = frame.getNormalData().getDataType();
-        byte[] data = frame.getNormalData().getData();
-        Object ret;
-                switch (dataType){
-            case OCT_STRING:
-                ret = HexUtils.bytesToHex(data);
-                log.info("数据解析为{}", ret);
-                return ret;
-            case LONG64_UNSIGNED:
-                checkLength(dataType,data);
-                ret =  new BigInteger(1,data);
-                return ret;
-            case DOUBLE_LONG:
-                checkLength(dataType,data);
-                ret =  new BigInteger(1,data);
-                return ret;
-            default:
-                log.error("未知的数据类型{}",dataType);
-        }
-        return null;
+    public Object getData(GetResponseNormalFrame frame) throws RuntimeException {
+        return super.getData(frame.getNormalData().getDataType(), frame.getNormalData().getData());
     }
-    private void checkLength(DataType dataType,byte[] data) throws RuntimeException{
-        if(data.length != dataType.getLength()){
-            String msg = "double_long类型数据长度应该为4,当前数据"+HexUtils.bytesToHex(data);
-            log.error(msg);
-            throw new RuntimeException(msg);
-        }
-    }
+
 
 }

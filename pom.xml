@@ -38,6 +38,8 @@
         <swagger.version>2.9.2</swagger.version>
 
         <netty.version>4.1.68.Final</netty.version>
+
+        <fastjson.version>2.0.22</fastjson.version>
     </properties>
     <modules>
         <module>bs-boot-common</module>

@@ -1,5 +1,6 @@
 package cn.com.wenyl.bs.dlt698.service;
 
+import cn.com.wenyl.bs.dlt698.constants.DataType;
 import cn.com.wenyl.bs.dlt698.entity.*;
 import cn.com.wenyl.bs.dlt698.entity.dto.FrameDto;
 
@@ -141,9 +142,18 @@ public interface BaseFrameParser<T extends Frame,G extends LinkUserData> {
     OAD parseOAD(byte[] oad);
 
     /**
-     * 解析帧中的实际数据
+     * 解析帧中的实际数据，这里帧实例中会包含其他数据
      * @param frame 帧信息
      * @return 实际数据
      */
     Object getData(T frame) throws RuntimeException;
+
+    /**
+     * 解析数据，这里只包含帧中传输的实际数据部分
+     * @param dataType 数据类型
+     * @param data 数据字节
+     * @return 返回数据解析结果
+     * @throws RuntimeException 解析异常
+     */
+    Object getData(DataType dataType,byte[] data) throws RuntimeException;
 }

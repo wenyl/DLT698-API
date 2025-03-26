@@ -4,8 +4,8 @@ import cn.com.wenyl.bs.dlt698.constants.*;
 import cn.com.wenyl.bs.dlt698.entity.GetRequestNormalData;
 import cn.com.wenyl.bs.dlt698.entity.GetRequestNormalFrame;
 import cn.com.wenyl.bs.dlt698.entity.GetResponseNormalFrame;
-import cn.com.wenyl.bs.dlt698.service.ElectricCurrentService;
 import cn.com.wenyl.bs.dlt698.service.RS485Service;
+import cn.com.wenyl.bs.dlt698.service.VoltageService;
 import cn.com.wenyl.bs.dlt698.utils.BCDUtils;
 import cn.com.wenyl.bs.dlt698.utils.HexUtils;
 import cn.com.wenyl.bs.dlt698.utils.SerialCommUtils;
@@ -25,7 +25,7 @@ import java.util.concurrent.TimeoutException;
 
 @Slf4j
 @Service
-public class ElectricCurrentServiceImpl implements ElectricCurrentService {
+public class VoltageServiceImpl implements VoltageService {
     @Resource
     private FrameBuildProcessor frameBuildProcessor;
     @Resource
@@ -33,14 +33,14 @@ public class ElectricCurrentServiceImpl implements ElectricCurrentService {
     @Resource
     private RS485Service rs485Service;
     @Override
-    public Object getElectricCurrent(String carbonDeviceAddress) throws ExecutionException, InterruptedException, TimeoutException, JSONException {
+    public Object getVoltage(String carbonDeviceAddress) throws ExecutionException, InterruptedException, TimeoutException, JSONException {
         GetRequestNormalFrameBuilder builder = (GetRequestNormalFrameBuilder)frameBuildProcessor.getFrameBuilder(GetRequestNormalFrame.class);
 
         GetRequestNormalFrame getRequestNormalFrame = (GetRequestNormalFrame)builder.getFrame(FunctionCode.THREE, ScramblingCodeFlag.NOT_SCRAMBLING_CODE, FrameFlag.NOT_SUB_FRAME,
                 RequestType.CLIENT_REQUEST, AddressType.SINGLE_ADDRESS,LogicAddress.ZERO, BCDUtils.encodeBCD(carbonDeviceAddress),
                 Address.CLIENT_ADDRESS);
 
-        GetRequestNormalData userData = new GetRequestNormalData(PIID.ZERO_ZERO,OI.ELECTRIC_CURRENT, AttrNum.ATTR_02,AttributeIndex.ZERO_ONE,TimeTag.NO_TIME_TAG);
+        GetRequestNormalData userData = new GetRequestNormalData(PIID.ZERO_ZERO,OI.VOLTAGE, AttrNum.ATTR_02,AttributeIndex.ZERO,TimeTag.NO_TIME_TAG);
         getRequestNormalFrame.setData(userData);
         byte[] bytes = builder.buildFrame(getRequestNormalFrame);
         try{
@@ -50,14 +50,13 @@ public class ElectricCurrentServiceImpl implements ElectricCurrentService {
             GetResponseNormalFrame frame = parser.parseFrame(returnFrame);
             if(frame.getNormalData().getDataType() != null){
                 if(frame.getNormalData().getDataType().equals(DataType.DOUBLE_LONG)){
-                    log.warn("分项电流查询返回数据异常!");
+                    log.warn("分项电压查询返回数据异常!");
                 }
                 if(frame.getNormalData().getDataType().equals(DataType.ARRAY)){
                     List<Object> ret = new ArrayList<>();
                     JSONArray array = (JSONArray) parser.getData(frame);
                     for (int i = 0; i < array.length(); i++) {
-                        // 这个电表分项电流是三位小数，但是接口返回是整数，需要自己除1000得到三位小数
-                        ret.add(((Integer)array.get(i))/(100.0));
+                        ret.add(((Integer)array.get(i))/(10.0));
                     }
                     return ret;
                 }
