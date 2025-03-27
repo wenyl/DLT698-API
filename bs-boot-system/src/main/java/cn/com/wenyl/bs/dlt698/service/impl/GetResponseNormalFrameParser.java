@@ -8,8 +8,6 @@ import cn.com.wenyl.bs.dlt698.utils.HexUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
-import java.math.BigInteger;
-
 @Slf4j
 @Service("getResponseNormalFrameParser")
 public class GetResponseNormalFrameParser extends BaseFrameParserImpl<GetResponseNormalFrame,GetResponseNormalData> implements BaseFrameParser<GetResponseNormalFrame,GetResponseNormalData> {

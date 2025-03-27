@@ -10,7 +10,6 @@ import cn.com.wenyl.bs.dlt698.entity.dto.FrameDto;
 import cn.com.wenyl.bs.dlt698.service.BaseFrameParser;
 import cn.com.wenyl.bs.dlt698.utils.HexUtils;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.shiro.codec.Hex;
 import org.springframework.stereotype.Service;
 
 import java.nio.charset.StandardCharsets;

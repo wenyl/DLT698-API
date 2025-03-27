@@ -1,5 +1,8 @@
 package cn.com.wenyl.bs.dlt698.service.impl;
 
+import com.alibaba.fastjson.JSON;
+import cn.com.wenyl.bs.dlt698.annotation.DeviceOperateContext;
+import cn.com.wenyl.bs.dlt698.annotation.DeviceOperateLog;
 import cn.com.wenyl.bs.dlt698.constants.*;
 import cn.com.wenyl.bs.dlt698.entity.*;
 import cn.com.wenyl.bs.dlt698.entity.dto.CarbonFactorDto;
@@ -34,6 +37,7 @@ public class CarbonFactorServiceImpl implements CarbonFactorService {
     @Resource
     private RS485Service rs485Service;
     @Override
+    @DeviceOperateLog(jobName = "碳因子-设置1个碳因子(昨日单个因子)",valueSign = "operateStatus",valueLabel = "操作状态",hasValue = true)
     public Object set1CarbonFactor(String carbonDeviceAddress,Double carbonFactor)  throws ExecutionException, InterruptedException, TimeoutException {
         // 先链接电表
         carbonDeviceService.connectCarbonDevice(carbonDeviceAddress);
@@ -50,16 +54,20 @@ public class CarbonFactorServiceImpl implements CarbonFactorService {
         log.info(HexUtils.bytesToHex(bytes));
         try{
             byte[] returnFrame = rs485Service.sendByte(bytes);
-            log.info("收到数据帧{}", HexUtils.bytesToHex(returnFrame));
 
             SetResponseNormalFrameParser parser = (SetResponseNormalFrameParser)frameParseProcessor.getFrameParser(SetResponseNormalFrame.class);
-            return parser.getData(parser.parseFrame(returnFrame));
+            Object obj = parser.getData(parser.parseFrame(returnFrame));
+            DeviceOperateContext.get().setSentFrame(HexUtils.bytesToHex(bytes));
+            DeviceOperateContext.get().setReceivedFrame(HexUtils.bytesToHex(returnFrame));
+            DeviceOperateContext.get().setValueJson(JSON.toJSONString(obj));
+            return obj;
         } finally{
             SerialCommUtils.getInstance().closePort();
         }
     }
 
     @Override
+    @DeviceOperateLog(jobName = "碳因子-设置多个碳因子(昨日24/96个因子",valueSign = "operateStatus",valueLabel = "操作状态",hasValue = true)
     public Object setCarbonFactors(CarbonFactorDto carbonFactorDto) throws ExecutionException, InterruptedException, TimeoutException {
         // 先链接电表
         carbonDeviceService.connectCarbonDevice(carbonFactorDto.getCarbonDeviceAddress());
@@ -76,10 +84,12 @@ public class CarbonFactorServiceImpl implements CarbonFactorService {
         log.info(HexUtils.bytesToHex(bytes));
         try{
             byte[] returnFrame = rs485Service.sendByte(bytes);
-            log.info("收到数据帧{}", HexUtils.bytesToHex(returnFrame));
-
             SetResponseNormalFrameParser parser = (SetResponseNormalFrameParser)frameParseProcessor.getFrameParser(SetResponseNormalFrame.class);
-            return parser.getData(parser.parseFrame(returnFrame));
+            Object obj = parser.getData(parser.parseFrame(returnFrame));
+            DeviceOperateContext.get().setSentFrame(HexUtils.bytesToHex(bytes));
+            DeviceOperateContext.get().setReceivedFrame(HexUtils.bytesToHex(returnFrame));
+            DeviceOperateContext.get().setValueJson(JSON.toJSONString(obj));
+            return obj;
         } finally{
             SerialCommUtils.getInstance().closePort();
         }

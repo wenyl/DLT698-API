@@ -1,10 +1,7 @@
 package cn.com.wenyl.bs.dlt698.utils;
 
 
-
-import cn.com.wenyl.bs.dlt698.constants.DLT698Def;
 import cn.com.wenyl.bs.dlt698.constants.RS485;
-import cn.com.wenyl.bs.dlt698.entity.LengthDomain;
 import com.fazecast.jSerialComm.SerialPort;
 import com.fazecast.jSerialComm.SerialPortDataListener;
 import com.fazecast.jSerialComm.SerialPortEvent;

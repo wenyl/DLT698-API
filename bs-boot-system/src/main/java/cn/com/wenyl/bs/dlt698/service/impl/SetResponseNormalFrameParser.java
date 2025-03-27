@@ -1,7 +1,6 @@
 package cn.com.wenyl.bs.dlt698.service.impl;
 
 import cn.com.wenyl.bs.dlt698.constants.DARType;
-import cn.com.wenyl.bs.dlt698.constants.GetResponse;
 import cn.com.wenyl.bs.dlt698.constants.ServerAPDU;
 import cn.com.wenyl.bs.dlt698.constants.SetResponse;
 import cn.com.wenyl.bs.dlt698.entity.*;

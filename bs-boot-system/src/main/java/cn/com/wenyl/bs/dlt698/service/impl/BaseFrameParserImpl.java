@@ -1,5 +1,6 @@
 package cn.com.wenyl.bs.dlt698.service.impl;
 
+import com.alibaba.fastjson2.JSONArray;
 import cn.com.wenyl.bs.dlt698.constants.AttrNum;
 import cn.com.wenyl.bs.dlt698.constants.DLT698Def;
 import cn.com.wenyl.bs.dlt698.constants.DataType;
@@ -11,14 +12,10 @@ import cn.com.wenyl.bs.dlt698.utils.ASN1DecoderUtils;
 import cn.com.wenyl.bs.dlt698.utils.FrameCheckUtils;
 import cn.com.wenyl.bs.dlt698.utils.HexUtils;
 import lombok.extern.slf4j.Slf4j;
-import org.json.JSONArray;
-import org.json.JSONObject;
 
 import java.math.BigInteger;
 import java.nio.ByteBuffer;
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
 
 import static cn.com.wenyl.bs.dlt698.utils.HexUtils.bytesToHex;
 
@@ -261,7 +258,7 @@ public abstract class BaseFrameParserImpl<T extends Frame,G extends LinkUserData
             byte[] dataBytes = new byte[currentDataType.getLength()];
             System.arraycopy(currentBytes,1,dataBytes,0,dataBytes.length);
             Object dataX = this.getData(currentDataType,dataBytes);
-            parsedList.put(dataX);
+            parsedList.add(dataX);
         }
         return parsedList;
     }

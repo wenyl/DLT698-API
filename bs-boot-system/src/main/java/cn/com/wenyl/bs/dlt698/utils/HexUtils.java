@@ -1,9 +1,6 @@
 package cn.com.wenyl.bs.dlt698.utils;
 
-import cn.com.wenyl.bs.dlt698.constants.DataType;
 import lombok.extern.slf4j.Slf4j;
-
-import java.util.Calendar;
 
 /**
  * 十六进制工具类

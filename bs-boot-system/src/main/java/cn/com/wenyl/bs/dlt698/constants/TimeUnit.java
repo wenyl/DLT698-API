@@ -1,6 +1,5 @@
 package cn.com.wenyl.bs.dlt698.constants;
 
-import lombok.Data;
 import lombok.Getter;
 
 @Getter

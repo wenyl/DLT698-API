@@ -1,10 +1,5 @@
 package cn.com.wenyl.bs.dlt698.utils;
 
-import cn.com.wenyl.bs.dlt698.constants.DataType;
-
-import java.util.Calendar;
-import java.util.Date;
-
 /**
  * ASN1编码工具类
  */

@@ -4,10 +4,8 @@ package cn.com.wenyl.bs.dlt698.service.impl;
 import cn.com.wenyl.bs.dlt698.constants.*;
 import cn.com.wenyl.bs.dlt698.entity.*;
 import cn.com.wenyl.bs.dlt698.service.*;
-import cn.com.wenyl.bs.dlt698.utils.HexUtils;
 
 import javax.annotation.Resource;
-import javax.sound.midi.Soundbank;
 import java.lang.reflect.InvocationTargetException;
 import java.nio.ByteBuffer;
 
@@ -24,6 +22,7 @@ public abstract class BaseFrameBuilderImpl<T extends Frame>  implements BaseFram
     private LengthDomainBuildService lengthDomainBuildService;
     @Resource
     private CheckBuildService checkBuildService;
+
     @Override
     public byte[] buildFrame(byte[] frameHead, byte[] linkUserData) {
         // 构建长度域，并初始化帧头，数据长度为帧头+apdu链路用户数据长度+2字节hcs校验信息+2字节fcs校验信息

@@ -1,5 +1,8 @@
 package cn.com.wenyl.bs.dlt698.service.impl;
 
+import com.alibaba.fastjson.JSON;
+import cn.com.wenyl.bs.dlt698.annotation.DeviceOperateContext;
+import cn.com.wenyl.bs.dlt698.annotation.DeviceOperateLog;
 import cn.com.wenyl.bs.dlt698.constants.*;
 import cn.com.wenyl.bs.dlt698.entity.*;
 import cn.com.wenyl.bs.dlt698.service.*;
@@ -24,7 +27,9 @@ public class CarbonDeviceServiceImpl implements CarbonDeviceService {
 
 
     @Override
+    @DeviceOperateLog(jobName = "碳表管理-获取碳表地址",valueSign = "carbonDeviceAddress",valueLabel = "碳表地址",hasValue = true)
     public Object getCarbonDeviceAddress() throws RuntimeException,TimeoutException, ExecutionException, InterruptedException {
+
         GetRequestNormalFrameBuilder builder = (GetRequestNormalFrameBuilder)frameBuildProcessor.getFrameBuilder(GetRequestNormalFrame.class);
 
         GetRequestNormalFrame getRequestNormalFrame = (GetRequestNormalFrame)builder.getFrame(FunctionCode.THREE,ScramblingCodeFlag.NOT_SCRAMBLING_CODE,FrameFlag.NOT_SUB_FRAME,
@@ -36,15 +41,19 @@ public class CarbonDeviceServiceImpl implements CarbonDeviceService {
         byte[] bytes = builder.buildFrame(getRequestNormalFrame);
         try{
             byte[] returnFrame = rs485Service.sendByte(bytes);
-            log.info("收到数据帧{}", HexUtils.bytesToHex(returnFrame));
             GetResponseNormalFrameParser parser = (GetResponseNormalFrameParser)frameParseProcessor.getFrameParser(GetResponseNormalFrame.class);
-            return parser.getData(parser.parseFrame(returnFrame));
+            Object obj = parser.getData(parser.parseFrame(returnFrame));
+            DeviceOperateContext.get().setSentFrame(HexUtils.bytesToHex(bytes));
+            DeviceOperateContext.get().setReceivedFrame(HexUtils.bytesToHex(returnFrame));
+            DeviceOperateContext.get().setValueJson(JSON.toJSONString(obj));
+            return obj;
         } finally{
             SerialCommUtils.getInstance().closePort();
         }
     }
 
     @Override
+    @DeviceOperateLog(jobName = "碳表管理-链接碳表",valueSign = "connectInfo",valueLabel = "链接信息",hasValue = true)
     public Object connectCarbonDevice(String carbonDeviceAddress) throws RuntimeException,TimeoutException, ExecutionException, InterruptedException  {
         ConnectRequestFrameBuilder builder = (ConnectRequestFrameBuilder)frameBuildProcessor.getFrameBuilder(ConnectRequestFrame.class);
         ConnectRequestFrame connectRequestFrame = (ConnectRequestFrame)builder.getFrame(FunctionCode.THREE,ScramblingCodeFlag.NOT_SCRAMBLING_CODE,FrameFlag.NOT_SUB_FRAME,
@@ -55,9 +64,12 @@ public class CarbonDeviceServiceImpl implements CarbonDeviceService {
         byte[] bytes = builder.buildFrame(connectRequestFrame);
         try{
             byte[] returnFrame = rs485Service.sendByte(bytes);
-            log.info("收到数据帧{}", HexUtils.bytesToHex(returnFrame));
             ConnectResponseFrameParser parser = (ConnectResponseFrameParser)frameParseProcessor.getFrameParser(ConnectResponseFrame.class);
-            return parser.getData(parser.parseFrame(returnFrame));
+            Object obj = parser.getData(parser.parseFrame(returnFrame));
+            DeviceOperateContext.get().setSentFrame(HexUtils.bytesToHex(bytes));
+            DeviceOperateContext.get().setReceivedFrame(HexUtils.bytesToHex(returnFrame));
+            DeviceOperateContext.get().setValueJson(JSON.toJSONString(obj));
+            return obj;
         } finally{
             SerialCommUtils.getInstance().closePort();
         }

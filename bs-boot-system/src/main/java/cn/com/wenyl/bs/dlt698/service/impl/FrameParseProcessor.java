@@ -1,7 +1,6 @@
 package cn.com.wenyl.bs.dlt698.service.impl;
 
 import cn.com.wenyl.bs.dlt698.entity.Frame;
-import cn.com.wenyl.bs.dlt698.entity.LinkUserData;
 import cn.com.wenyl.bs.dlt698.service.BaseFrameParser;
 import org.springframework.stereotype.Service;
 

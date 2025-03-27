@@ -4,7 +4,6 @@ import cn.com.wenyl.bs.dlt698.entity.ConnectInfo;
 import cn.com.wenyl.bs.dlt698.entity.ConnectRequestData;
 import cn.com.wenyl.bs.dlt698.entity.ConnectRequestFrame;
 import cn.com.wenyl.bs.dlt698.service.BaseFrameBuilder;
-import cn.com.wenyl.bs.dlt698.utils.HexUtils;
 import org.springframework.stereotype.Service;
 
 import java.nio.ByteBuffer;

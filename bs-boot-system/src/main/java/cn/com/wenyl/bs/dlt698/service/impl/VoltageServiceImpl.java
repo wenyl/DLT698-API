@@ -1,5 +1,11 @@
 package cn.com.wenyl.bs.dlt698.service.impl;
 
+import cn.com.wenyl.bs.dlt698.service.CarbonDeviceService;
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson2.JSONArray;
+import com.alibaba.fastjson2.JSONException;
+import cn.com.wenyl.bs.dlt698.annotation.DeviceOperateContext;
+import cn.com.wenyl.bs.dlt698.annotation.DeviceOperateLog;
 import cn.com.wenyl.bs.dlt698.constants.*;
 import cn.com.wenyl.bs.dlt698.entity.GetRequestNormalData;
 import cn.com.wenyl.bs.dlt698.entity.GetRequestNormalFrame;
@@ -10,14 +16,9 @@ import cn.com.wenyl.bs.dlt698.utils.BCDUtils;
 import cn.com.wenyl.bs.dlt698.utils.HexUtils;
 import cn.com.wenyl.bs.dlt698.utils.SerialCommUtils;
 import lombok.extern.slf4j.Slf4j;
-import org.json.JSONArray;
-import org.json.JSONException;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
-import java.math.BigDecimal;
-import java.math.BigInteger;
-import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
@@ -32,8 +33,12 @@ public class VoltageServiceImpl implements VoltageService {
     private FrameParseProcessor frameParseProcessor;
     @Resource
     private RS485Service rs485Service;
+    @Resource
+    private CarbonDeviceService carbonDeviceService;
     @Override
-    public Object getVoltage(String carbonDeviceAddress) throws ExecutionException, InterruptedException, TimeoutException, JSONException {
+    @DeviceOperateLog(jobName = "电压-读取电压",valueSign = "voltage",valueLabel = "电压",hasValue = true)
+    public Object getVoltage(String carbonDeviceAddress) throws JSONException,ExecutionException, InterruptedException, TimeoutException {
+        carbonDeviceService.connectCarbonDevice(carbonDeviceAddress);
         GetRequestNormalFrameBuilder builder = (GetRequestNormalFrameBuilder)frameBuildProcessor.getFrameBuilder(GetRequestNormalFrame.class);
 
         GetRequestNormalFrame getRequestNormalFrame = (GetRequestNormalFrame)builder.getFrame(FunctionCode.THREE, ScramblingCodeFlag.NOT_SCRAMBLING_CODE, FrameFlag.NOT_SUB_FRAME,
@@ -45,9 +50,10 @@ public class VoltageServiceImpl implements VoltageService {
         byte[] bytes = builder.buildFrame(getRequestNormalFrame);
         try{
             byte[] returnFrame = rs485Service.sendByte(bytes);
-            log.info("收到数据帧{}", HexUtils.bytesToHex(returnFrame));
             GetResponseNormalFrameParser parser = (GetResponseNormalFrameParser)frameParseProcessor.getFrameParser(GetResponseNormalFrame.class);
             GetResponseNormalFrame frame = parser.parseFrame(returnFrame);
+            DeviceOperateContext.get().setSentFrame(HexUtils.bytesToHex(bytes));
+            DeviceOperateContext.get().setReceivedFrame(HexUtils.bytesToHex(returnFrame));
             if(frame.getNormalData().getDataType() != null){
                 if(frame.getNormalData().getDataType().equals(DataType.DOUBLE_LONG)){
                     log.warn("分项电压查询返回数据异常!");
@@ -55,13 +61,16 @@ public class VoltageServiceImpl implements VoltageService {
                 if(frame.getNormalData().getDataType().equals(DataType.ARRAY)){
                     List<Object> ret = new ArrayList<>();
                     JSONArray array = (JSONArray) parser.getData(frame);
-                    for (int i = 0; i < array.length(); i++) {
-                        ret.add(((Integer)array.get(i))/(10.0));
+                    for (Object o : array) {
+                        ret.add(((Integer) o) / (10.0));
                     }
+                    DeviceOperateContext.get().setValueJson(JSON.toJSONString(ret));
                     return ret;
                 }
             }
-            return parser.getData(frame);
+            Object obj = parser.getData(frame);
+            DeviceOperateContext.get().setValueJson(JSON.toJSONString(obj));
+            return obj;
         } finally{
             SerialCommUtils.getInstance().closePort();
         }

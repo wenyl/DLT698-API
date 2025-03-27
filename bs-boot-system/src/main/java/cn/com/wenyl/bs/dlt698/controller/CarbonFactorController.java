@@ -2,7 +2,7 @@ package cn.com.wenyl.bs.dlt698.controller;
 
 import cn.com.wenyl.bs.dlt698.entity.dto.CarbonFactorDto;
 import cn.com.wenyl.bs.dlt698.service.CarbonFactorService;
-import cn.com.wenyl.bs.utils.R;
+import cn.com.wenyl.bs.dlt698.utils.R;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;

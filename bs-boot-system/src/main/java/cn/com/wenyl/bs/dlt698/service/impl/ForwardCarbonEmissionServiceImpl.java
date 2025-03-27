@@ -1,5 +1,8 @@
 package cn.com.wenyl.bs.dlt698.service.impl;
 
+import com.alibaba.fastjson.JSON;
+import cn.com.wenyl.bs.dlt698.annotation.DeviceOperateContext;
+import cn.com.wenyl.bs.dlt698.annotation.DeviceOperateLog;
 import cn.com.wenyl.bs.dlt698.constants.*;
 import cn.com.wenyl.bs.dlt698.entity.GetRequestNormalData;
 import cn.com.wenyl.bs.dlt698.entity.GetRequestNormalFrame;
@@ -29,6 +32,7 @@ public class ForwardCarbonEmissionServiceImpl implements ForwardCarbonEmissionSe
     @Resource
     private RS485Service rs485Service;
     @Override
+    @DeviceOperateLog(jobName = "正向碳排放管理-昨日累计",valueSign = "fce",valueLabel = "正向碳排放",hasValue = true)
     public Object yesterdayCarbonAccumulate(String deviceAddress) throws ExecutionException, InterruptedException, TimeoutException {
         // 先链接电表
         carbonDeviceService.connectCarbonDevice(deviceAddress);
@@ -44,9 +48,12 @@ public class ForwardCarbonEmissionServiceImpl implements ForwardCarbonEmissionSe
         byte[] bytes = builder.buildFrame(getRequestNormalFrame);
         try{
             byte[] returnFrame = rs485Service.sendByte(bytes);
-            log.info("收到数据帧{}", HexUtils.bytesToHex(returnFrame));
             GetResponseNormalFrameParser parser = (GetResponseNormalFrameParser)frameParseProcessor.getFrameParser(GetResponseNormalFrame.class);
-            return parser.getData(parser.parseFrame(returnFrame));
+            Object obj = parser.getData(parser.parseFrame(returnFrame));
+            DeviceOperateContext.get().setSentFrame(HexUtils.bytesToHex(bytes));
+            DeviceOperateContext.get().setReceivedFrame(HexUtils.bytesToHex(returnFrame));
+            DeviceOperateContext.get().setValueJson(JSON.toJSONString(obj));
+            return obj;
         } finally{
             SerialCommUtils.getInstance().closePort();
         }

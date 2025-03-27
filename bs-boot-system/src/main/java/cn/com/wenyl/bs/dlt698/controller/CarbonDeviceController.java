@@ -1,7 +1,7 @@
 package cn.com.wenyl.bs.dlt698.controller;
 
 import cn.com.wenyl.bs.dlt698.service.CarbonDeviceService;
-import cn.com.wenyl.bs.utils.R;
+import cn.com.wenyl.bs.dlt698.utils.R;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -24,6 +24,7 @@ public class CarbonDeviceController {
 
     @GetMapping("/getCarbonDeviceAddress")
     @ApiOperation(value="碳表管理-获取碳表地址", notes="碳表管理-获取碳表地址")
+
     public R<Object> getCarbonDeviceAddress()  throws RuntimeException,TimeoutException, ExecutionException, InterruptedException {
         return R.ok(carbonDeviceService.getCarbonDeviceAddress());
     }
