@@ -32,4 +32,10 @@ public @interface DeviceOperateLog {
      * @return 是否有返回值
      */
     boolean hasValue();
+
+    /**
+     * 标识是否大屏数据，是的话就需要标识为true
+     * @return 是否大屏数据
+     */
+    boolean screenData() default false;
 }

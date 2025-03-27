@@ -1,5 +1,6 @@
 package cn.com.wenyl.bs.dlt698.service.impl;
 
+import cn.com.wenyl.bs.dlt698.entity.dto.CarbonDeviceDataDto;
 import com.alibaba.fastjson.JSON;
 import cn.com.wenyl.bs.dlt698.annotation.DeviceOperateContext;
 import cn.com.wenyl.bs.dlt698.annotation.DeviceOperateLog;
@@ -9,6 +10,7 @@ import cn.com.wenyl.bs.dlt698.service.*;
 import cn.com.wenyl.bs.dlt698.utils.BCDUtils;
 import cn.com.wenyl.bs.dlt698.utils.HexUtils;
 import cn.com.wenyl.bs.dlt698.utils.SerialCommUtils;
+import com.alibaba.fastjson2.JSONException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
@@ -24,7 +26,18 @@ public class CarbonDeviceServiceImpl implements CarbonDeviceService {
     private FrameParseProcessor frameParseProcessor;
     @Resource
     private RS485Service rs485Service;
-
+    @Resource
+    private ElectricCurrentService electricCurrentService;
+    @Resource
+    private VoltageService voltageService;
+    @Resource
+    private ForwardCarbonEmissionService forwardCarbonEmissionService;
+    @Resource
+    private ReverseCarbonEmissionService reverseCarbonEmissionService;
+    @Resource
+    private PAEEnergyService paeEnergyService;
+    @Resource
+    private RAEEnergyService raeEnergyService;
 
     @Override
     @DeviceOperateLog(jobName = "碳表管理-获取碳表地址",valueSign = "carbonDeviceAddress",valueLabel = "碳表地址",hasValue = true)
@@ -51,7 +64,6 @@ public class CarbonDeviceServiceImpl implements CarbonDeviceService {
             SerialCommUtils.getInstance().closePort();
         }
     }
-
     @Override
     @DeviceOperateLog(jobName = "碳表管理-链接碳表",valueSign = "connectInfo",valueLabel = "链接信息",hasValue = true)
     public Object connectCarbonDevice(String carbonDeviceAddress) throws RuntimeException,TimeoutException, ExecutionException, InterruptedException  {
@@ -73,5 +85,25 @@ public class CarbonDeviceServiceImpl implements CarbonDeviceService {
         } finally{
             SerialCommUtils.getInstance().closePort();
         }
+    }
+
+
+    @Override
+    @DeviceOperateLog(jobName = "碳表管理-获取数据(电流、电压、正向有功电能量、反向有功电能量、正向碳排放管理-昨日累计、反向碳排放管理-昨日累计)",valueSign = "getData",valueLabel = "数据",hasValue = false,screenData=true)
+    public Object getData(String carbonDeviceAddress)  throws ExecutionException, InterruptedException, TimeoutException, JSONException{
+        CarbonDeviceDataDto dataDto = new CarbonDeviceDataDto();
+        Object electricCurrent = electricCurrentService.getElectricCurrent(carbonDeviceAddress);
+        Object voltage = voltageService.getVoltage(carbonDeviceAddress);
+        Object fce = forwardCarbonEmissionService.yesterdayCarbonAccumulate(carbonDeviceAddress);
+        Object rce = reverseCarbonEmissionService.yesterdayCarbonAccumulate(carbonDeviceAddress);
+        Object paee = paeEnergyService.getPAEEnergy(carbonDeviceAddress);
+        Object raee = raeEnergyService.getRAEEnergy(carbonDeviceAddress);
+        dataDto.setElectricCurrent(electricCurrent);
+        dataDto.setVoltage(voltage);
+        dataDto.setFce(fce);
+        dataDto.setRce(rce);
+        dataDto.setPaee(paee);
+        dataDto.setRaee(raee);
+        return dataDto;
     }
 }

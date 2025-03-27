@@ -52,4 +52,10 @@ public class CarbonDeviceTask implements Serializable {
      */
     @ApiModelProperty("结束时间")
     private LocalDateTime endTime;
+
+    /**
+     * 是否大屏数据，默认0
+     */
+    @ApiModelProperty("是否大屏数据，默认0")
+    private boolean screenData;
 }

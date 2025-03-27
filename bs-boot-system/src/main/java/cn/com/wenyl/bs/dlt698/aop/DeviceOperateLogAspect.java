@@ -50,6 +50,9 @@ public class DeviceOperateLogAspect {
             mainTask.setStartTime(LocalDateTime.now());
             mainTask.setEndTime(LocalDateTime.now());
             mainTask.setJobName(jobName);
+            if(annotation.screenData()){
+                mainTask.setScreenData(true);
+            }
             carbonDeviceTaskService.save(mainTask);
             jobId = mainTask.getId();
             context.setJobId(jobId);

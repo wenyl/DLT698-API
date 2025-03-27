@@ -8,11 +8,12 @@
         <result column="job_name" property="jobName" />
         <result column="start_time" property="startTime" />
         <result column="end_time" property="endTime" />
+        <result column="screen_data" property="screenData" />
     </resultMap>
 
     <!-- 通用查询结果列 -->
     <sql id="Base_Column_List">
-        id, job_name, start_time, end_time
+        id, job_name, start_time, end_time,screen_data
     </sql>
 
 </mapper>

@@ -64,7 +64,7 @@ public class JwtUtil {
         try {
             DecodedJWT jwt = JWT.decode(token);
             return jwt.getClaim(JwtConstant.ACCOUNT_PROPERTY_NAME).asString();
-        } catch (JWTDecodeException e) {
+        } catch (JWTDecodeException | NullPointerException e) {
             return null;
         }
     }
