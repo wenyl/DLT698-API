@@ -23,8 +23,7 @@ import java.util.concurrent.TimeoutException;
 @Slf4j
 @Service
 public class ForwardCarbonEmissionServiceImpl implements ForwardCarbonEmissionService {
-    @Resource
-    private CarbonDeviceService carbonDeviceService;
+
     @Resource
     private FrameBuildProcessor frameBuildProcessor;
     @Resource
@@ -34,8 +33,7 @@ public class ForwardCarbonEmissionServiceImpl implements ForwardCarbonEmissionSe
     @Override
     @DeviceOperateLog(jobName = "正向碳排放管理-昨日累计",valueSign = "fce",valueLabel = "正向碳排放",hasValue = true)
     public Object yesterdayCarbonAccumulate(String deviceAddress) throws ExecutionException, InterruptedException, TimeoutException {
-        // 先链接电表
-        carbonDeviceService.connectCarbonDevice(deviceAddress);
+
         // 查询昨日碳排放累计量
         GetRequestNormalFrameBuilder builder = (GetRequestNormalFrameBuilder)frameBuildProcessor.getFrameBuilder(GetRequestNormalFrame.class);
 

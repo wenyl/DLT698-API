@@ -23,8 +23,7 @@ import java.util.concurrent.TimeoutException;
 @Slf4j
 @Service
 public class ReverseCarbonEmissionServiceImpl implements ReverseCarbonEmissionService {
-    @Resource
-    private CarbonDeviceService carbonDeviceService;
+
     @Resource
     private FrameBuildProcessor frameBuildProcessor;
     @Resource
@@ -34,8 +33,7 @@ public class ReverseCarbonEmissionServiceImpl implements ReverseCarbonEmissionSe
     @Override
     @DeviceOperateLog(jobName = "反向碳排放管理-昨日累计",valueSign = "rce",valueLabel = "反向碳排放",hasValue = true)
     public Object yesterdayCarbonAccumulate(String carbonDeviceAddress)  throws ExecutionException, InterruptedException, TimeoutException {
-        // 先链接电表
-        carbonDeviceService.connectCarbonDevice(carbonDeviceAddress);
+
         // 查询昨日碳排放累计量
         GetRequestNormalFrameBuilder builder = (GetRequestNormalFrameBuilder)frameBuildProcessor.getFrameBuilder(GetRequestNormalFrame.class);
 

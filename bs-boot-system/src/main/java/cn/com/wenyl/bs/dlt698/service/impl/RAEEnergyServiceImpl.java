@@ -33,12 +33,9 @@ public class RAEEnergyServiceImpl implements RAEEnergyService {
     private FrameParseProcessor frameParseProcessor;
     @Resource
     private RS485Service rs485Service;
-    @Resource
-    private CarbonDeviceService carbonDeviceService;
     @Override
     @DeviceOperateLog(jobName = "反向有功电能量-获取反向有功电能量",valueSign = "raee",valueLabel = "反向有功电能量",hasValue = true)
     public Object getRAEEnergy(String carbonDeviceAddress) throws ExecutionException, InterruptedException, TimeoutException, JSONException {
-        carbonDeviceService.connectCarbonDevice(carbonDeviceAddress);
         GetRequestNormalFrameBuilder builder = (GetRequestNormalFrameBuilder)frameBuildProcessor.getFrameBuilder(GetRequestNormalFrame.class);
 
         GetRequestNormalFrame getRequestNormalFrame = (GetRequestNormalFrame)builder.getFrame(FunctionCode.THREE, ScramblingCodeFlag.NOT_SCRAMBLING_CODE, FrameFlag.NOT_SUB_FRAME,

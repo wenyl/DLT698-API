@@ -29,8 +29,6 @@ import java.util.concurrent.TimeoutException;
 @Service
 public class CarbonFactorServiceImpl implements CarbonFactorService {
     @Resource
-    private CarbonDeviceService carbonDeviceService;
-    @Resource
     private FrameBuildProcessor frameBuildProcessor;
     @Resource
     private FrameParseProcessor frameParseProcessor;
@@ -39,8 +37,7 @@ public class CarbonFactorServiceImpl implements CarbonFactorService {
     @Override
     @DeviceOperateLog(jobName = "碳因子-设置1个碳因子(昨日单个因子)",valueSign = "operateStatus",valueLabel = "操作状态",hasValue = true)
     public Object set1CarbonFactor(String carbonDeviceAddress,Double carbonFactor)  throws ExecutionException, InterruptedException, TimeoutException {
-        // 先链接电表
-        carbonDeviceService.connectCarbonDevice(carbonDeviceAddress);
+
         SetRequestNormalFrameBuilder builder = (SetRequestNormalFrameBuilder)frameBuildProcessor.getFrameBuilder(SetRequestNormalFrame.class);
 
         SetRequestNormalFrame setRequestNormalFrame = (SetRequestNormalFrame)builder.getFrame(FunctionCode.THREE, ScramblingCodeFlag.NOT_SCRAMBLING_CODE, FrameFlag.NOT_SUB_FRAME,
@@ -69,8 +66,6 @@ public class CarbonFactorServiceImpl implements CarbonFactorService {
     @Override
     @DeviceOperateLog(jobName = "碳因子-设置多个碳因子(昨日24/96个因子",valueSign = "operateStatus",valueLabel = "操作状态",hasValue = true)
     public Object setCarbonFactors(CarbonFactorDto carbonFactorDto) throws ExecutionException, InterruptedException, TimeoutException {
-        // 先链接电表
-        carbonDeviceService.connectCarbonDevice(carbonFactorDto.getCarbonDeviceAddress());
         SetRequestNormalFrameBuilder builder = (SetRequestNormalFrameBuilder)frameBuildProcessor.getFrameBuilder(SetRequestNormalFrame.class);
 
         SetRequestNormalFrame setRequestNormalFrame = (SetRequestNormalFrame)builder.getFrame(FunctionCode.THREE, ScramblingCodeFlag.NOT_SCRAMBLING_CODE, FrameFlag.NOT_SUB_FRAME,

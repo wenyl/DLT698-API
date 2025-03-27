@@ -33,12 +33,9 @@ public class ElectricCurrentServiceImpl implements ElectricCurrentService {
     private FrameParseProcessor frameParseProcessor;
     @Resource
     private RS485Service rs485Service;
-    @Resource
-    private CarbonDeviceService carbonDeviceService;
     @Override
     @DeviceOperateLog(jobName = "电流-读取电流",valueSign = "electricCurrent",valueLabel = "电流",hasValue = true)
     public Object getElectricCurrent(String carbonDeviceAddress) throws ExecutionException, InterruptedException, TimeoutException, JSONException {
-        carbonDeviceService.connectCarbonDevice(carbonDeviceAddress);
         GetRequestNormalFrameBuilder builder = (GetRequestNormalFrameBuilder)frameBuildProcessor.getFrameBuilder(GetRequestNormalFrame.class);
 
         GetRequestNormalFrame getRequestNormalFrame = (GetRequestNormalFrame)builder.getFrame(FunctionCode.THREE, ScramblingCodeFlag.NOT_SCRAMBLING_CODE, FrameFlag.NOT_SUB_FRAME,

@@ -1,5 +1,6 @@
 package cn.com.wenyl.bs.dlt698.controller;
 
+import cn.com.wenyl.bs.dlt698.service.CarbonDeviceService;
 import com.alibaba.fastjson2.JSONException;
 import cn.com.wenyl.bs.dlt698.service.VoltageService;
 import cn.com.wenyl.bs.dlt698.utils.R;
@@ -21,9 +22,12 @@ import java.util.concurrent.TimeoutException;
 public class VoltageController {
     @Resource
     private VoltageService voltageService;
+    @Resource
+    private CarbonDeviceService carbonDeviceService;
     @ApiOperation(value="电压-读取电压", notes="电压-读取电压")
     @GetMapping("/getVoltage")
     public R<Object> getVoltage(@RequestParam("carbonDeviceAddress") @ApiParam("碳表地址") String carbonDeviceAddress) throws JSONException,ExecutionException, InterruptedException, TimeoutException {
+        carbonDeviceService.connectCarbonDevice(carbonDeviceAddress);
         return R.ok(voltageService.getVoltage(carbonDeviceAddress));
     }
 }

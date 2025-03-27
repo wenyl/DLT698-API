@@ -21,7 +21,6 @@ public class CarbonDeviceController {
 
     @Resource
     private CarbonDeviceService carbonDeviceService;
-
     @GetMapping("/getCarbonDeviceAddress")
     @ApiOperation(value="碳表管理-获取碳表地址", notes="碳表管理-获取碳表地址")
 

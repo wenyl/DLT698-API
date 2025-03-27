@@ -33,12 +33,9 @@ public class VoltageServiceImpl implements VoltageService {
     private FrameParseProcessor frameParseProcessor;
     @Resource
     private RS485Service rs485Service;
-    @Resource
-    private CarbonDeviceService carbonDeviceService;
     @Override
     @DeviceOperateLog(jobName = "电压-读取电压",valueSign = "voltage",valueLabel = "电压",hasValue = true)
     public Object getVoltage(String carbonDeviceAddress) throws JSONException,ExecutionException, InterruptedException, TimeoutException {
-        carbonDeviceService.connectCarbonDevice(carbonDeviceAddress);
         GetRequestNormalFrameBuilder builder = (GetRequestNormalFrameBuilder)frameBuildProcessor.getFrameBuilder(GetRequestNormalFrame.class);
 
         GetRequestNormalFrame getRequestNormalFrame = (GetRequestNormalFrame)builder.getFrame(FunctionCode.THREE, ScramblingCodeFlag.NOT_SCRAMBLING_CODE, FrameFlag.NOT_SUB_FRAME,

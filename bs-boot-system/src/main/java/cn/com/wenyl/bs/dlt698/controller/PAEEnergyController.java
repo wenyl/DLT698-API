@@ -1,5 +1,6 @@
 package cn.com.wenyl.bs.dlt698.controller;
 
+import cn.com.wenyl.bs.dlt698.service.CarbonDeviceService;
 import com.alibaba.fastjson2.JSONException;
 import cn.com.wenyl.bs.dlt698.service.PAEEnergyService;
 import cn.com.wenyl.bs.dlt698.utils.R;
@@ -24,9 +25,12 @@ import java.util.concurrent.TimeoutException;
 public class PAEEnergyController {
     @Resource
     private PAEEnergyService paeEnergyService;
+    @Resource
+    private CarbonDeviceService carbonDeviceService;
     @GetMapping("/getPAEEnergy")
     @ApiOperation(value="正向有功电能量-获取正向有功电能量", notes="正向有功电能量-获取正向有功电能量")
     public R<Object> getPAEEnergy(@RequestParam("carbonDeviceAddress") @ApiParam("碳表地址") String carbonDeviceAddress) throws JSONException, ExecutionException, InterruptedException, TimeoutException {
+        carbonDeviceService.connectCarbonDevice(carbonDeviceAddress);
         return R.ok(paeEnergyService.getPAEEnergy(carbonDeviceAddress));
     }
 }

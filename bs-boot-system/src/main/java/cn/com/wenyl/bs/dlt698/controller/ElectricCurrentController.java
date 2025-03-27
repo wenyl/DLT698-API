@@ -1,5 +1,6 @@
 package cn.com.wenyl.bs.dlt698.controller;
 
+import cn.com.wenyl.bs.dlt698.service.CarbonDeviceService;
 import cn.com.wenyl.bs.dlt698.service.ElectricCurrentService;
 import cn.com.wenyl.bs.dlt698.utils.R;
 import com.alibaba.fastjson2.JSONException;
@@ -20,10 +21,14 @@ import java.util.concurrent.TimeoutException;
 @RequestMapping("/electricCurrent")
 public class ElectricCurrentController {
     @Resource
+    private CarbonDeviceService carbonDeviceService;
+    @Resource
     private ElectricCurrentService electricCurrentService;
     @ApiOperation(value="电流-读取电流", notes="电流-读取电流")
     @GetMapping("/getElectricCurrent")
     public R<Object> getElectricCurrent(@RequestParam("carbonDeviceAddress") @ApiParam("碳表地址") String carbonDeviceAddress) throws ExecutionException, InterruptedException, TimeoutException, JSONException {
+        // 先链接电表
+        carbonDeviceService.connectCarbonDevice(carbonDeviceAddress);
         return R.ok(electricCurrentService.getElectricCurrent(carbonDeviceAddress));
     }
 }

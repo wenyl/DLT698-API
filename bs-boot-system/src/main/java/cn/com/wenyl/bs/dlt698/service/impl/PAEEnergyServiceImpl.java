@@ -33,12 +33,9 @@ public class PAEEnergyServiceImpl implements PAEEnergyService {
     private FrameParseProcessor frameParseProcessor;
     @Resource
     private RS485Service rs485Service;
-    @Resource
-    private CarbonDeviceService carbonDeviceService;
     @Override
     @DeviceOperateLog(jobName = "正向有功电能量-获取正向有功电能量",valueSign = "paee",valueLabel = "正向有功电能量",hasValue = true)
     public Object getPAEEnergy(String carbonDeviceAddress) throws ExecutionException, InterruptedException, TimeoutException, JSONException {
-        carbonDeviceService.connectCarbonDevice(carbonDeviceAddress);
         GetRequestNormalFrameBuilder builder = (GetRequestNormalFrameBuilder)frameBuildProcessor.getFrameBuilder(GetRequestNormalFrame.class);
 
         GetRequestNormalFrame getRequestNormalFrame = (GetRequestNormalFrame)builder.getFrame(FunctionCode.THREE, ScramblingCodeFlag.NOT_SCRAMBLING_CODE, FrameFlag.NOT_SUB_FRAME,

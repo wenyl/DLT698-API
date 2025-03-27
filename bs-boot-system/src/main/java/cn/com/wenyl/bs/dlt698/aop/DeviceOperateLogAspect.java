@@ -1,5 +1,6 @@
 package cn.com.wenyl.bs.dlt698.aop;
 
+import cn.com.wenyl.bs.dlt698.service.CarbonDeviceService;
 import com.alibaba.fastjson.JSON;
 import cn.com.wenyl.bs.dlt698.annotation.DeviceOperateContext;
 import cn.com.wenyl.bs.dlt698.annotation.DeviceOperateLog;
@@ -16,6 +17,7 @@ import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
 import java.lang.reflect.Method;
+import java.lang.reflect.Parameter;
 import java.time.LocalDateTime;
 
 @Aspect
@@ -41,7 +43,6 @@ public class DeviceOperateLogAspect {
         Method method = signature.getMethod();
         DeviceOperateLog annotation = method.getAnnotation(DeviceOperateLog.class);
         String jobName = annotation.jobName();
-
         // **如果是主方法，创建任务**
         CarbonDeviceTask mainTask = null;
         if (isRootMethod) {
