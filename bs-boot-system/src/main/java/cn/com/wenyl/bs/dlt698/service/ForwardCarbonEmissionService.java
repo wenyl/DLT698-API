@@ -4,5 +4,5 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeoutException;
 
 public interface ForwardCarbonEmissionService {
-    Object yesterdayCarbonAccumulate(String deviceAddress) throws ExecutionException, InterruptedException, TimeoutException;
+    Object yesterdayCarbonAccumulate(String carbonDeviceAddress) throws ExecutionException, InterruptedException, TimeoutException;
 }

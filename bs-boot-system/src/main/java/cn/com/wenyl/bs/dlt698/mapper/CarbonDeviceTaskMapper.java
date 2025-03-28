@@ -1,7 +1,10 @@
 package cn.com.wenyl.bs.dlt698.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import cn.com.wenyl.bs.dlt698.entity.CarbonDeviceTask;
+import cn.com.wenyl.bs.dlt698.entity.dto.CarbonDeviceTaskDto;
+import org.apache.ibatis.annotations.Param;
 
 
 /**
@@ -14,5 +17,6 @@ import cn.com.wenyl.bs.dlt698.entity.CarbonDeviceTask;
  */
 public interface CarbonDeviceTaskMapper extends BaseMapper<CarbonDeviceTask> {
 
+    Page<CarbonDeviceTaskDto> pageScreenData(Page<CarbonDeviceTaskDto> page,@Param("carbonDeviceAddress") String carbonDeviceAddress);
 }
 

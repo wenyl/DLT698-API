@@ -1,19 +1,21 @@
 package cn.com.wenyl.bs.dlt698.aop;
 
-import cn.com.wenyl.bs.dlt698.service.CarbonDeviceService;
 import com.alibaba.fastjson.JSON;
+import cn.com.wenyl.bs.dlt698.annotation.CarbonDeviceAddress;
 import cn.com.wenyl.bs.dlt698.annotation.DeviceOperateContext;
 import cn.com.wenyl.bs.dlt698.annotation.DeviceOperateLog;
 import cn.com.wenyl.bs.dlt698.entity.CarbonDeviceMessage;
 import cn.com.wenyl.bs.dlt698.entity.CarbonDeviceTask;
 import cn.com.wenyl.bs.dlt698.service.CarbonDeviceMessageService;
 import cn.com.wenyl.bs.dlt698.service.CarbonDeviceTaskService;
+import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.reflect.MethodSignature;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import java.lang.reflect.Method;
@@ -29,6 +31,7 @@ public class DeviceOperateLogAspect {
     @Resource
     private CarbonDeviceMessageService carbonDeviceMessageService;
     @Around("@annotation(cn.com.wenyl.bs.dlt698.annotation.DeviceOperateLog)")
+    @Transactional(rollbackFor = Exception.class)
     public Object logCommunication(ProceedingJoinPoint joinPoint) throws Throwable {
         DeviceOperateContext context = DeviceOperateContext.get();
         Long jobId = context.getJobId();
@@ -52,6 +55,19 @@ public class DeviceOperateLogAspect {
             mainTask.setJobName(jobName);
             if(annotation.screenData()){
                 mainTask.setScreenData(true);
+            }
+            String carbonDeviceAddress = null;
+            // 遍历参数，查找带有@CarbonDeviceAddress注解的参数
+            Parameter[] parameters = method.getParameters();
+            Object[] args = joinPoint.getArgs();
+            for (int i = 0; i < parameters.length; i++) {
+                if (parameters[i].isAnnotationPresent(CarbonDeviceAddress.class)) {
+                    carbonDeviceAddress = (String) args[i];
+                    break;
+                }
+            }
+            if(StringUtils.isNotBlank(carbonDeviceAddress)){
+                mainTask.setCarbonDeviceAddress(carbonDeviceAddress);
             }
             carbonDeviceTaskService.save(mainTask);
             jobId = mainTask.getId();

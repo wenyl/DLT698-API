@@ -6,7 +6,6 @@ import cn.com.wenyl.bs.dlt698.annotation.DeviceOperateLog;
 import cn.com.wenyl.bs.dlt698.constants.*;
 import cn.com.wenyl.bs.dlt698.entity.*;
 import cn.com.wenyl.bs.dlt698.entity.dto.CarbonFactorDto;
-import cn.com.wenyl.bs.dlt698.service.CarbonDeviceService;
 import cn.com.wenyl.bs.dlt698.service.CarbonFactorService;
 import cn.com.wenyl.bs.dlt698.service.RS485Service;
 import cn.com.wenyl.bs.dlt698.utils.ASN1EncoderUtils;

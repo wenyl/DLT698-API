@@ -1,13 +1,13 @@
 package cn.com.wenyl.bs.dlt698.service.impl;
 
 import com.alibaba.fastjson.JSON;
+import cn.com.wenyl.bs.dlt698.annotation.CarbonDeviceAddress;
 import cn.com.wenyl.bs.dlt698.annotation.DeviceOperateContext;
 import cn.com.wenyl.bs.dlt698.annotation.DeviceOperateLog;
 import cn.com.wenyl.bs.dlt698.constants.*;
 import cn.com.wenyl.bs.dlt698.entity.GetRequestNormalData;
 import cn.com.wenyl.bs.dlt698.entity.GetRequestNormalFrame;
 import cn.com.wenyl.bs.dlt698.entity.GetResponseNormalFrame;
-import cn.com.wenyl.bs.dlt698.service.CarbonDeviceService;
 import cn.com.wenyl.bs.dlt698.service.RS485Service;
 import cn.com.wenyl.bs.dlt698.service.ReverseCarbonEmissionService;
 import cn.com.wenyl.bs.dlt698.utils.BCDUtils;
@@ -32,7 +32,7 @@ public class ReverseCarbonEmissionServiceImpl implements ReverseCarbonEmissionSe
     private RS485Service rs485Service;
     @Override
     @DeviceOperateLog(jobName = "反向碳排放管理-昨日累计",valueSign = "rce",valueLabel = "反向碳排放",hasValue = true)
-    public Object yesterdayCarbonAccumulate(String carbonDeviceAddress)  throws ExecutionException, InterruptedException, TimeoutException {
+    public Object yesterdayCarbonAccumulate(@CarbonDeviceAddress String carbonDeviceAddress)  throws ExecutionException, InterruptedException, TimeoutException {
 
         // 查询昨日碳排放累计量
         GetRequestNormalFrameBuilder builder = (GetRequestNormalFrameBuilder)frameBuildProcessor.getFrameBuilder(GetRequestNormalFrame.class);

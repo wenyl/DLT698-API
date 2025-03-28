@@ -58,4 +58,10 @@ public class CarbonDeviceTask implements Serializable {
      */
     @ApiModelProperty("是否大屏数据，默认0")
     private boolean screenData;
+
+    /**
+     * 碳表地址
+     */
+    @ApiModelProperty("碳表地址")
+    private String carbonDeviceAddress;
 }

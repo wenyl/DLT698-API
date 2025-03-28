@@ -1,9 +1,9 @@
 package cn.com.wenyl.bs.dlt698.service.impl;
 
-import cn.com.wenyl.bs.dlt698.service.CarbonDeviceService;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson2.JSONArray;
 import com.alibaba.fastjson2.JSONException;
+import cn.com.wenyl.bs.dlt698.annotation.CarbonDeviceAddress;
 import cn.com.wenyl.bs.dlt698.annotation.DeviceOperateContext;
 import cn.com.wenyl.bs.dlt698.annotation.DeviceOperateLog;
 import cn.com.wenyl.bs.dlt698.constants.*;
@@ -35,7 +35,7 @@ public class PAEEnergyServiceImpl implements PAEEnergyService {
     private RS485Service rs485Service;
     @Override
     @DeviceOperateLog(jobName = "正向有功电能量-获取正向有功电能量",valueSign = "paee",valueLabel = "正向有功电能量",hasValue = true)
-    public Object getPAEEnergy(String carbonDeviceAddress) throws ExecutionException, InterruptedException, TimeoutException, JSONException {
+    public Object getPAEEnergy(@CarbonDeviceAddress String carbonDeviceAddress) throws ExecutionException, InterruptedException, TimeoutException, JSONException {
         GetRequestNormalFrameBuilder builder = (GetRequestNormalFrameBuilder)frameBuildProcessor.getFrameBuilder(GetRequestNormalFrame.class);
 
         GetRequestNormalFrame getRequestNormalFrame = (GetRequestNormalFrame)builder.getFrame(FunctionCode.THREE, ScramblingCodeFlag.NOT_SCRAMBLING_CODE, FrameFlag.NOT_SUB_FRAME,

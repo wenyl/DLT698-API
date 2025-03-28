@@ -1,13 +1,13 @@
 package cn.com.wenyl.bs.dlt698.service.impl;
 
 import com.alibaba.fastjson.JSON;
+import cn.com.wenyl.bs.dlt698.annotation.CarbonDeviceAddress;
 import cn.com.wenyl.bs.dlt698.annotation.DeviceOperateContext;
 import cn.com.wenyl.bs.dlt698.annotation.DeviceOperateLog;
 import cn.com.wenyl.bs.dlt698.constants.*;
 import cn.com.wenyl.bs.dlt698.entity.GetRequestNormalData;
 import cn.com.wenyl.bs.dlt698.entity.GetRequestNormalFrame;
 import cn.com.wenyl.bs.dlt698.entity.GetResponseNormalFrame;
-import cn.com.wenyl.bs.dlt698.service.CarbonDeviceService;
 import cn.com.wenyl.bs.dlt698.service.ForwardCarbonEmissionService;
 import cn.com.wenyl.bs.dlt698.service.RS485Service;
 import cn.com.wenyl.bs.dlt698.utils.BCDUtils;
@@ -32,13 +32,13 @@ public class ForwardCarbonEmissionServiceImpl implements ForwardCarbonEmissionSe
     private RS485Service rs485Service;
     @Override
     @DeviceOperateLog(jobName = "正向碳排放管理-昨日累计",valueSign = "fce",valueLabel = "正向碳排放",hasValue = true)
-    public Object yesterdayCarbonAccumulate(String deviceAddress) throws ExecutionException, InterruptedException, TimeoutException {
+    public Object yesterdayCarbonAccumulate(@CarbonDeviceAddress String carbonDeviceAddress) throws ExecutionException, InterruptedException, TimeoutException {
 
         // 查询昨日碳排放累计量
         GetRequestNormalFrameBuilder builder = (GetRequestNormalFrameBuilder)frameBuildProcessor.getFrameBuilder(GetRequestNormalFrame.class);
 
         GetRequestNormalFrame getRequestNormalFrame = (GetRequestNormalFrame)builder.getFrame(FunctionCode.THREE, ScramblingCodeFlag.NOT_SCRAMBLING_CODE, FrameFlag.NOT_SUB_FRAME,
-                RequestType.CLIENT_REQUEST, AddressType.SINGLE_ADDRESS,LogicAddress.ZERO, BCDUtils.encodeBCD(deviceAddress),
+                RequestType.CLIENT_REQUEST, AddressType.SINGLE_ADDRESS,LogicAddress.ZERO, BCDUtils.encodeBCD(carbonDeviceAddress),
                 Address.CLIENT_ADDRESS);
 
         GetRequestNormalData userData = new GetRequestNormalData(PIID.ZERO_ZERO,OI.FORWARD_CARBON_EMISSION, AttrNum.ATTR_02,AttributeIndex.ZERO,TimeTag.NO_TIME_TAG);
