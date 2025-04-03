@@ -1,6 +1,6 @@
 package cn.com.wenyl.bs.dlt698.utils;
 
-import cn.com.wenyl.bs.dlt698.constants.DataType;
+import cn.com.wenyl.bs.dlt698.client.constants.DataType;
 
 import java.util.Calendar;
 import java.util.Date;

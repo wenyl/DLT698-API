@@ -63,20 +63,18 @@
     <!--  配置阿里云仓库  -->
     <repositories>
         <repository>
-            <id>aliyun</id>
+            <id>public</id>
+            <name>aliyun nexus</name>
             <url>https://maven.aliyun.com/repository/public</url>
             <releases>
                 <enabled>true</enabled>
             </releases>
-            <snapshots>
-                <enabled>false</enabled>
-            </snapshots>
         </repository>
     </repositories>
-    <!--  配置阿里云插件仓库  -->
     <pluginRepositories>
         <pluginRepository>
-            <id>aliyun-plugin</id>
+            <id>public</id>
+            <name>aliyun nexus</name>
             <url>https://maven.aliyun.com/repository/public</url>
             <releases>
                 <enabled>true</enabled>
@@ -86,6 +84,7 @@
             </snapshots>
         </pluginRepository>
     </pluginRepositories>
+
 
     <build>
         <plugins>
@@ -100,6 +99,22 @@
                 </configuration>
             </plugin>
         </plugins>
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>org.springframework.boot</groupId>
+                    <artifactId>spring-boot-maven-plugin</artifactId>
+                    <version>${spring-boot.version}</version>
+                    <executions>
+                        <execution>
+                            <goals>
+                                <goal>repackage</goal>
+                            </goals>
+                        </execution>
+                    </executions>
+                </plugin>
+            </plugins>
+        </pluginManagement>
         <resources>
             <resource>
                 <directory>src/main/resources</directory>
