@@ -4,6 +4,7 @@ import cn.com.wenyl.bs.dlt698.client.constants.*;
 import cn.com.wenyl.bs.dlt698.client.entity.*;
 import cn.com.wenyl.bs.dlt698.client.service.CarbonDeviceService;
 import cn.com.wenyl.bs.dlt698.client.service.RS485Service;
+import cn.com.wenyl.bs.dlt698.server.service.FrameParseProcessor;
 import com.alibaba.fastjson.JSON;
 import cn.com.wenyl.bs.dlt698.client.annotation.CarbonDeviceAddress;
 import cn.com.wenyl.bs.dlt698.client.annotation.DeviceOperateContext;

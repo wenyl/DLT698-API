@@ -1,7 +1,9 @@
-package cn.com.wenyl.bs.dlt698.client.service.impl;
+package cn.com.wenyl.bs.dlt698.server.service;
 
-import cn.com.wenyl.bs.dlt698.common.Frame;
 import cn.com.wenyl.bs.dlt698.client.service.BaseFrameParser;
+import cn.com.wenyl.bs.dlt698.client.service.LengthDomainBuildService;
+import cn.com.wenyl.bs.dlt698.client.service.impl.FrameParserFactory;
+import cn.com.wenyl.bs.dlt698.common.Frame;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;

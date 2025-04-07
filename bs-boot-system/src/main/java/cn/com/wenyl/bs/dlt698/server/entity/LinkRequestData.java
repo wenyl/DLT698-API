@@ -10,9 +10,10 @@ import lombok.EqualsAndHashCode;
 @EqualsAndHashCode(callSuper = true)
 @Data
 public class LinkRequestData extends LinkUserData {
-    // 心跳周期
+    // 心跳周期 long-unsigned 2字节
     private byte[] heartbeatIntervalBytes;
     private int heartbeatInterval;
-    // 请求时间
-    private byte[] requestTime;
+    // 请求时间 date_time
+    private byte[] requestTimeBytes;
+    private String requestTime;
 }

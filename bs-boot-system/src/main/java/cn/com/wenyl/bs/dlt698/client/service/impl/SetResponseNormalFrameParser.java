@@ -3,29 +3,30 @@ package cn.com.wenyl.bs.dlt698.client.service.impl;
 import cn.com.wenyl.bs.dlt698.client.constants.DARType;
 import cn.com.wenyl.bs.dlt698.client.constants.ServerAPDU;
 import cn.com.wenyl.bs.dlt698.client.constants.SetResponse;
+import cn.com.wenyl.bs.dlt698.client.service.BaseFrameParser;
+import cn.com.wenyl.bs.dlt698.client.service.LengthDomainBuildService;
 import cn.com.wenyl.bs.dlt698.common.OAD;
 import cn.com.wenyl.bs.dlt698.client.entity.SetResponseNormalData;
 import cn.com.wenyl.bs.dlt698.client.entity.SetResponseNormalFrame;
 
 import cn.com.wenyl.bs.dlt698.client.entity.dto.FrameDto;
-import cn.com.wenyl.bs.dlt698.client.service.BaseFrameParser;
-import cn.com.wenyl.bs.dlt698.common.BaseFrameParserImpl;
+import cn.com.wenyl.bs.dlt698.utils.FrameParseUtils;
 import cn.com.wenyl.bs.dlt698.utils.HexUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 @Slf4j
 @Service("setResponseNormalFrameParser")
-public class SetResponseNormalFrameParser extends BaseFrameParserImpl<SetResponseNormalFrame, SetResponseNormalData> implements BaseFrameParser<SetResponseNormalFrame,SetResponseNormalData> {
+public class SetResponseNormalFrameParser implements BaseFrameParser<SetResponseNormalFrame,SetResponseNormalData> {
     @Override
     public SetResponseNormalFrame parseFrame(byte[] frameBytes) throws RuntimeException {
         SetResponseNormalFrame frame  = new SetResponseNormalFrame();
-        if(!super.checkFrame(frameBytes)){
+        if(!FrameParseUtils.checkFrame(frameBytes)){
             String errorInfo = "无效帧：起始符或结束符错误,当前帧起始符--"+ HexUtils.byteToHex(frameBytes[0])+",结束符--"+HexUtils.byteToHex(frameBytes[frameBytes.length-1]);
             log.error(errorInfo);
             throw new RuntimeException(errorInfo);
         }
-        FrameDto frameDto = super.getFrameDto(frameBytes);
+        FrameDto frameDto = FrameParseUtils.getFrameDto(frameBytes);
         SetResponseNormalData setResponseNormalData = this.parseLinkUserData(frameDto.getUserData());
         frame.setLengthDomain(frameDto.getLengthDomain());
         frame.setControlDomain(frameDto.getControlDomain());
@@ -55,7 +56,7 @@ public class SetResponseNormalFrameParser extends BaseFrameParserImpl<SetRespons
         byte[] oadBytes = new byte[4];
         System.arraycopy(userDataBytes,3,oadBytes,0,4);
         data.setOadBytes(oadBytes);
-        OAD oad = super.parseOAD(oadBytes);
+        OAD oad = FrameParseUtils.parseOAD(oadBytes);
         data.setOad(oad);
         DARType darType = DARType.getDARBySign(userDataBytes[7]);
         if(darType == null){

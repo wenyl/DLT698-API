@@ -4,7 +4,7 @@ import cn.com.wenyl.bs.dlt698.client.entity.ConnectInfo;
 import cn.com.wenyl.bs.dlt698.client.entity.ConnectRequestData;
 import cn.com.wenyl.bs.dlt698.client.entity.ConnectRequestFrame;
 import cn.com.wenyl.bs.dlt698.client.service.BaseFrameBuilder;
-import cn.com.wenyl.bs.dlt698.common.BaseFrameBuilderImpl;
+import cn.com.wenyl.bs.dlt698.client.service.LengthDomainBuildService;
 import org.springframework.stereotype.Service;
 
 import java.nio.ByteBuffer;

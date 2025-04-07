@@ -4,6 +4,7 @@ import cn.com.wenyl.bs.dlt698.client.constants.*;
 import cn.com.wenyl.bs.dlt698.client.entity.SetRequestNormalData;
 import cn.com.wenyl.bs.dlt698.client.entity.SetRequestNormalFrame;
 import cn.com.wenyl.bs.dlt698.client.entity.SetResponseNormalFrame;
+import cn.com.wenyl.bs.dlt698.server.service.FrameParseProcessor;
 import com.alibaba.fastjson.JSON;
 import cn.com.wenyl.bs.dlt698.client.annotation.DeviceOperateContext;
 import cn.com.wenyl.bs.dlt698.client.annotation.DeviceOperateLog;

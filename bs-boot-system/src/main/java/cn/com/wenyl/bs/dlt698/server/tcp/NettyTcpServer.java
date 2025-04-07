@@ -1,4 +1,4 @@
-package cn.com.wenyl.bs.dlt698.tcp;
+package cn.com.wenyl.bs.dlt698.server.tcp;
 
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.ChannelFuture;
@@ -11,8 +11,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.stereotype.Component;
-
-import javax.annotation.PostConstruct;
 
 @Slf4j
 @Component

@@ -1,10 +1,7 @@
 package cn.com.wenyl.bs.dlt698.client.service;
 
-
 import cn.com.wenyl.bs.dlt698.client.constants.RequestType;
 import cn.com.wenyl.bs.dlt698.common.Frame;
-
-
 
 /**
  * 基础帧构建服务

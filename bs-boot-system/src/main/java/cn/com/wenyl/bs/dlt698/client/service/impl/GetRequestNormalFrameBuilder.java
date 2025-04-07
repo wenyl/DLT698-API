@@ -5,7 +5,6 @@ import cn.com.wenyl.bs.dlt698.client.entity.GetRequestNormalFrame;
 
 
 import cn.com.wenyl.bs.dlt698.client.service.BaseFrameBuilder;
-import cn.com.wenyl.bs.dlt698.common.BaseFrameBuilderImpl;
 import org.springframework.stereotype.Service;
 
 import java.nio.ByteBuffer;

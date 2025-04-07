@@ -21,6 +21,7 @@ public enum DataType {
     INTEGER(Integer.class,(byte)0x0F,"数据类型:integer,8位整数",1),
     LONG_UNSIGNED(Integer.class,(byte)0x12,"数据类型：integer,16位整数",2),
     LONG64_UNSIGNED(Long.class,(byte)0x15,"数据类型:integer,64位正整数",8),
+    DATE_TIME(Date.class,(byte)0x19,"数据类型:octet-string(SIZE(10))",10),
     DATE_TIME_S(Date.class,(byte)0x1C,"数据类型:octet-string(SIZE(7))",7),
     TI(TimeUnit.class,(byte)0x54,"数据类型:时间间隔TI(Time Interval)",0),
     DOUBLE_LONG(Double.class,(byte)0x05,"数据类型:double-long,32位整数",4),

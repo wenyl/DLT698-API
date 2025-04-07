@@ -6,28 +6,29 @@ import cn.com.wenyl.bs.dlt698.client.constants.GetResultType;
 import cn.com.wenyl.bs.dlt698.client.constants.ServerAPDU;
 import cn.com.wenyl.bs.dlt698.client.entity.GetResponseNormalData;
 import cn.com.wenyl.bs.dlt698.client.entity.GetResponseNormalFrame;
+import cn.com.wenyl.bs.dlt698.client.service.BaseFrameParser;
+import cn.com.wenyl.bs.dlt698.client.service.LengthDomainBuildService;
 import cn.com.wenyl.bs.dlt698.common.OAD;
 
 
 import cn.com.wenyl.bs.dlt698.client.entity.dto.FrameDto;
-import cn.com.wenyl.bs.dlt698.client.service.BaseFrameParser;
-import cn.com.wenyl.bs.dlt698.common.BaseFrameParserImpl;
+import cn.com.wenyl.bs.dlt698.utils.FrameParseUtils;
 import cn.com.wenyl.bs.dlt698.utils.HexUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 @Slf4j
 @Service("getResponseNormalFrameParser")
-public class GetResponseNormalFrameParser extends BaseFrameParserImpl<GetResponseNormalFrame, GetResponseNormalData> implements BaseFrameParser<GetResponseNormalFrame,GetResponseNormalData> {
+public class GetResponseNormalFrameParser implements BaseFrameParser<GetResponseNormalFrame,GetResponseNormalData> {
     @Override
     public GetResponseNormalFrame parseFrame(byte[] frameBytes) throws RuntimeException{
         GetResponseNormalFrame frame  = new GetResponseNormalFrame();
-        if(!super.checkFrame(frameBytes)){
+        if(!FrameParseUtils.checkFrame(frameBytes)){
             String errorInfo = "无效帧：起始符或结束符错误,当前帧起始符--"+HexUtils.byteToHex(frameBytes[0])+",结束符--"+HexUtils.byteToHex(frameBytes[frameBytes.length-1]);
             log.error(errorInfo);
             throw new RuntimeException(errorInfo);
         }
-        FrameDto frameDto = super.getFrameDto(frameBytes);
+        FrameDto frameDto = FrameParseUtils.getFrameDto(frameBytes);
         GetResponseNormalData getResponseNormalData = this.parseLinkUserData(frameDto.getUserData());
         frame.setLengthDomain(frameDto.getLengthDomain());
         frame.setControlDomain(frameDto.getControlDomain());
@@ -58,7 +59,7 @@ public class GetResponseNormalFrameParser extends BaseFrameParserImpl<GetRespons
         byte[] oadBytes = new byte[4];
         System.arraycopy(userDataBytes,3,oadBytes,0,4);
         normalData.setOadBytes(oadBytes);
-        OAD oad = super.parseOAD(oadBytes);
+        OAD oad = FrameParseUtils.parseOAD(oadBytes);
         normalData.setOad(oad);
 
         GetResultType getResultType = GetResultType.getResultTypeBySign(userDataBytes[7]);
@@ -91,7 +92,7 @@ public class GetResponseNormalFrameParser extends BaseFrameParserImpl<GetRespons
 
     @Override
     public Object getData(GetResponseNormalFrame frame) throws RuntimeException {
-        return super.getData(frame.getNormalData().getDataType(), frame.getNormalData().getData());
+        return FrameParseUtils.getData(frame.getNormalData().getDataType(), frame.getNormalData().getData());
     }
 
 

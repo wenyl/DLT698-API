@@ -30,7 +30,7 @@ public class DeviceOperateLogAspect {
     private CarbonDeviceTaskService carbonDeviceTaskService;
     @Resource
     private CarbonDeviceMessageService carbonDeviceMessageService;
-    @Around("@annotation(cn.com.wenyl.bs.dlt698.annotation.DeviceOperateLog)")
+    @Around("@annotation(cn.com.wenyl.bs.dlt698.client.annotation.DeviceOperateLog)")
     @Transactional(rollbackFor = Exception.class)
     public Object logCommunication(ProceedingJoinPoint joinPoint) throws Throwable {
         DeviceOperateContext context = DeviceOperateContext.get();

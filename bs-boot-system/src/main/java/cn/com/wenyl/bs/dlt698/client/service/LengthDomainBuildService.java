@@ -1,5 +1,7 @@
 package cn.com.wenyl.bs.dlt698.client.service;
 
+
+
 /**
  * 长度域构建服务
  */
@@ -11,4 +13,8 @@ public interface LengthDomainBuildService {
      * @return 返回长度域数据
      */
     byte[] buildFrameLength(int length);
+
+
+
+
 }

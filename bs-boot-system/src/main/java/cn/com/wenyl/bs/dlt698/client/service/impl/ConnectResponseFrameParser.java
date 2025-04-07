@@ -8,7 +8,8 @@ import cn.com.wenyl.bs.dlt698.client.entity.dto.ConnectInfoDto;
 import cn.com.wenyl.bs.dlt698.client.entity.dto.ConnectResponseDto;
 import cn.com.wenyl.bs.dlt698.client.entity.dto.FrameDto;
 import cn.com.wenyl.bs.dlt698.client.service.BaseFrameParser;
-import cn.com.wenyl.bs.dlt698.common.BaseFrameParserImpl;
+import cn.com.wenyl.bs.dlt698.client.service.LengthDomainBuildService;
+import cn.com.wenyl.bs.dlt698.utils.FrameParseUtils;
 import cn.com.wenyl.bs.dlt698.utils.HexUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -18,16 +19,16 @@ import java.util.Objects;
 
 @Slf4j
 @Service("connectResponseFrameParser")
-public class ConnectResponseFrameParser extends BaseFrameParserImpl<ConnectResponseFrame,ConnectResponseData> implements BaseFrameParser<ConnectResponseFrame,ConnectResponseData> {
+public class ConnectResponseFrameParser implements BaseFrameParser<ConnectResponseFrame,ConnectResponseData> {
     @Override
     public ConnectResponseFrame parseFrame(byte[] frameBytes) throws RuntimeException {
         ConnectResponseFrame frame = new ConnectResponseFrame();
-        if(!super.checkFrame(frameBytes)){
+        if(!FrameParseUtils.checkFrame(frameBytes)){
             String errorInfo = "无效帧：起始符或结束符错误,当前帧起始符--"+ HexUtils.byteToHex(frameBytes[0])+",结束符--"+HexUtils.byteToHex(frameBytes[frameBytes.length-1]);
             log.error(errorInfo);
             throw new RuntimeException(errorInfo);
         }
-        FrameDto frameDto = super.getFrameDto(frameBytes);
+        FrameDto frameDto = FrameParseUtils.getFrameDto(frameBytes);
         ConnectResponseData userData = this.parseLinkUserData(frameDto.getUserData());
         frame.setLengthDomain(frameDto.getLengthDomain());
         frame.setControlDomain(frameDto.getControlDomain());

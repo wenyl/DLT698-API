@@ -1,7 +1,8 @@
 package cn.com.wenyl.bs.dlt698.client.service.impl;
 
-import cn.com.wenyl.bs.dlt698.common.Frame;
 import cn.com.wenyl.bs.dlt698.client.service.BaseFrameBuilder;
+import cn.com.wenyl.bs.dlt698.client.service.LengthDomainBuildService;
+import cn.com.wenyl.bs.dlt698.common.Frame;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

@@ -3,7 +3,6 @@ package cn.com.wenyl.bs.dlt698.client.service.impl;
 import cn.com.wenyl.bs.dlt698.client.entity.SetRequestNormalData;
 import cn.com.wenyl.bs.dlt698.client.entity.SetRequestNormalFrame;
 import cn.com.wenyl.bs.dlt698.client.service.BaseFrameBuilder;
-import cn.com.wenyl.bs.dlt698.common.BaseFrameBuilderImpl;
 import org.springframework.stereotype.Service;
 
 import java.nio.ByteBuffer;

@@ -1,9 +1,13 @@
-package cn.com.wenyl.bs.dlt698.common;
+package cn.com.wenyl.bs.dlt698.client.service.impl;
 
 
 import cn.com.wenyl.bs.dlt698.client.constants.DLT698Def;
 import cn.com.wenyl.bs.dlt698.client.constants.RequestType;
 import cn.com.wenyl.bs.dlt698.client.service.*;
+import cn.com.wenyl.bs.dlt698.common.AddressDomain;
+import cn.com.wenyl.bs.dlt698.common.ControlDomain;
+import cn.com.wenyl.bs.dlt698.common.Frame;
+
 import javax.annotation.Resource;
 import java.lang.reflect.InvocationTargetException;
 import java.nio.ByteBuffer;

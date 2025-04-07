@@ -1,4 +1,4 @@
-package cn.com.wenyl.bs.dlt698.tcp;
+package cn.com.wenyl.bs.dlt698.server.tcp;
 
 import io.netty.channel.Channel;
 
