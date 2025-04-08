@@ -8,6 +8,8 @@ import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.ObjectProvider;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.stereotype.Component;
@@ -16,7 +18,8 @@ import org.springframework.stereotype.Component;
 @Component
 public class NettyTcpServer implements ApplicationRunner {
     private static final int port = 30055; // GPRS/4G 设备连接的端口
-
+    @Autowired
+    private ObjectProvider<TcpServerHandler> handlerProvider;
     public void start() {
         EventLoopGroup bossGroup = new NioEventLoopGroup();
         EventLoopGroup workerGroup = new NioEventLoopGroup();
@@ -27,7 +30,7 @@ public class NettyTcpServer implements ApplicationRunner {
                     .childHandler(new ChannelInitializer<SocketChannel>() {
                         @Override
                         protected void initChannel(SocketChannel ch) {
-                            ch.pipeline().addLast(new TcpServerHandler());
+                            ch.pipeline().addLast(handlerProvider.getObject());
                         }
                     });
 

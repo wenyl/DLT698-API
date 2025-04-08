@@ -2,8 +2,8 @@ package cn.com.wenyl.bs.dlt698.client.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import cn.com.wenyl.bs.dlt698.client.entity.CarbonDeviceTask;
-import cn.com.wenyl.bs.dlt698.client.entity.dto.CarbonDeviceTaskDto;
+import cn.com.wenyl.bs.dlt698.common.entity.CarbonDeviceTask;
+import cn.com.wenyl.bs.dlt698.common.entity.dto.CarbonDeviceTaskDto;
 import org.apache.ibatis.annotations.Param;
 
 

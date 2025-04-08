@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.Resource;
+import java.lang.reflect.InvocationTargetException;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeoutException;
 
@@ -29,7 +30,7 @@ public class RAEEnergyController {
     private CarbonDeviceService carbonDeviceService;
     @GetMapping("/getRAEEnergy")
     @ApiOperation(value="反向有功电能量-获取反向有功电能量", notes="反向有功电能量-获取反向有功电能量")
-    public R<Object> getPAEEnergy(@RequestParam("carbonDeviceAddress") @ApiParam("碳表地址") String carbonDeviceAddress) throws JSONException, ExecutionException, InterruptedException, TimeoutException {
+    public R<Object> getPAEEnergy(@RequestParam("carbonDeviceAddress") @ApiParam("碳表地址") String carbonDeviceAddress) throws JSONException, ExecutionException, InterruptedException, TimeoutException, InvocationTargetException, NoSuchMethodException, InstantiationException, IllegalAccessException {
         carbonDeviceService.connectCarbonDevice(carbonDeviceAddress);
         return R.ok(raeEnergyService.getRAEEnergy(carbonDeviceAddress));
     }

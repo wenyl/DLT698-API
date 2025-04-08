@@ -1,7 +1,7 @@
 package cn.com.wenyl.bs.dlt698.client.service.impl;
 
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import cn.com.wenyl.bs.dlt698.client.entity.CarbonDeviceMessage;
+import cn.com.wenyl.bs.dlt698.common.entity.CarbonDeviceMessage;
 import cn.com.wenyl.bs.dlt698.client.mapper.CarbonDeviceMessageMapper;
 import cn.com.wenyl.bs.dlt698.client.service.CarbonDeviceMessageService;
 import org.springframework.stereotype.Service;

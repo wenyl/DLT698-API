@@ -1,7 +1,7 @@
 package cn.com.wenyl.bs.dlt698.client.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import cn.com.wenyl.bs.dlt698.client.entity.CarbonDeviceMessage;
+import cn.com.wenyl.bs.dlt698.common.entity.CarbonDeviceMessage;
 
 
 /**

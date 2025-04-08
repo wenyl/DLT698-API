@@ -2,6 +2,7 @@ package cn.com.wenyl.bs.dlt698.client.service;
 
 import com.alibaba.fastjson2.JSONException;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeoutException;
 
@@ -14,5 +15,5 @@ public interface ElectricCurrentService {
      * @param carbonDeviceAddress 碳表地址
      * @return 返回ABC三相电流
      */
-    Object getElectricCurrent(String carbonDeviceAddress) throws ExecutionException, InterruptedException, TimeoutException, JSONException;
+    Object getElectricCurrent(String carbonDeviceAddress) throws ExecutionException, InterruptedException, TimeoutException, JSONException, InvocationTargetException, NoSuchMethodException, InstantiationException, IllegalAccessException;
 }

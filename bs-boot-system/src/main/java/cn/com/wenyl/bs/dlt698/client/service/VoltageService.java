@@ -3,6 +3,7 @@ package cn.com.wenyl.bs.dlt698.client.service;
 
 import com.alibaba.fastjson2.JSONException;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeoutException;
 
@@ -15,5 +16,5 @@ public interface VoltageService {
      * @param carbonDeviceAddress 设备地址
      * @return 三相电压
      */
-    Object getVoltage(String carbonDeviceAddress) throws JSONException,ExecutionException, InterruptedException, TimeoutException;
+    Object getVoltage(String carbonDeviceAddress) throws JSONException, ExecutionException, InterruptedException, TimeoutException, InvocationTargetException, NoSuchMethodException, InstantiationException, IllegalAccessException;
 }

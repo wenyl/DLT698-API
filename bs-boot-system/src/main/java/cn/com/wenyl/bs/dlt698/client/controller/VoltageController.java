@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.Resource;
+import java.lang.reflect.InvocationTargetException;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeoutException;
 
@@ -26,7 +27,7 @@ public class VoltageController {
     private CarbonDeviceService carbonDeviceService;
     @ApiOperation(value="电压-读取电压", notes="电压-读取电压")
     @GetMapping("/getVoltage")
-    public R<Object> getVoltage(@RequestParam("carbonDeviceAddress") @ApiParam("碳表地址") String carbonDeviceAddress) throws JSONException,ExecutionException, InterruptedException, TimeoutException {
+    public R<Object> getVoltage(@RequestParam("carbonDeviceAddress") @ApiParam("碳表地址") String carbonDeviceAddress) throws JSONException, ExecutionException, InterruptedException, TimeoutException, InvocationTargetException, NoSuchMethodException, InstantiationException, IllegalAccessException {
         carbonDeviceService.connectCarbonDevice(carbonDeviceAddress);
         return R.ok(voltageService.getVoltage(carbonDeviceAddress));
     }

@@ -2,7 +2,7 @@ package cn.com.wenyl.bs.dlt698.client.controller;
 
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
-import cn.com.wenyl.bs.dlt698.client.entity.dto.CarbonDeviceTaskMsgDto;
+import cn.com.wenyl.bs.dlt698.common.entity.dto.CarbonDeviceTaskMsgDto;
 import cn.com.wenyl.bs.dlt698.client.service.CarbonDeviceService;
 import cn.com.wenyl.bs.dlt698.client.service.CarbonDeviceTaskService;
 import cn.com.wenyl.bs.dlt698.utils.R;
@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.Resource;
+import java.lang.reflect.InvocationTargetException;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeoutException;
 
@@ -45,7 +46,7 @@ public class CarbonDeviceTaskController {
 
     @GetMapping("/getData")
     @ApiOperation(value="碳表管理-获取数据(电流、电压、正向有功电能量、反向有功电能量、正向碳排放管理-昨日累计、反向碳排放管理-昨日累计)", notes="碳表管理-获取数据(电流、电压、正向有功电能量、反向有功电能量、正向碳排放管理-昨日累计、反向碳排放管理-昨日累计)")
-    public R<Object> getData(@RequestParam("carbonDeviceAddress") @ApiParam("碳表地址") String carbonDeviceAddress) throws RuntimeException, TimeoutException, ExecutionException, InterruptedException {
+    public R<Object> getData(@RequestParam("carbonDeviceAddress") @ApiParam("碳表地址") String carbonDeviceAddress) throws RuntimeException, TimeoutException, ExecutionException, InterruptedException, InvocationTargetException, NoSuchMethodException, InstantiationException, IllegalAccessException {
         carbonDeviceService.connectCarbonDevice(carbonDeviceAddress);
         return R.ok(carbonDeviceTaskService.getData(carbonDeviceAddress));
     }

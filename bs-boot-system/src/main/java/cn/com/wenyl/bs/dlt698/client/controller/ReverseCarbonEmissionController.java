@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.Resource;
+import java.lang.reflect.InvocationTargetException;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeoutException;
 
@@ -25,7 +26,7 @@ public class ReverseCarbonEmissionController {
     private CarbonDeviceService carbonDeviceService;
     @GetMapping("/yesterdayTotal")
     @ApiOperation(value="反向碳排放管理-昨日累计", notes="反向碳排放管理-昨日累计")
-    public R<Object> yesterdayCarbonAccumulate(@RequestParam("carbonDeviceAddress") @ApiParam("碳表地址") String carbonDeviceAddress) throws RuntimeException, TimeoutException, ExecutionException, InterruptedException {
+    public R<Object> yesterdayCarbonAccumulate(@RequestParam("carbonDeviceAddress") @ApiParam("碳表地址") String carbonDeviceAddress) throws RuntimeException, TimeoutException, ExecutionException, InterruptedException, InvocationTargetException, NoSuchMethodException, InstantiationException, IllegalAccessException {
         carbonDeviceService.connectCarbonDevice(carbonDeviceAddress);
         return R.ok(carbonEmissionService.yesterdayCarbonAccumulate(carbonDeviceAddress));
     }

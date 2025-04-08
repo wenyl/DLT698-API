@@ -1,26 +1,26 @@
 package cn.com.wenyl.bs.dlt698.server.service;
-
-import cn.com.wenyl.bs.dlt698.client.service.BaseFrameParser;
-import cn.com.wenyl.bs.dlt698.client.service.LengthDomainBuildService;
+import cn.com.wenyl.bs.dlt698.common.entity.dto.FrameDto;
+import cn.com.wenyl.bs.dlt698.common.service.BaseFrameParser;
 import cn.com.wenyl.bs.dlt698.client.service.impl.FrameParserFactory;
-import cn.com.wenyl.bs.dlt698.common.Frame;
+import cn.com.wenyl.bs.dlt698.common.constants.ClientAPDU;
+import cn.com.wenyl.bs.dlt698.common.entity.Frame;
+import cn.com.wenyl.bs.dlt698.common.entity.LinkUserData;
+import cn.com.wenyl.bs.dlt698.server.entity.LinkRequestData;
+import cn.com.wenyl.bs.dlt698.server.entity.LinkRequestFrame;
+import cn.com.wenyl.bs.dlt698.utils.FrameParseUtils;
+import cn.com.wenyl.bs.dlt698.utils.HexUtils;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
-
+@Slf4j
 @Service
-@SuppressWarnings("unchecked")
 public class FrameParseProcessor {
     @Resource
     private FrameParserFactory factory;
-    // 自动获取当前类的 Frame 类型对应的 Builder
-    // 通过泛型自动获取解析器并解析帧数据
-    public <T extends Frame> Frame parseFrame(Class frameType, byte[] frameBytes) throws RuntimeException{
-        // 使用解析器解析帧数据
-        return factory.getFrameParser(frameType).parseFrame(frameBytes);
-    }
 
-    public BaseFrameParser getFrameParser(Class frameType) {
-        return factory.getFrameParser(frameType);
+
+    public <T extends Frame, G extends LinkUserData> BaseFrameParser<T, G> getFrameParser(Class<T> frameType,Class<G> linkUserDataType) {
+        return factory.getParser(frameType,linkUserDataType);
     }
 }

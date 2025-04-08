@@ -1,24 +1,22 @@
 package cn.com.wenyl.bs.dlt698.client.service.impl;
 
-import cn.com.wenyl.bs.dlt698.client.entity.GetRequestNormalData;
-import cn.com.wenyl.bs.dlt698.client.entity.GetRequestNormalFrame;
+import cn.com.wenyl.bs.dlt698.common.entity.GetRequestNormalData;
+import cn.com.wenyl.bs.dlt698.common.entity.GetRequestNormalFrame;
 
 
-import cn.com.wenyl.bs.dlt698.client.service.BaseFrameBuilder;
+import cn.com.wenyl.bs.dlt698.common.service.BaseFrameBuilder;
+import cn.com.wenyl.bs.dlt698.utils.FrameBuildUtils;
 import org.springframework.stereotype.Service;
 
 import java.nio.ByteBuffer;
 
 @Service("getRequestNormalFrameBuilder")
-public class GetRequestNormalFrameBuilder extends BaseFrameBuilderImpl<GetRequestNormalFrame> implements BaseFrameBuilder<GetRequestNormalFrame> {
-    public GetRequestNormalFrameBuilder() {
-        super(GetRequestNormalFrame.class);
-    }
+public class GetRequestNormalFrameBuilder implements BaseFrameBuilder<GetRequestNormalFrame> {
     @Override
     public byte[] buildFrame(GetRequestNormalFrame frame) {
-        byte[] frameHead = super.buildFrameHead(frame);
+        byte[] frameHead = FrameBuildUtils.buildFrameHead(frame);
         byte[] linkUserData = buildLinkUserData(frame);
-        return super.buildFrame(frameHead,linkUserData);
+        return FrameBuildUtils.buildFrame(frameHead,linkUserData);
     }
 
     @Override

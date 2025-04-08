@@ -1,11 +1,10 @@
 package cn.com.wenyl.bs.dlt698.server.service;
 
-import cn.com.wenyl.bs.dlt698.client.constants.ClientAPDU;
-import cn.com.wenyl.bs.dlt698.client.constants.DataType;
-import cn.com.wenyl.bs.dlt698.client.service.BaseFrameParser;
+import cn.com.wenyl.bs.dlt698.common.constants.DataType;
+import cn.com.wenyl.bs.dlt698.common.service.BaseFrameParser;
 import cn.com.wenyl.bs.dlt698.server.entity.LinkRequestData;
 import cn.com.wenyl.bs.dlt698.server.entity.LinkRequestFrame;
-import cn.com.wenyl.bs.dlt698.client.entity.dto.FrameDto;
+import cn.com.wenyl.bs.dlt698.common.entity.dto.FrameDto;
 import cn.com.wenyl.bs.dlt698.utils.ASN1DecoderUtils;
 import cn.com.wenyl.bs.dlt698.utils.FrameParseUtils;
 import cn.com.wenyl.bs.dlt698.utils.HexUtils;

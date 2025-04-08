@@ -1,25 +1,22 @@
 package cn.com.wenyl.bs.dlt698.client.service.impl;
 
-import cn.com.wenyl.bs.dlt698.client.entity.ConnectInfo;
-import cn.com.wenyl.bs.dlt698.client.entity.ConnectRequestData;
-import cn.com.wenyl.bs.dlt698.client.entity.ConnectRequestFrame;
-import cn.com.wenyl.bs.dlt698.client.service.BaseFrameBuilder;
-import cn.com.wenyl.bs.dlt698.client.service.LengthDomainBuildService;
+import cn.com.wenyl.bs.dlt698.common.entity.ConnectInfo;
+import cn.com.wenyl.bs.dlt698.common.entity.ConnectRequestData;
+import cn.com.wenyl.bs.dlt698.common.entity.ConnectRequestFrame;
+import cn.com.wenyl.bs.dlt698.common.service.BaseFrameBuilder;
+import cn.com.wenyl.bs.dlt698.utils.FrameBuildUtils;
 import org.springframework.stereotype.Service;
 
 import java.nio.ByteBuffer;
 
 @Service("connectRequestBuilder")
-public class ConnectRequestFrameBuilder extends BaseFrameBuilderImpl<ConnectRequestFrame> implements BaseFrameBuilder<ConnectRequestFrame> {
+public class ConnectRequestFrameBuilder implements BaseFrameBuilder<ConnectRequestFrame> {
 
-    public ConnectRequestFrameBuilder() {
-        super(ConnectRequestFrame.class);
-    }
     @Override
     public byte[] buildFrame(ConnectRequestFrame frame) {
-        byte[] frameHead = super.buildFrameHead(frame);
+        byte[] frameHead = FrameBuildUtils.buildFrameHead(frame);
         byte[] linkUserData = buildLinkUserData(frame);
-        return super.buildFrame(frameHead,linkUserData);
+        return FrameBuildUtils.buildFrame(frameHead,linkUserData);
     }
 
     @Override

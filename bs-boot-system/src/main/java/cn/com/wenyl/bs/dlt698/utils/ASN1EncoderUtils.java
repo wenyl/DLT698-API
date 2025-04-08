@@ -1,7 +1,9 @@
 package cn.com.wenyl.bs.dlt698.utils;
 
-import cn.com.wenyl.bs.dlt698.client.constants.DataType;
+import cn.com.wenyl.bs.dlt698.common.constants.DataType;
 
+import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
 import java.util.Calendar;
 import java.util.Date;
 
@@ -50,5 +52,39 @@ public class ASN1EncoderUtils {
         // 秒
         dateTimeSBytes[6] = (byte) (second & 0xFF);
         return dateTimeSBytes;
+    }
+
+    /**
+     * 将当前时间转换为字节数组，长度为10个字节
+     * @return 当前时间的字节数组
+     */
+    public static byte[] encodeDateTime() {
+        // 获取当前时间
+        Calendar calendar = Calendar.getInstance();
+
+        // 提取日期时间信息
+        int year = calendar.get(Calendar.YEAR);
+        int month = calendar.get(Calendar.MONTH) + 1; // Calendar.MONTH 是从 0 开始的
+        int day = calendar.get(Calendar.DAY_OF_MONTH);
+        int dayOfWeek = calendar.get(Calendar.DAY_OF_WEEK); // 1-7，表示星期天到星期六
+        int hour = calendar.get(Calendar.HOUR_OF_DAY);
+        int minute = calendar.get(Calendar.MINUTE);
+        int second = calendar.get(Calendar.SECOND);
+        int milliseconds = calendar.get(Calendar.MILLISECOND);
+
+        // 创建字节缓冲区，大小为10字节
+        ByteBuffer buffer = ByteBuffer.allocate(10).order(ByteOrder.BIG_ENDIAN);
+
+        // 按照指定顺序写入字节数组
+        buffer.putShort((short) year); // 年
+        buffer.put((byte) month); // 月
+        buffer.put((byte) day); // 日
+        buffer.put((byte) (dayOfWeek - 1)); // 星期（0-6，0表示星期日，1表示星期一）
+        buffer.put((byte) hour); // 小时
+        buffer.put((byte) minute); // 分钟
+        buffer.put((byte) second); // 秒
+        buffer.putShort((short) milliseconds); // 毫秒
+
+        return buffer.array();
     }
 }

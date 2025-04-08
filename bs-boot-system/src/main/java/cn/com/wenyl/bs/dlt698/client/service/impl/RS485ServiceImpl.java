@@ -1,6 +1,6 @@
 package cn.com.wenyl.bs.dlt698.client.service.impl;
 
-import cn.com.wenyl.bs.dlt698.client.constants.RS485;
+import cn.com.wenyl.bs.dlt698.common.constants.RS485;
 import cn.com.wenyl.bs.dlt698.client.service.RS485Service;
 import cn.com.wenyl.bs.dlt698.utils.HexUtils;
 import cn.com.wenyl.bs.dlt698.utils.SerialCommUtils;

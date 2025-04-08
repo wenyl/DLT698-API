@@ -1,17 +1,16 @@
 package cn.com.wenyl.bs.dlt698.client.service.impl;
 
-import cn.com.wenyl.bs.dlt698.client.constants.DataType;
-import cn.com.wenyl.bs.dlt698.client.constants.GetResponse;
-import cn.com.wenyl.bs.dlt698.client.constants.GetResultType;
-import cn.com.wenyl.bs.dlt698.client.constants.ServerAPDU;
-import cn.com.wenyl.bs.dlt698.client.entity.GetResponseNormalData;
-import cn.com.wenyl.bs.dlt698.client.entity.GetResponseNormalFrame;
-import cn.com.wenyl.bs.dlt698.client.service.BaseFrameParser;
-import cn.com.wenyl.bs.dlt698.client.service.LengthDomainBuildService;
-import cn.com.wenyl.bs.dlt698.common.OAD;
+import cn.com.wenyl.bs.dlt698.common.constants.DataType;
+import cn.com.wenyl.bs.dlt698.common.constants.GetResponse;
+import cn.com.wenyl.bs.dlt698.common.constants.GetResultType;
+import cn.com.wenyl.bs.dlt698.common.constants.ServerAPDU;
+import cn.com.wenyl.bs.dlt698.common.entity.GetResponseNormalData;
+import cn.com.wenyl.bs.dlt698.common.entity.GetResponseNormalFrame;
+import cn.com.wenyl.bs.dlt698.common.service.BaseFrameParser;
+import cn.com.wenyl.bs.dlt698.common.entity.OAD;
 
 
-import cn.com.wenyl.bs.dlt698.client.entity.dto.FrameDto;
+import cn.com.wenyl.bs.dlt698.common.entity.dto.FrameDto;
 import cn.com.wenyl.bs.dlt698.utils.FrameParseUtils;
 import cn.com.wenyl.bs.dlt698.utils.HexUtils;
 import lombok.extern.slf4j.Slf4j;

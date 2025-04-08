@@ -3,7 +3,7 @@
 <mapper namespace="cn.com.wenyl.bs.dlt698.client.mapper.CarbonDeviceMessageMapper">
 
     <!-- 通用查询映射结果 -->
-    <resultMap id="BaseResultMap" type="cn.com.wenyl.bs.dlt698.client.entity.CarbonDeviceMessage">
+    <resultMap id="BaseResultMap" type="cn.com.wenyl.bs.dlt698.common.entity.CarbonDeviceMessage">
         <id column="id" property="id" />
         <result column="job_id" property="jobId" />
         <result column="operate_name" property="operateName" />

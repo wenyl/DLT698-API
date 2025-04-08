@@ -2,9 +2,10 @@ package cn.com.wenyl.bs.dlt698.client.service;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.IService;
-import cn.com.wenyl.bs.dlt698.client.entity.CarbonDeviceTask;
-import cn.com.wenyl.bs.dlt698.client.entity.dto.CarbonDeviceTaskMsgDto;
+import cn.com.wenyl.bs.dlt698.common.entity.CarbonDeviceTask;
+import cn.com.wenyl.bs.dlt698.common.entity.dto.CarbonDeviceTaskMsgDto;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeoutException;
 
@@ -31,5 +32,5 @@ public interface CarbonDeviceTaskService extends IService<CarbonDeviceTask> {
      * @param carbonDeviceAddress 碳表地址
      * @return 返回数据
      */
-    Object getData(String carbonDeviceAddress)throws RuntimeException, TimeoutException, ExecutionException, InterruptedException  ;
+    Object getData(String carbonDeviceAddress) throws RuntimeException, TimeoutException, ExecutionException, InterruptedException, InvocationTargetException, NoSuchMethodException, InstantiationException, IllegalAccessException;
 }

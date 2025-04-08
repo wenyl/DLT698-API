@@ -1,24 +1,24 @@
 package cn.com.wenyl.bs.dlt698.client.service.impl;
 
-import cn.com.wenyl.bs.dlt698.client.constants.*;
-import cn.com.wenyl.bs.dlt698.client.entity.SetRequestNormalData;
-import cn.com.wenyl.bs.dlt698.client.entity.SetRequestNormalFrame;
-import cn.com.wenyl.bs.dlt698.client.entity.SetResponseNormalFrame;
+import cn.com.wenyl.bs.dlt698.common.entity.SetRequestNormalData;
+import cn.com.wenyl.bs.dlt698.common.entity.SetRequestNormalFrame;
+import cn.com.wenyl.bs.dlt698.common.entity.SetResponseNormalData;
+import cn.com.wenyl.bs.dlt698.common.entity.SetResponseNormalFrame;
+import cn.com.wenyl.bs.dlt698.common.constants.*;
+import cn.com.wenyl.bs.dlt698.common.service.BaseFrameParser;
 import cn.com.wenyl.bs.dlt698.server.service.FrameParseProcessor;
+import cn.com.wenyl.bs.dlt698.utils.*;
 import com.alibaba.fastjson.JSON;
 import cn.com.wenyl.bs.dlt698.client.annotation.DeviceOperateContext;
 import cn.com.wenyl.bs.dlt698.client.annotation.DeviceOperateLog;
-import cn.com.wenyl.bs.dlt698.client.entity.dto.CarbonFactorDto;
+import cn.com.wenyl.bs.dlt698.common.entity.dto.CarbonFactorDto;
 import cn.com.wenyl.bs.dlt698.client.service.CarbonFactorService;
 import cn.com.wenyl.bs.dlt698.client.service.RS485Service;
-import cn.com.wenyl.bs.dlt698.utils.ASN1EncoderUtils;
-import cn.com.wenyl.bs.dlt698.utils.BCDUtils;
-import cn.com.wenyl.bs.dlt698.utils.HexUtils;
-import cn.com.wenyl.bs.dlt698.utils.SerialCommUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import java.lang.reflect.InvocationTargetException;
 import java.nio.ByteBuffer;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -38,23 +38,23 @@ public class CarbonFactorServiceImpl implements CarbonFactorService {
     private RS485Service rs485Service;
     @Override
     @DeviceOperateLog(jobName = "碳因子-设置1个碳因子(昨日单个因子)",valueSign = "operateStatus",valueLabel = "操作状态",hasValue = true)
-    public Object set1CarbonFactor(String carbonDeviceAddress,Double carbonFactor)  throws ExecutionException, InterruptedException, TimeoutException {
+    public Object set1CarbonFactor(String carbonDeviceAddress,Double carbonFactor) throws ExecutionException, InterruptedException, TimeoutException, InvocationTargetException, NoSuchMethodException, InstantiationException, IllegalAccessException {
 
         SetRequestNormalFrameBuilder builder = (SetRequestNormalFrameBuilder)frameBuildProcessor.getFrameBuilder(SetRequestNormalFrame.class);
 
-        SetRequestNormalFrame setRequestNormalFrame = (SetRequestNormalFrame)builder.getFrame(FunctionCode.THREE, ScramblingCodeFlag.NOT_SCRAMBLING_CODE, FrameFlag.NOT_SUB_FRAME,
+        SetRequestNormalFrame setRequestNormalFrame = (SetRequestNormalFrame) FrameBuildUtils.getCommonFrame(SetRequestNormalFrame.class,FunctionCode.THREE, ScramblingCodeFlag.NOT_SCRAMBLING_CODE, FrameFlag.NOT_SUB_FRAME,
                 RequestType.CLIENT_REQUEST, AddressType.SINGLE_ADDRESS,LogicAddress.ZERO, BCDUtils.encodeBCD(carbonDeviceAddress),
                 Address.CLIENT_ADDRESS);
         // todo 生成要设置的信息
         byte[] data = buildSetCarbonFactorBytes(carbonFactor);
-        SetRequestNormalData userData = new SetRequestNormalData(data,PIID.ZERO_ZERO,OI.SET_CARBON_FACTOR, AttrNum.ATTR_02,AttributeIndex.ZERO,TimeTag.NO_TIME_TAG);
+        SetRequestNormalData userData = new SetRequestNormalData(data, PIID.ZERO_ZERO, OI.SET_CARBON_FACTOR, AttrNum.ATTR_02,AttributeIndex.ZERO,TimeTag.NO_TIME_TAG);
         setRequestNormalFrame.setData(userData);
         byte[] bytes = builder.buildFrame(setRequestNormalFrame);
         log.info(HexUtils.bytesToHex(bytes));
         try{
             byte[] returnFrame = rs485Service.sendByte(bytes);
 
-            SetResponseNormalFrameParser parser = (SetResponseNormalFrameParser)frameParseProcessor.getFrameParser(SetResponseNormalFrame.class);
+            SetResponseNormalFrameParser parser = (SetResponseNormalFrameParser)frameParseProcessor.getFrameParser(SetResponseNormalFrame.class, SetResponseNormalData.class);
             Object obj = parser.getData(parser.parseFrame(returnFrame));
             DeviceOperateContext.get().setSentFrame(HexUtils.bytesToHex(bytes));
             DeviceOperateContext.get().setReceivedFrame(HexUtils.bytesToHex(returnFrame));
@@ -67,10 +67,10 @@ public class CarbonFactorServiceImpl implements CarbonFactorService {
 
     @Override
     @DeviceOperateLog(jobName = "碳因子-设置多个碳因子(昨日24/96个因子",valueSign = "operateStatus",valueLabel = "操作状态",hasValue = true)
-    public Object setCarbonFactors(CarbonFactorDto carbonFactorDto) throws ExecutionException, InterruptedException, TimeoutException {
+    public Object setCarbonFactors(CarbonFactorDto carbonFactorDto) throws ExecutionException, InterruptedException, TimeoutException, InvocationTargetException, NoSuchMethodException, InstantiationException, IllegalAccessException {
         SetRequestNormalFrameBuilder builder = (SetRequestNormalFrameBuilder)frameBuildProcessor.getFrameBuilder(SetRequestNormalFrame.class);
 
-        SetRequestNormalFrame setRequestNormalFrame = (SetRequestNormalFrame)builder.getFrame(FunctionCode.THREE, ScramblingCodeFlag.NOT_SCRAMBLING_CODE, FrameFlag.NOT_SUB_FRAME,
+        SetRequestNormalFrame setRequestNormalFrame = (SetRequestNormalFrame)FrameBuildUtils.getCommonFrame(SetRequestNormalFrame.class,FunctionCode.THREE, ScramblingCodeFlag.NOT_SCRAMBLING_CODE, FrameFlag.NOT_SUB_FRAME,
                 RequestType.CLIENT_REQUEST, AddressType.SINGLE_ADDRESS,LogicAddress.ZERO, BCDUtils.encodeBCD(carbonFactorDto.getCarbonDeviceAddress()),
                 Address.CLIENT_ADDRESS);
         // todo 生成要设置的信息
@@ -81,7 +81,7 @@ public class CarbonFactorServiceImpl implements CarbonFactorService {
         log.info(HexUtils.bytesToHex(bytes));
         try{
             byte[] returnFrame = rs485Service.sendByte(bytes);
-            SetResponseNormalFrameParser parser = (SetResponseNormalFrameParser)frameParseProcessor.getFrameParser(SetResponseNormalFrame.class);
+            SetResponseNormalFrameParser parser = (SetResponseNormalFrameParser)frameParseProcessor.getFrameParser(SetResponseNormalFrame.class, SetResponseNormalData.class);
             Object obj = parser.getData(parser.parseFrame(returnFrame));
             DeviceOperateContext.get().setSentFrame(HexUtils.bytesToHex(bytes));
             DeviceOperateContext.get().setReceivedFrame(HexUtils.bytesToHex(returnFrame));

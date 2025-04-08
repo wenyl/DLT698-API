@@ -1,14 +1,14 @@
 package cn.com.wenyl.bs.dlt698.utils;
 
-import cn.com.wenyl.bs.dlt698.client.constants.AttrNum;
-import cn.com.wenyl.bs.dlt698.client.constants.DLT698Def;
-import cn.com.wenyl.bs.dlt698.client.constants.DataType;
-import cn.com.wenyl.bs.dlt698.client.constants.OI;
-import cn.com.wenyl.bs.dlt698.client.entity.dto.FrameDto;
-import cn.com.wenyl.bs.dlt698.common.AddressDomain;
-import cn.com.wenyl.bs.dlt698.common.ControlDomain;
-import cn.com.wenyl.bs.dlt698.common.LengthDomain;
-import cn.com.wenyl.bs.dlt698.common.OAD;
+import cn.com.wenyl.bs.dlt698.common.constants.AttrNum;
+import cn.com.wenyl.bs.dlt698.common.constants.DLT698Def;
+import cn.com.wenyl.bs.dlt698.common.constants.DataType;
+import cn.com.wenyl.bs.dlt698.common.constants.OI;
+import cn.com.wenyl.bs.dlt698.common.entity.dto.FrameDto;
+import cn.com.wenyl.bs.dlt698.common.entity.AddressDomain;
+import cn.com.wenyl.bs.dlt698.common.entity.ControlDomain;
+import cn.com.wenyl.bs.dlt698.common.entity.LengthDomain;
+import cn.com.wenyl.bs.dlt698.common.entity.OAD;
 import com.alibaba.fastjson2.JSONArray;
 import lombok.extern.slf4j.Slf4j;
 

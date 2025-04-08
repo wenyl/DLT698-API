@@ -1,15 +1,18 @@
 package cn.com.wenyl.bs.dlt698.client.service.impl;
 
-import cn.com.wenyl.bs.dlt698.client.constants.*;
+import cn.com.wenyl.bs.dlt698.common.constants.*;
+import cn.com.wenyl.bs.dlt698.common.entity.GetResponseNormalData;
+import cn.com.wenyl.bs.dlt698.common.service.BaseFrameParser;
 import cn.com.wenyl.bs.dlt698.server.service.FrameParseProcessor;
+import cn.com.wenyl.bs.dlt698.utils.FrameBuildUtils;
 import com.alibaba.fastjson.JSON;
 import cn.com.wenyl.bs.dlt698.client.annotation.CarbonDeviceAddress;
 import cn.com.wenyl.bs.dlt698.client.annotation.DeviceOperateContext;
 import cn.com.wenyl.bs.dlt698.client.annotation.DeviceOperateLog;
 
-import cn.com.wenyl.bs.dlt698.client.entity.GetRequestNormalData;
-import cn.com.wenyl.bs.dlt698.client.entity.GetRequestNormalFrame;
-import cn.com.wenyl.bs.dlt698.client.entity.GetResponseNormalFrame;
+import cn.com.wenyl.bs.dlt698.common.entity.GetRequestNormalData;
+import cn.com.wenyl.bs.dlt698.common.entity.GetRequestNormalFrame;
+import cn.com.wenyl.bs.dlt698.common.entity.GetResponseNormalFrame;
 import cn.com.wenyl.bs.dlt698.client.service.RS485Service;
 import cn.com.wenyl.bs.dlt698.client.service.ReverseCarbonEmissionService;
 import cn.com.wenyl.bs.dlt698.utils.BCDUtils;
@@ -19,6 +22,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import java.lang.reflect.InvocationTargetException;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeoutException;
 
@@ -34,22 +38,22 @@ public class ReverseCarbonEmissionServiceImpl implements ReverseCarbonEmissionSe
     private RS485Service rs485Service;
     @Override
     @DeviceOperateLog(jobName = "反向碳排放管理-昨日累计",valueSign = "rce",valueLabel = "反向碳排放",hasValue = true)
-    public Object yesterdayCarbonAccumulate(@CarbonDeviceAddress String carbonDeviceAddress)  throws ExecutionException, InterruptedException, TimeoutException {
+    public Object yesterdayCarbonAccumulate(@CarbonDeviceAddress String carbonDeviceAddress) throws ExecutionException, InterruptedException, TimeoutException, InvocationTargetException, NoSuchMethodException, InstantiationException, IllegalAccessException {
 
         // 查询昨日碳排放累计量
         GetRequestNormalFrameBuilder builder = (GetRequestNormalFrameBuilder)frameBuildProcessor.getFrameBuilder(GetRequestNormalFrame.class);
 
-        GetRequestNormalFrame getRequestNormalFrame = (GetRequestNormalFrame)builder.getFrame(FunctionCode.THREE, ScramblingCodeFlag.NOT_SCRAMBLING_CODE, FrameFlag.NOT_SUB_FRAME,
+        GetRequestNormalFrame getRequestNormalFrame = (GetRequestNormalFrame) FrameBuildUtils.getCommonFrame(GetRequestNormalFrame.class,FunctionCode.THREE, ScramblingCodeFlag.NOT_SCRAMBLING_CODE, FrameFlag.NOT_SUB_FRAME,
                 RequestType.CLIENT_REQUEST, AddressType.SINGLE_ADDRESS, LogicAddress.ZERO, BCDUtils.encodeBCD(carbonDeviceAddress),
                 Address.CLIENT_ADDRESS);
 
-        GetRequestNormalData userData = new GetRequestNormalData(PIID.ZERO_ZERO,OI.REVERSE_CARBON_EMISSION, AttrNum.ATTR_02,AttributeIndex.ZERO,TimeTag.NO_TIME_TAG);
+        GetRequestNormalData userData = new GetRequestNormalData(PIID.ZERO_ZERO, OI.REVERSE_CARBON_EMISSION, AttrNum.ATTR_02,AttributeIndex.ZERO,TimeTag.NO_TIME_TAG);
         getRequestNormalFrame.setData(userData);
         byte[] bytes = builder.buildFrame(getRequestNormalFrame);
         try{
             byte[] returnFrame = rs485Service.sendByte(bytes);
             log.info("收到数据帧{}", HexUtils.bytesToHex(returnFrame));
-            GetResponseNormalFrameParser parser = (GetResponseNormalFrameParser)frameParseProcessor.getFrameParser(GetResponseNormalFrame.class);
+            GetResponseNormalFrameParser parser = (GetResponseNormalFrameParser)frameParseProcessor.getFrameParser(GetResponseNormalFrame.class, GetResponseNormalData.class);
             Object obj = parser.getData(parser.parseFrame(returnFrame));
             DeviceOperateContext.get().setSentFrame(HexUtils.bytesToHex(bytes));
             DeviceOperateContext.get().setReceivedFrame(HexUtils.bytesToHex(returnFrame));

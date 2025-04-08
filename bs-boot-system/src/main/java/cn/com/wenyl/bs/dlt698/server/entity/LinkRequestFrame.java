@@ -1,6 +1,6 @@
 package cn.com.wenyl.bs.dlt698.server.entity;
 
-import cn.com.wenyl.bs.dlt698.common.Frame;
+import cn.com.wenyl.bs.dlt698.common.entity.Frame;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 /**

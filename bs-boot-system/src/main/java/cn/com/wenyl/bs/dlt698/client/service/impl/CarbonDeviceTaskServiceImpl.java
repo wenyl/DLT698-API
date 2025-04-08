@@ -10,14 +10,15 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import cn.com.wenyl.bs.dlt698.client.annotation.CarbonDeviceAddress;
 import cn.com.wenyl.bs.dlt698.client.annotation.DeviceOperateLog;
-import cn.com.wenyl.bs.dlt698.client.entity.CarbonDeviceTask;
-import cn.com.wenyl.bs.dlt698.client.entity.dto.CarbonDeviceTaskDto;
-import cn.com.wenyl.bs.dlt698.client.entity.dto.CarbonDeviceTaskMsgDto;
+import cn.com.wenyl.bs.dlt698.common.entity.CarbonDeviceTask;
+import cn.com.wenyl.bs.dlt698.common.entity.dto.CarbonDeviceTaskDto;
+import cn.com.wenyl.bs.dlt698.common.entity.dto.CarbonDeviceTaskMsgDto;
 import cn.com.wenyl.bs.dlt698.client.mapper.CarbonDeviceTaskMapper;
 
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeoutException;
@@ -100,7 +101,7 @@ public class CarbonDeviceTaskServiceImpl extends ServiceImpl<CarbonDeviceTaskMap
 
     @Override
     @DeviceOperateLog(jobName = "碳表管理-获取数据(电流、电压、正向有功电能量、反向有功电能量、正向碳排放管理-昨日累计、反向碳排放管理-昨日累计)",valueSign = "getData",valueLabel = "数据",hasValue = false,screenData=true)
-    public Object getData(@CarbonDeviceAddress String carbonDeviceAddress)  throws ExecutionException, InterruptedException, TimeoutException, JSONException {
+    public Object getData(@CarbonDeviceAddress String carbonDeviceAddress) throws ExecutionException, InterruptedException, TimeoutException, JSONException, InvocationTargetException, NoSuchMethodException, InstantiationException, IllegalAccessException {
         CarbonDeviceTaskMsgDto dataDto = new CarbonDeviceTaskMsgDto();
         Object electricCurrent = electricCurrentService.getElectricCurrent(carbonDeviceAddress);
         Object voltage = voltageService.getVoltage(carbonDeviceAddress);
