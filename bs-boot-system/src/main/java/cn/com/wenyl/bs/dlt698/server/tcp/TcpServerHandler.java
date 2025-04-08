@@ -32,7 +32,6 @@ public class TcpServerHandler  extends SimpleChannelInboundHandler<ByteBuf> {
         String deviceId = ctx.channel().remoteAddress().toString();
         // todo 这里要判断数据库中是否已经存在这个设备
         DeviceChannelManager.addDevice(deviceId, ctx.channel());
-        ctx.writeAndFlush(Unpooled.copiedBuffer("ACK\n".getBytes(StandardCharsets.UTF_8)));
         log.info("设备链接:{}",deviceId);
     }
 
