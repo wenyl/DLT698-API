@@ -1,4 +1,4 @@
-package cn.com.wenyl.bs.dlt698.client.service.impl;
+package cn.com.wenyl.bs.dlt698.common.service.impl;
 
 import cn.com.wenyl.bs.dlt698.common.entity.SetRequestNormalData;
 import cn.com.wenyl.bs.dlt698.common.entity.SetRequestNormalFrame;

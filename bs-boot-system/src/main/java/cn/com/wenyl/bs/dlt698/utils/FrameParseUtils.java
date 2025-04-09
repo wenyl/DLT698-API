@@ -27,7 +27,6 @@ public class FrameParseUtils {
      */
     public static FrameDto getFrameDto(byte[] frameBytes) throws RuntimeException{
         FrameDto frameDto = parseFrameHead(frameBytes);
-
         byte[] hcs = getHCS(frameBytes,frameDto.getOffset());
         frameDto.setHcs(hcs);
         frameDto.setOffset(frameDto.getOffset()+hcs.length);
@@ -59,7 +58,6 @@ public class FrameParseUtils {
         // 解析控制域
         byte controlByte = frameBytes[3];
         ControlDomain controlDomain = parseControlDomain(controlByte);
-
 
         // 获取地址域的字节数据并解析
         int[] offsetArray = new int[1];
@@ -229,7 +227,19 @@ public class FrameParseUtils {
      * @return 控制域数据
      */
     public static ControlDomain parseControlDomain(byte frameBytes) {
-        return null;
+        ControlDomain ret = new ControlDomain();
+        int controlField = frameBytes & 0xFF;
+        int funcCode = controlField & 0x07; // 提取功能码（bit0-bit2）
+        int sc = (controlField >>> 3) & 0x01; // 提取扰码标志SC（bit3）
+        int frameFlag = (controlField >>> 5) & 0x01; // 分帧标识（bit5）
+        int prm = (controlField >>> 6) & 0x01; // 启动标志PRM（bit6）
+        int dir = (controlField >>> 7) & 0x01; // 方向标志DIR（bit7）
+        ret.setFunCode(funcCode);
+        ret.setSc(sc);
+        ret.setFrameFlg(frameFlag);
+        ret.setPrm(prm);
+        ret.setDir(dir);
+        return ret;
     }
     /**
      * 获取地址域A

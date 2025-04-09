@@ -7,10 +7,11 @@ import lombok.Getter;
  */
 @Getter
 public enum AttrNum {
+    UNKNOWN(null,"未知属性"),
     ATTR_02((byte)0x02,"属性编号02");
-    private final byte sign;
+    private final Byte sign;
     private final String desc;
-    AttrNum(byte sign, String desc){
+    AttrNum(Byte sign, String desc){
         this.sign = sign;
         this.desc = desc;
     }

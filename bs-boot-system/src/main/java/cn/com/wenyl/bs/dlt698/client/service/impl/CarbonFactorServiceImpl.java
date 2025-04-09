@@ -5,7 +5,9 @@ import cn.com.wenyl.bs.dlt698.common.entity.SetRequestNormalFrame;
 import cn.com.wenyl.bs.dlt698.common.entity.SetResponseNormalData;
 import cn.com.wenyl.bs.dlt698.common.entity.SetResponseNormalFrame;
 import cn.com.wenyl.bs.dlt698.common.constants.*;
-import cn.com.wenyl.bs.dlt698.common.service.BaseFrameParser;
+import cn.com.wenyl.bs.dlt698.common.service.impl.FrameBuildProcessor;
+import cn.com.wenyl.bs.dlt698.common.service.impl.SetRequestNormalFrameBuilder;
+import cn.com.wenyl.bs.dlt698.common.service.impl.SetResponseNormalFrameParser;
 import cn.com.wenyl.bs.dlt698.server.service.FrameParseProcessor;
 import cn.com.wenyl.bs.dlt698.utils.*;
 import com.alibaba.fastjson.JSON;
@@ -42,12 +44,12 @@ public class CarbonFactorServiceImpl implements CarbonFactorService {
 
         SetRequestNormalFrameBuilder builder = (SetRequestNormalFrameBuilder)frameBuildProcessor.getFrameBuilder(SetRequestNormalFrame.class);
 
-        SetRequestNormalFrame setRequestNormalFrame = (SetRequestNormalFrame) FrameBuildUtils.getCommonFrame(SetRequestNormalFrame.class,FunctionCode.THREE, ScramblingCodeFlag.NOT_SCRAMBLING_CODE, FrameFlag.NOT_SUB_FRAME,
+        SetRequestNormalFrame setRequestNormalFrame = FrameBuildUtils.getCommonFrame(SetRequestNormalFrame.class,FunctionCode.THREE, ScramblingCodeFlag.NOT_SCRAMBLING_CODE, FrameFlag.NOT_SUB_FRAME,
                 RequestType.CLIENT_REQUEST, AddressType.SINGLE_ADDRESS,LogicAddress.ZERO, BCDUtils.encodeBCD(carbonDeviceAddress),
                 Address.CLIENT_ADDRESS);
         // todo 生成要设置的信息
         byte[] data = buildSetCarbonFactorBytes(carbonFactor);
-        SetRequestNormalData userData = new SetRequestNormalData(data, PIID.ZERO_ZERO, OI.SET_CARBON_FACTOR, AttrNum.ATTR_02,AttributeIndex.ZERO,TimeTag.NO_TIME_TAG);
+        SetRequestNormalData userData = new SetRequestNormalData(data, PIID.ZERO_ZERO, OI.SET_CARBON_FACTOR, AttrNum.ATTR_02,AttributeIndex.ZERO_ZERO.getSign(),TimeTag.NO_TIME_TAG);
         setRequestNormalFrame.setData(userData);
         byte[] bytes = builder.buildFrame(setRequestNormalFrame);
         log.info(HexUtils.bytesToHex(bytes));
@@ -70,12 +72,12 @@ public class CarbonFactorServiceImpl implements CarbonFactorService {
     public Object setCarbonFactors(CarbonFactorDto carbonFactorDto) throws ExecutionException, InterruptedException, TimeoutException, InvocationTargetException, NoSuchMethodException, InstantiationException, IllegalAccessException {
         SetRequestNormalFrameBuilder builder = (SetRequestNormalFrameBuilder)frameBuildProcessor.getFrameBuilder(SetRequestNormalFrame.class);
 
-        SetRequestNormalFrame setRequestNormalFrame = (SetRequestNormalFrame)FrameBuildUtils.getCommonFrame(SetRequestNormalFrame.class,FunctionCode.THREE, ScramblingCodeFlag.NOT_SCRAMBLING_CODE, FrameFlag.NOT_SUB_FRAME,
+        SetRequestNormalFrame setRequestNormalFrame = FrameBuildUtils.getCommonFrame(SetRequestNormalFrame.class,FunctionCode.THREE, ScramblingCodeFlag.NOT_SCRAMBLING_CODE, FrameFlag.NOT_SUB_FRAME,
                 RequestType.CLIENT_REQUEST, AddressType.SINGLE_ADDRESS,LogicAddress.ZERO, BCDUtils.encodeBCD(carbonFactorDto.getCarbonDeviceAddress()),
                 Address.CLIENT_ADDRESS);
         // todo 生成要设置的信息
         byte[] data = buildSetCarbonFactorBytes(carbonFactorDto.getCarbonFactor());
-        SetRequestNormalData userData = new SetRequestNormalData(data,PIID.ZERO_ZERO,OI.SET_CARBON_FACTOR, AttrNum.ATTR_02,AttributeIndex.ZERO,TimeTag.NO_TIME_TAG);
+        SetRequestNormalData userData = new SetRequestNormalData(data,PIID.ZERO_ZERO,OI.SET_CARBON_FACTOR, AttrNum.ATTR_02,AttributeIndex.ZERO_ZERO.getSign(),TimeTag.NO_TIME_TAG);
         setRequestNormalFrame.setData(userData);
         byte[] bytes = builder.buildFrame(setRequestNormalFrame);
         log.info(HexUtils.bytesToHex(bytes));

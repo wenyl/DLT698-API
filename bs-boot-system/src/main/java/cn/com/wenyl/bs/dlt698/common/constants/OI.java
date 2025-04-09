@@ -7,6 +7,7 @@ import lombok.Getter;
  */
 @Getter
 public enum OI {
+    UNKNOWN(null,"不存在"),
     PAEE(new byte[]{(byte) 0x00, (byte) 0x10},"正向有功电能"),
     RAEE(new byte[]{(byte) 0x00, (byte) 0x20},"反向有功电能"),
     VOLTAGE(new byte[]{(byte) 0x20, (byte) 0x00},"电压"),

@@ -4,7 +4,7 @@ import cn.com.wenyl.bs.dlt698.client.service.CarbonDeviceService;
 import cn.com.wenyl.bs.dlt698.client.service.RS485Service;
 import cn.com.wenyl.bs.dlt698.common.constants.*;
 import cn.com.wenyl.bs.dlt698.common.entity.*;
-import cn.com.wenyl.bs.dlt698.common.service.BaseFrameParser;
+import cn.com.wenyl.bs.dlt698.common.service.impl.*;
 import cn.com.wenyl.bs.dlt698.server.service.FrameParseProcessor;
 import cn.com.wenyl.bs.dlt698.utils.FrameBuildUtils;
 import com.alibaba.fastjson.JSON;
@@ -38,11 +38,11 @@ public class CarbonDeviceServiceImpl implements CarbonDeviceService {
 
         GetRequestNormalFrameBuilder builder = (GetRequestNormalFrameBuilder)frameBuildProcessor.getFrameBuilder(GetRequestNormalFrame.class);
 
-        GetRequestNormalFrame getRequestNormalFrame = (GetRequestNormalFrame) FrameBuildUtils.getCommonFrame(GetRequestNormalFrame.class,FunctionCode.THREE,ScramblingCodeFlag.NOT_SCRAMBLING_CODE, FrameFlag.NOT_SUB_FRAME,
+        GetRequestNormalFrame getRequestNormalFrame = FrameBuildUtils.getCommonFrame(GetRequestNormalFrame.class,FunctionCode.THREE,ScramblingCodeFlag.NOT_SCRAMBLING_CODE, FrameFlag.NOT_SUB_FRAME,
                 RequestType.CLIENT_REQUEST,AddressType.DISTRIBUTION_ADDRESS, LogicAddress.ZERO, Address.DISTRIBUTION_ADDRESS,
                 Address.CLIENT_ADDRESS);
 
-        GetRequestNormalData userData = new GetRequestNormalData(PIID.ZERO_ZERO, OI.MAIL_ADDRESS, AttrNum.ATTR_02,AttributeIndex.ZERO,TimeTag.NO_TIME_TAG);
+        GetRequestNormalData userData = new GetRequestNormalData(PIID.ZERO_ZERO, OI.MAIL_ADDRESS, AttrNum.ATTR_02,AttributeIndex.ZERO_ZERO.getSign(),TimeTag.NO_TIME_TAG);
         getRequestNormalFrame.setData(userData);
         byte[] bytes = builder.buildFrame(getRequestNormalFrame);
         try{
@@ -61,7 +61,7 @@ public class CarbonDeviceServiceImpl implements CarbonDeviceService {
     @DeviceOperateLog(jobName = "碳表管理-链接碳表",valueSign = "connectInfo",valueLabel = "链接信息",hasValue = true)
     public Object connectCarbonDevice(@CarbonDeviceAddress String carbonDeviceAddress) throws RuntimeException, TimeoutException, ExecutionException, InterruptedException, InvocationTargetException, NoSuchMethodException, InstantiationException, IllegalAccessException {
         ConnectRequestFrameBuilder builder = (ConnectRequestFrameBuilder)frameBuildProcessor.getFrameBuilder(ConnectRequestFrame.class);
-        ConnectRequestFrame connectRequestFrame = (ConnectRequestFrame)FrameBuildUtils.getCommonFrame(ConnectRequestFrame.class,FunctionCode.THREE,ScramblingCodeFlag.NOT_SCRAMBLING_CODE,FrameFlag.NOT_SUB_FRAME,
+        ConnectRequestFrame connectRequestFrame = FrameBuildUtils.getCommonFrame(ConnectRequestFrame.class,FunctionCode.THREE,ScramblingCodeFlag.NOT_SCRAMBLING_CODE,FrameFlag.NOT_SUB_FRAME,
                 RequestType.CLIENT_REQUEST,AddressType.SINGLE_ADDRESS,LogicAddress.ZERO, BCDUtils.encodeBCD(carbonDeviceAddress),Address.CLIENT_ADDRESS);
         // 这里使用了默认的参数，有其他需要自己设置对应值即可
         ConnectRequestData requestData = new ConnectRequestData(PIID.ZERO_ZERO,TimeTag.NO_TIME_TAG);

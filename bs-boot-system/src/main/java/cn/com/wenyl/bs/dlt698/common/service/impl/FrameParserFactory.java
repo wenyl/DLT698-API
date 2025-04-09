@@ -1,10 +1,9 @@
-package cn.com.wenyl.bs.dlt698.client.service.impl;
+package cn.com.wenyl.bs.dlt698.common.service.impl;
 
 import cn.com.wenyl.bs.dlt698.common.service.BaseFrameParser;
 import cn.com.wenyl.bs.dlt698.common.entity.Frame;
 import cn.com.wenyl.bs.dlt698.common.entity.LinkUserData;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.shiro.crypto.hash.Hash;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

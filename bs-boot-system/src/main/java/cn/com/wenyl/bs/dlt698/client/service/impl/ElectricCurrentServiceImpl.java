@@ -2,7 +2,9 @@ package cn.com.wenyl.bs.dlt698.client.service.impl;
 
 import cn.com.wenyl.bs.dlt698.common.constants.*;
 import cn.com.wenyl.bs.dlt698.common.entity.GetResponseNormalData;
-import cn.com.wenyl.bs.dlt698.common.service.BaseFrameParser;
+import cn.com.wenyl.bs.dlt698.common.service.impl.FrameBuildProcessor;
+import cn.com.wenyl.bs.dlt698.common.service.impl.GetRequestNormalFrameBuilder;
+import cn.com.wenyl.bs.dlt698.common.service.impl.GetResponseNormalFrameParser;
 import cn.com.wenyl.bs.dlt698.server.service.FrameParseProcessor;
 import cn.com.wenyl.bs.dlt698.utils.FrameBuildUtils;
 import com.alibaba.fastjson.JSON;
@@ -44,11 +46,11 @@ public class ElectricCurrentServiceImpl implements ElectricCurrentService {
     public Object getElectricCurrent(@CarbonDeviceAddress String carbonDeviceAddress) throws ExecutionException, InterruptedException, TimeoutException, JSONException, InvocationTargetException, NoSuchMethodException, InstantiationException, IllegalAccessException {
         GetRequestNormalFrameBuilder builder = (GetRequestNormalFrameBuilder)frameBuildProcessor.getFrameBuilder(GetRequestNormalFrame.class);
 
-        GetRequestNormalFrame getRequestNormalFrame = (GetRequestNormalFrame) FrameBuildUtils.getCommonFrame(GetRequestNormalFrame.class,FunctionCode.THREE, ScramblingCodeFlag.NOT_SCRAMBLING_CODE, FrameFlag.NOT_SUB_FRAME,
+        GetRequestNormalFrame getRequestNormalFrame = FrameBuildUtils.getCommonFrame(GetRequestNormalFrame.class,FunctionCode.THREE, ScramblingCodeFlag.NOT_SCRAMBLING_CODE, FrameFlag.NOT_SUB_FRAME,
                 RequestType.CLIENT_REQUEST, AddressType.SINGLE_ADDRESS,LogicAddress.ZERO, BCDUtils.encodeBCD(carbonDeviceAddress),
                 Address.CLIENT_ADDRESS);
 
-        GetRequestNormalData userData = new GetRequestNormalData(PIID.ZERO_ZERO, OI.ELECTRIC_CURRENT, AttrNum.ATTR_02,AttributeIndex.ZERO_ONE,TimeTag.NO_TIME_TAG);
+        GetRequestNormalData userData = new GetRequestNormalData(PIID.ZERO_ZERO, OI.ELECTRIC_CURRENT, AttrNum.ATTR_02,AttributeIndex.ZERO_ZERO.getSign()_ONE,TimeTag.NO_TIME_TAG);
         getRequestNormalFrame.setData(userData);
         byte[] bytes = builder.buildFrame(getRequestNormalFrame);
         try{

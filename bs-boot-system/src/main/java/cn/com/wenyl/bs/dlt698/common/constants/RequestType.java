@@ -9,7 +9,7 @@ import lombok.Getter;
 public enum RequestType {
     CLIENT_RESPONSE_SERVER(0,0), //客户机对服务器上报的响应
     CLIENT_REQUEST(0,1), //客户机发起的请求
-    SERVER_REQUEST(1,0), // 服务器发起的请求
+    SERVER_REQUEST(1,0), // 服务器发起的上报
     SERVER_RESPONSE_CLIENT(1,1); // 服务器对客户机请求的响应
     private final int dir;
     private final int prm;
