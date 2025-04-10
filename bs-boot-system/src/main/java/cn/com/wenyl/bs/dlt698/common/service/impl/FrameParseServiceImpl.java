@@ -5,14 +5,14 @@ import cn.com.wenyl.bs.dlt698.common.entity.LinkResponseData;
 import cn.com.wenyl.bs.dlt698.common.entity.LinkResponseFrame;
 import cn.com.wenyl.bs.dlt698.common.entity.dto.FrameDto;
 import cn.com.wenyl.bs.dlt698.common.service.FrameParseService;
-import cn.com.wenyl.bs.dlt698.server.entity.LinkRequestData;
-import cn.com.wenyl.bs.dlt698.server.entity.LinkRequestFrame;
-import cn.com.wenyl.bs.dlt698.server.service.FrameParseProcessor;
-import cn.com.wenyl.bs.dlt698.server.service.LinkRequestFrameParser;
-import cn.com.wenyl.bs.dlt698.server.tcp.TcpServerHandler;
+import cn.com.wenyl.bs.dlt698.net4g.entity.LinkRequestData;
+import cn.com.wenyl.bs.dlt698.net4g.entity.LinkRequestFrame;
+import cn.com.wenyl.bs.dlt698.net4g.service.CarbonDeviceService;
+import cn.com.wenyl.bs.dlt698.net4g.service.FrameParseProcessor;
+import cn.com.wenyl.bs.dlt698.net4g.service.LinkRequestFrameParser;
+import cn.com.wenyl.bs.dlt698.net4g.tcp.DeviceChannelManager;
 import cn.com.wenyl.bs.dlt698.utils.ASN1EncoderUtils;
 import cn.com.wenyl.bs.dlt698.utils.FrameBuildUtils;
-import cn.com.wenyl.bs.dlt698.utils.FrameParseUtils;
 import cn.com.wenyl.bs.dlt698.utils.HexUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -31,15 +31,17 @@ public class FrameParseServiceImpl implements FrameParseService {
     @Resource
     private FrameBuildProcessor frameBuildProcessor;
     @Resource
-    private TcpServerHandler tcpServerHandler;
+    private CarbonDeviceService carbonDeviceService;
+    @Resource
+    private DeviceChannelManager deviceChannelManager;
     /**
      * 解析LinkRequest 的login类型
      */
     @Override
-    public void login(String deviceId,FrameDto frameDto,byte[] bytes) throws InvocationTargetException, NoSuchMethodException, InstantiationException, IllegalAccessException {
+    public void login(String deviceIp,FrameDto frameDto) throws InvocationTargetException, NoSuchMethodException, InstantiationException, IllegalAccessException {
         byte[] receiveTime = ASN1EncoderUtils.encodeDateTime();
         LinkRequestFrameParser frameParser = (LinkRequestFrameParser)frameParseProcessor.getFrameParser(LinkRequestFrame.class, LinkRequestData.class);
-        LinkRequestFrame linkRequestFrame = frameParser.parseFrame(bytes);
+        LinkRequestFrame linkRequestFrame = frameParser.parseFrame(frameDto);
         byte[] requestTime = linkRequestFrame.getLinkRequestData().getRequestTimeBytes();
         LinkResponseFrameBuilder frameBuilder = (LinkResponseFrameBuilder) frameBuildProcessor.getFrameBuilder(LinkResponseFrame.class);
 
@@ -52,16 +54,16 @@ public class FrameParseServiceImpl implements FrameParseService {
         linkResponseData.setReceiveTimeBytes(receiveTime);
         linkResponseFrame.setLinkUserData(linkResponseData);
         byte[] frameBytes = frameBuilder.buildFrame(linkResponseFrame);
-        tcpServerHandler.sendDataToDevice(deviceId,frameBytes);
+        deviceChannelManager.sendDataToDevice(deviceIp,frameBytes);
     }
     /**
      * 解析LinkRequest类型
      */
     @Override
-    public void heartbeat(String deviceId,FrameDto frameDto,byte[] bytes) throws InvocationTargetException, NoSuchMethodException, InstantiationException, IllegalAccessException {
+    public void heartbeat(String deviceIp,FrameDto frameDto) throws InvocationTargetException, NoSuchMethodException, InstantiationException, IllegalAccessException {
         byte[] receiveTime = ASN1EncoderUtils.encodeDateTime();
         LinkRequestFrameParser frameParser = (LinkRequestFrameParser)frameParseProcessor.getFrameParser(LinkRequestFrame.class, LinkRequestData.class);
-        LinkRequestFrame linkRequestFrame = frameParser.parseFrame(bytes);
+        LinkRequestFrame linkRequestFrame = frameParser.parseFrame(frameDto);
         byte[] requestTime = linkRequestFrame.getLinkRequestData().getRequestTimeBytes();
         LinkResponseFrameBuilder frameBuilder = (LinkResponseFrameBuilder) frameBuildProcessor.getFrameBuilder(LinkResponseFrame.class);
 
@@ -74,14 +76,14 @@ public class FrameParseServiceImpl implements FrameParseService {
         linkResponseData.setReceiveTimeBytes(receiveTime);
         linkResponseFrame.setLinkUserData(linkResponseData);
         byte[] frameBytes = frameBuilder.buildFrame(linkResponseFrame);
-        tcpServerHandler.sendDataToDevice(deviceId,frameBytes);
+        deviceChannelManager.sendDataToDevice(deviceIp,frameBytes);
     }
 
     @Override
-    public void logout(String deviceId,FrameDto frameDto,byte[] bytes) throws InvocationTargetException, NoSuchMethodException, InstantiationException, IllegalAccessException {
+    public void logout(String deviceIp,FrameDto frameDto) throws InvocationTargetException, NoSuchMethodException, InstantiationException, IllegalAccessException {
         byte[] receiveTime = ASN1EncoderUtils.encodeDateTime();
         LinkRequestFrameParser frameParser = (LinkRequestFrameParser)frameParseProcessor.getFrameParser(LinkRequestFrame.class, LinkRequestData.class);
-        LinkRequestFrame linkRequestFrame = frameParser.parseFrame(bytes);
+        LinkRequestFrame linkRequestFrame = frameParser.parseFrame(frameDto);
         byte[] requestTime = linkRequestFrame.getLinkRequestData().getRequestTimeBytes();
         LinkResponseFrameBuilder frameBuilder = (LinkResponseFrameBuilder) frameBuildProcessor.getFrameBuilder(LinkResponseFrame.class);
 
@@ -94,53 +96,45 @@ public class FrameParseServiceImpl implements FrameParseService {
         linkResponseData.setReceiveTimeBytes(receiveTime);
         linkResponseFrame.setLinkUserData(linkResponseData);
         byte[] frameBytes = frameBuilder.buildFrame(linkResponseFrame);
-        tcpServerHandler.sendDataToDevice(deviceId,frameBytes);
+        deviceChannelManager.sendDataToDevice(deviceIp,frameBytes);
     }
 
-    /**
-     * 解析接收到的数据，调用对应的服务
-     * @param bytes 接收的数据
-     */
     @Override
-    public void frameParse(String deviceId,byte[] bytes) throws RuntimeException,InvocationTargetException, NoSuchMethodException, InstantiationException, IllegalAccessException {
-        FrameDto frameDto = FrameParseUtils.getFrameDto(bytes);
+    public void frameParse(FrameDto frameDto,String deviceIp,byte[] bytes) throws RuntimeException,InvocationTargetException, NoSuchMethodException, InstantiationException, IllegalAccessException {
         byte[] userData = frameDto.getUserData();
         // 如果是碳表发起的请求，则要封装对应数据回复给碳表
-        ClientAPDU clientAPDU = ClientAPDU.getClientAPDUBySign(userData[0]);
-        if(clientAPDU == null){
-            String msg = "无法解析的请求类型"+ HexUtils.byteToHex(userData[0]);
-            log.error(msg);
-            throw new RuntimeException(msg);
+        ClientAPDU clientAPDU = frameDto.getClientAPDU();
+        ServerAPDU serverAPDU = frameDto.getServerAPDU();
+        // 这里处理碳表发来的请求
+        if(clientAPDU != ClientAPDU.UNKNOWN){
+            switch (clientAPDU){
+                case GET_REQUEST:
+                    break;
+                case LINK_REQUEST:
+                    LinkRequestType linkRequestType = LinkRequestType.getLinkRequestTypeBySign(userData[2]);
+                    switch (linkRequestType){
+                        case LOGIN:
+                            login(deviceIp,frameDto);
+                            return;
+                        case HEARTBEAT:
+                            heartbeat(deviceIp,frameDto);
+                            return;
+                        case LOGOUT:
+                            logout(deviceIp,frameDto);
+                            deviceChannelManager.removeDevice(deviceIp);
+                            return;
+                        default:
+                            String msg = "未定义的LinkRequestType类型"+ HexUtils.byteToHex(userData[2]);
+                            log.error(msg);
+                            throw new RuntimeException(msg);
+                    }
+                case CONNECT_REQUEST:
+                    break;
+                case SET_REQUEST:
+                    break;
+            }
         }
 
-        switch (clientAPDU){
-            case GET_REQUEST:
-                break;
-            case LINK_REQUEST:
-                LinkRequestType linkRequestType = LinkRequestType.getLinkRequestTypeBySign(userData[2]);
-                if(linkRequestType == null){
-                    String msg = "未定义的LinkRequestType类型"+ HexUtils.byteToHex(userData[2]);
-                    log.error(msg);
-                    throw new RuntimeException(msg);
-                }
-                switch (linkRequestType){
-                    case LOGIN:
-                        login(deviceId,frameDto,bytes);
-                        return;
-                    case HEARTBEAT:
-                        heartbeat(deviceId,frameDto,bytes);
-                    case LOGOUT:
-                        logout(deviceId,frameDto,bytes);
-                    default:
-                        String msg = "未定义的LinkRequestType类型"+ HexUtils.byteToHex(userData[2]);
-                        log.error(msg);
-                        throw new RuntimeException(msg);
-                }
-
-            case CONNECT_REQUEST:
-                break;
-            case SET_REQUEST:
-                break;
-        }
+        // todo 处理碳表对服务的响应
     }
 }

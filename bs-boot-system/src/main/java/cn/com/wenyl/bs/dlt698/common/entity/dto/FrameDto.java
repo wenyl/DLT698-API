@@ -1,5 +1,7 @@
 package cn.com.wenyl.bs.dlt698.common.entity.dto;
 
+import cn.com.wenyl.bs.dlt698.common.constants.ClientAPDU;
+import cn.com.wenyl.bs.dlt698.common.constants.ServerAPDU;
 import cn.com.wenyl.bs.dlt698.common.entity.AddressDomain;
 import cn.com.wenyl.bs.dlt698.common.entity.ControlDomain;
 import cn.com.wenyl.bs.dlt698.common.entity.LengthDomain;
@@ -29,4 +31,8 @@ public class FrameDto {
     private byte[] userData;
     // 标识当前读取位
     int offset;
+    // 请求
+    private ClientAPDU clientAPDU;
+    // 响应
+    private ServerAPDU serverAPDU;
 }

@@ -5,8 +5,6 @@ import cn.com.wenyl.bs.dlt698.common.constants.GetResponse;
 import cn.com.wenyl.bs.dlt698.common.constants.GetResultType;
 import cn.com.wenyl.bs.dlt698.common.constants.ServerAPDU;
 
-import cn.com.wenyl.bs.dlt698.common.entity.LinkUserData;
-import cn.com.wenyl.bs.dlt698.common.entity.OAD;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 

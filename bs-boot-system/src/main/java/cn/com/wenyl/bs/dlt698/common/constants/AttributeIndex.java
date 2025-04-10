@@ -23,6 +23,6 @@ public enum AttributeIndex {
                 return attributeIndex;
             }
         }
-        return null;
+        return UNKNOWN;
     }
 }

@@ -10,26 +10,27 @@ import java.lang.reflect.InvocationTargetException;
 public interface FrameParseService {
     /**
      * 处理login
+     * @param deviceIp 设备IP
      * @param frameDto frame传输对象
-     * @param bytes 原始报文
      */
-    void login(String deviceId,FrameDto frameDto, byte[] bytes) throws InvocationTargetException, NoSuchMethodException, InstantiationException, IllegalAccessException;
+    void login(String deviceIp,FrameDto frameDto) throws InvocationTargetException, NoSuchMethodException, InstantiationException, IllegalAccessException;
     /**
      * 处理heartBeat
+     * @param deviceIp 设备IP
      * @param frameDto frame传输对象
-     * @param bytes 原始报文
      */
-    void heartbeat(String deviceId,FrameDto frameDto, byte[] bytes) throws InvocationTargetException, NoSuchMethodException, InstantiationException, IllegalAccessException;
+    void heartbeat(String deviceIp,FrameDto frameDto) throws InvocationTargetException, NoSuchMethodException, InstantiationException, IllegalAccessException;
     /**
      * 处理heartBeat
+     * @param deviceIp 设备IP
      * @param frameDto frame传输对象
-     * @param bytes 原始报文
      */
-    void logout(String deviceId,FrameDto frameDto, byte[] bytes) throws InvocationTargetException, NoSuchMethodException, InstantiationException, IllegalAccessException;
+    void logout(String deviceIp,FrameDto frameDto) throws InvocationTargetException, NoSuchMethodException, InstantiationException, IllegalAccessException;
     /**
      * 解析设备发送的字节数据
-     * @param deviceId 设备ID
+     * @param frameDto frame传输对象
+     * @param deviceIp 设备IP
      * @param bytes 设备发送的字节数据
      */
-    void frameParse(String deviceId,byte[] bytes) throws RuntimeException,InvocationTargetException, NoSuchMethodException, InstantiationException, IllegalAccessException;
+    void frameParse(FrameDto frameDto,String deviceIp,byte[] bytes) throws RuntimeException,InvocationTargetException, NoSuchMethodException, InstantiationException, IllegalAccessException;
 }

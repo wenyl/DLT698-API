@@ -23,6 +23,6 @@ public enum AttrNum {
                 return attrNum;
             }
         }
-        return null;
+        return UNKNOWN;
     }
 }

@@ -33,6 +33,6 @@ public enum OI {
                 return oi;
             }
         }
-        return null;
+        return UNKNOWN;
     }
 }

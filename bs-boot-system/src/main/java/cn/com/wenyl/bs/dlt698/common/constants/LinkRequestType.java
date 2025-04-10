@@ -7,11 +7,14 @@ import lombok.Getter;
  */
 @Getter
 public enum LinkRequestType {
-    LOGIN((byte)0x01,1,"登录"),HEARTBEAT((byte)0x02,2,"心跳"),LOGOUT((byte)0x03,2,"退出");
-    private final byte sign;
+    LOGIN((byte)0x01,1,"登录"),
+    HEARTBEAT((byte)0x02,2,"心跳"),
+    LOGOUT((byte)0x03,2,"退出"),
+    UNKNOWN(null,-1,"未知");
+    private final Byte sign;
     private final int signNum;
     private final String desc;
-    LinkRequestType(byte sign, int signNum, String desc){
+    LinkRequestType(Byte sign, int signNum, String desc){
         this.sign = sign;
         this.signNum = signNum;
         this.desc = desc;
@@ -24,6 +27,6 @@ public enum LinkRequestType {
                 return linkRequestType;
             }
         }
-        return null;
+        return UNKNOWN;
     }
 }

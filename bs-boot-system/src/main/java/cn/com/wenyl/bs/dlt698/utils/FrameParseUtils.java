@@ -1,9 +1,6 @@
 package cn.com.wenyl.bs.dlt698.utils;
 
-import cn.com.wenyl.bs.dlt698.common.constants.AttrNum;
-import cn.com.wenyl.bs.dlt698.common.constants.DLT698Def;
-import cn.com.wenyl.bs.dlt698.common.constants.DataType;
-import cn.com.wenyl.bs.dlt698.common.constants.OI;
+import cn.com.wenyl.bs.dlt698.common.constants.*;
 import cn.com.wenyl.bs.dlt698.common.entity.dto.FrameDto;
 import cn.com.wenyl.bs.dlt698.common.entity.AddressDomain;
 import cn.com.wenyl.bs.dlt698.common.entity.ControlDomain;
@@ -12,6 +9,7 @@ import cn.com.wenyl.bs.dlt698.common.entity.OAD;
 import com.alibaba.fastjson2.JSONArray;
 import lombok.extern.slf4j.Slf4j;
 
+import javax.management.RuntimeMBeanException;
 import java.math.BigInteger;
 import java.nio.ByteBuffer;
 import java.util.Arrays;
@@ -37,7 +35,15 @@ public class FrameParseUtils {
         byte[] userData = getUserData(frameBytes,frameDto.getOffset());
         frameDto.setUserData(userData);
         frameDto.setOffset(frameDto.getOffset()+userData.length);
-
+        ClientAPDU clientAPDU = ClientAPDU.getClientAPDUBySign(userData[0]);
+        ServerAPDU serverAPDU = ServerAPDU.getServerAPDUBySign(userData[0]);
+        if(clientAPDU == ClientAPDU.UNKNOWN){
+            if(serverAPDU == ServerAPDU.UNKNOWN){
+                throw new RuntimeException("未知请求"+HexUtils.byteToHex(userData[0]));
+            }
+        }
+        frameDto.setServerAPDU(serverAPDU);
+        frameDto.setClientAPDU(clientAPDU);
         byte[] fcs = getFCS(frameBytes,frameDto.getOffset());
         frameDto.setFcs(fcs);
         if(!checkFrameFCS(frameDto)){
@@ -272,21 +278,24 @@ public class FrameParseUtils {
      * @param oad oad字节信息
      * @return OAD实体
      */
-    public static OAD parseOAD(byte[] oad){
+    public static OAD parseOAD(byte[] oad) throws RuntimeException{
         OAD oadData = new OAD();
         byte[] sign = new byte[2];
         System.arraycopy(oad,0,sign,0,2);
         OI oiBySign = OI.getOIBySign(sign);
-        if(oiBySign == null){
-            log.error("oad数据解析异常{}", bytesToHex(oad));
-            log.error("OI接口不存在{}", bytesToHex(sign));
-            return null;
+        if(oiBySign == OI.UNKNOWN){
+            String msg = "oad数据解析异常{}"+bytesToHex(oad)+",OI接口不存在"+bytesToHex(sign);
+            throw new RuntimeException(msg);
         }
         AttrNum attrNumBySign = AttrNum.getAttrNumBySign(oad[2]);
-        if(attrNumBySign == null){
-            log.error("oad数据解析异常{}", bytesToHex(oad));
-            log.error("属性编号不存在{}", HexUtils.byteToHex(oad[2]));
-            return null;
+        if(attrNumBySign == AttrNum.UNKNOWN){
+            String msg = "oad数据解析异常"+bytesToHex(oad)+",属性编号不存在"+HexUtils.byteToHex(oad[2]);
+            throw new RuntimeException(msg);
+        }
+        AttributeIndex attributeIndex = AttributeIndex.getAttributeIndexBySigh(oad[3]);
+        if(attributeIndex == AttributeIndex.UNKNOWN){
+            String msg = "oad数据解析异常"+bytesToHex(oad)+",特征索引不存在"+HexUtils.byteToHex(oad[3]);
+            throw new RuntimeException(msg);
         }
         log.info("OAD数据解析成功{}", bytesToHex(oad));
         log.info("操作名--{},接口编号--{},属性编号及类型--{}", oiBySign.getDesc(), bytesToHex(oiBySign.getSign()), attrNumBySign.getDesc());
