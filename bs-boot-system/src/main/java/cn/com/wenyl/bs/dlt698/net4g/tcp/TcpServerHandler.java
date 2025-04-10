@@ -5,7 +5,6 @@ import cn.com.wenyl.bs.dlt698.common.service.FrameParseService;
 import cn.com.wenyl.bs.dlt698.net4g.entity.CarbonDevice;
 import cn.com.wenyl.bs.dlt698.net4g.service.CarbonDeviceService;
 import cn.com.wenyl.bs.dlt698.net4g.service.DeviceMsgHisService;
-import cn.com.wenyl.bs.dlt698.net4g.service.StationDeviceMsgRelaService;
 import cn.com.wenyl.bs.dlt698.utils.FrameParseUtils;
 import cn.com.wenyl.bs.dlt698.utils.HexUtils;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
@@ -17,7 +16,9 @@ import org.springframework.stereotype.Component;
 import org.springframework.context.annotation.Scope;
 
 import javax.annotation.Resource;
+import java.net.InetSocketAddress;
 import java.time.LocalDateTime;
+import java.util.Arrays;
 
 @Slf4j
 @Component
@@ -34,8 +35,9 @@ public class TcpServerHandler  extends SimpleChannelInboundHandler<ByteBuf> {
 
     @Override
     public void channelActive(ChannelHandlerContext ctx) {
-        String deviceIp = ctx.channel().remoteAddress().toString();
-
+        InetSocketAddress socketAddress = (InetSocketAddress) ctx.channel().remoteAddress();
+        String deviceIp = socketAddress.getAddress().getHostAddress();
+        int port = socketAddress.getPort();
         // 数据库不存在则保存这个数据
         LambdaQueryWrapper<CarbonDevice> query = new LambdaQueryWrapper<>();
         query.eq(CarbonDevice::getDeviceIp,deviceIp);
@@ -51,14 +53,15 @@ public class TcpServerHandler  extends SimpleChannelInboundHandler<ByteBuf> {
             deviceId = carbonDevice.getId();
         }
         deviceChannelManager.addDevice(deviceId,deviceIp, ctx.channel());
-        log.info("设备链接:id={},ip={}",deviceId,deviceIp);
+        log.info("设备链接:id={},ip={},port={}",deviceId,deviceIp,port);
     }
 
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, ByteBuf msg) {
         String deviceIp = ctx.channel().remoteAddress().toString();
-
         byte[] bytes = new byte[msg.readableBytes()];
+        log.info(Arrays.toString(bytes));
+        log.info("收到设备数据:{}",HexUtils.bytesToHex(bytes));
         if(!FrameParseUtils.checkFrame(bytes)){
             String errorInfo = "无效帧：起始符或结束符错误,当前帧起始符--"+HexUtils.byteToHex(bytes[0])+",结束符--"+HexUtils.byteToHex(bytes[bytes.length-1]);
             log.error(errorInfo);
@@ -72,7 +75,7 @@ public class TcpServerHandler  extends SimpleChannelInboundHandler<ByteBuf> {
         // 根据IP查询数据
         FrameDto frameDto = FrameParseUtils.getFrameDto(bytes);
         msg.readBytes(bytes);
-        log.info("收到设备数据:{}",HexUtils.bytesToHex(bytes));
+
         try {
             deviceMsgHisService.save(frameDto,deviceId,bytes);
             frameParseService.frameParse(frameDto,deviceIp,bytes);

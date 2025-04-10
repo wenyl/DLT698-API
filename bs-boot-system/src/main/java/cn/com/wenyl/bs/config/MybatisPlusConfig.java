@@ -1,4 +1,4 @@
-package cn.com.wenyl.bs.dlt698.rs485.config;
+package cn.com.wenyl.bs.config;
 import com.baomidou.mybatisplus.extension.plugins.PaginationInterceptor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
