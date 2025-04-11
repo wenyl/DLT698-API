@@ -19,6 +19,7 @@ public enum AttributeIndex {
     public static AttributeIndex getAttributeIndexBySigh(byte sign){
         AttributeIndex[] values = AttributeIndex.values();
         for(AttributeIndex attributeIndex:values) {
+            if (attributeIndex.sign == null) continue;
             if (attributeIndex.getSign() == sign) {
                 return attributeIndex;
             }

@@ -1,9 +1,10 @@
-package cn.com.wenyl.bs.dlt698.net4g.service;
+package cn.com.wenyl.bs.dlt698.common.service.impl;
 
 import cn.com.wenyl.bs.dlt698.common.constants.DataType;
+import cn.com.wenyl.bs.dlt698.common.entity.dto.FrameDto;
+import cn.com.wenyl.bs.dlt698.common.service.BaseFrameParser;
 import cn.com.wenyl.bs.dlt698.net4g.entity.LinkRequestData;
 import cn.com.wenyl.bs.dlt698.net4g.entity.LinkRequestFrame;
-import cn.com.wenyl.bs.dlt698.common.entity.dto.FrameDto;
 import cn.com.wenyl.bs.dlt698.utils.ASN1DecoderUtils;
 import cn.com.wenyl.bs.dlt698.utils.FrameParseUtils;
 import cn.com.wenyl.bs.dlt698.utils.HexUtils;
@@ -11,9 +12,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 @Slf4j
-@Service("linkResponseFrameParser")
+@Service("linkRequestFrameParser")
 public class LinkRequestFrameParser implements BaseFrameParser<LinkRequestFrame, LinkRequestData> {
-    @Override
     public LinkRequestFrame parseFrame(FrameDto frameDto) throws RuntimeException{
         LinkRequestFrame frame  = new LinkRequestFrame();
         LinkRequestData linkRequestData = this.parseLinkUserData(frameDto.getUserData());
@@ -24,6 +24,11 @@ public class LinkRequestFrameParser implements BaseFrameParser<LinkRequestFrame,
         frame.setLinkRequestData(linkRequestData);
         frame.setFcs(frameDto.getFcs());
         return frame;
+    }
+
+    @Override
+    public LinkRequestFrame parseFrame(byte[] frameBytes) throws RuntimeException {
+        return null;
     }
 
     @Override

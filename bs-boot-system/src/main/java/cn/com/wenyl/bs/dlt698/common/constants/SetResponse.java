@@ -21,6 +21,8 @@ public enum SetResponse {
     public static SetResponse getSetResponseBySign(byte sign){
         SetResponse[] values = SetResponse.values();
         for(SetResponse setResponse:values) {
+            if (setResponse.sign == null) continue;
+
             if (setResponse.getSign() == sign) {
                 return setResponse;
             }

@@ -58,9 +58,10 @@ public class TcpServerHandler  extends SimpleChannelInboundHandler<ByteBuf> {
 
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, ByteBuf msg) {
-        String deviceIp = ctx.channel().remoteAddress().toString();
+        InetSocketAddress socketAddress = (InetSocketAddress) ctx.channel().remoteAddress();
+        String deviceIp = socketAddress.getAddress().getHostAddress();
         byte[] bytes = new byte[msg.readableBytes()];
-        log.info(Arrays.toString(bytes));
+        msg.readBytes(bytes);
         log.info("收到设备数据:{}",HexUtils.bytesToHex(bytes));
         if(!FrameParseUtils.checkFrame(bytes)){
             String errorInfo = "无效帧：起始符或结束符错误,当前帧起始符--"+HexUtils.byteToHex(bytes[0])+",结束符--"+HexUtils.byteToHex(bytes[bytes.length-1]);
@@ -72,15 +73,13 @@ public class TcpServerHandler  extends SimpleChannelInboundHandler<ByteBuf> {
             log.error("未知设备ip={}",deviceIp);
             return;
         }
-        // 根据IP查询数据
-        FrameDto frameDto = FrameParseUtils.getFrameDto(bytes);
-        msg.readBytes(bytes);
-
         try {
+            // 根据IP查询数据
+            FrameDto frameDto = FrameParseUtils.getFrameDto(bytes);
             deviceMsgHisService.save(frameDto,deviceId,bytes);
             frameParseService.frameParse(frameDto,deviceIp,bytes);
         } catch (Exception e) {
-            log.error("解析收到的帧数据异常，设备ID: {}, 字节内容: {}, 错误信息: {}", deviceIp, HexUtils.bytesToHex(bytes), e.getMessage());
+            log.error("解析收到的帧数据异常，设备ID: {}, 字节内容: {}", deviceIp, HexUtils.bytesToHex(bytes), e);
         }
     }
 

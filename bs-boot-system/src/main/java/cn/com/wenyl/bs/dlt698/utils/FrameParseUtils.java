@@ -15,6 +15,10 @@ import java.nio.ByteBuffer;
 import java.util.Arrays;
 
 import static cn.com.wenyl.bs.dlt698.utils.HexUtils.bytesToHex;
+
+/**
+ *
+ */
 @Slf4j
 public class FrameParseUtils {
     /**
@@ -37,10 +41,8 @@ public class FrameParseUtils {
         frameDto.setOffset(frameDto.getOffset()+userData.length);
         ClientAPDU clientAPDU = ClientAPDU.getClientAPDUBySign(userData[0]);
         ServerAPDU serverAPDU = ServerAPDU.getServerAPDUBySign(userData[0]);
-        if(clientAPDU == ClientAPDU.UNKNOWN){
-            if(serverAPDU == ServerAPDU.UNKNOWN){
-                throw new RuntimeException("未知请求"+HexUtils.byteToHex(userData[0]));
-            }
+        if(clientAPDU == ClientAPDU.UNKNOWN && serverAPDU == ServerAPDU.UNKNOWN){
+            throw new RuntimeException("未知请求"+HexUtils.byteToHex(userData[0]));
         }
         frameDto.setServerAPDU(serverAPDU);
         frameDto.setClientAPDU(clientAPDU);

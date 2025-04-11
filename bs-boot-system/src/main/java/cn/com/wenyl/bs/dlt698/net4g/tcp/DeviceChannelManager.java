@@ -27,7 +27,6 @@ public class DeviceChannelManager {
     public void addDevice(int deviceId,String deviceIp, Channel channel) {
         deviceChannels.put(deviceIp, channel);
         deviceIds.put(deviceIp,deviceId);
-        isAlive(deviceIp);
     }
 
     // 移除设备连接
@@ -48,8 +47,9 @@ public class DeviceChannelManager {
      * @param deviceIp 设备IP
      * @param data 数据
      */
-    public void sendDataToDevice(String deviceIp, byte[] data) {
+    public void sendDataToDevice(String deviceIp, byte[] data) throws Exception{
         FrameDto frameDto = FrameParseUtils.getFrameDto(data);
+        log.info("发送数据解析结果{}",frameDto);
         Integer deviceId = this.getDeviceId(deviceIp);
         deviceMsgHisService.save(frameDto,deviceId,data);
         Channel deviceChannel = getDeviceChannel(deviceIp);

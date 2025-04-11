@@ -20,5 +20,5 @@ public interface DeviceMsgHisService extends IService<DeviceMsgHis> {
      * @param deviceId 设备ID
      * @param bytes 帧原始数据
      */
-    void save(FrameDto frameDto, Integer deviceId, byte[] bytes) throws RuntimeException;
+    void save(FrameDto frameDto, Integer deviceId, byte[] bytes);
 }

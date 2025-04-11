@@ -24,6 +24,8 @@ public enum ServerAPDU {
     public static ServerAPDU getServerAPDUBySign(byte sign){
         ServerAPDU[] values = ServerAPDU.values();
         for(ServerAPDU serverAPDU:values) {
+            if (serverAPDU.sign == null) continue;
+
             if (serverAPDU.getSign() == sign) {
                 return serverAPDU;
             }

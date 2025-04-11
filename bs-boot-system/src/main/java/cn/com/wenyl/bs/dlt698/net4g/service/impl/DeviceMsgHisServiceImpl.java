@@ -13,6 +13,7 @@ import cn.com.wenyl.bs.dlt698.utils.FrameParseUtils;
 import cn.com.wenyl.bs.dlt698.utils.HexUtils;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -34,7 +35,8 @@ public class DeviceMsgHisServiceImpl extends ServiceImpl<DeviceMsgHisMapper, Dev
     private StationDeviceMsgRelaService deviceMsgRelaService;
 
     @Override
-    public void save(FrameDto frameDto, Integer deviceId, byte[] bytes) throws RuntimeException{
+    public void save(FrameDto frameDto, Integer deviceId, byte[] bytes){
+        log.info("开始保存帧数据");
         // 关联的消息条件
         DeviceMsgHisRela relaMsg = new DeviceMsgHisRela();
 
@@ -42,15 +44,16 @@ public class DeviceMsgHisServiceImpl extends ServiceImpl<DeviceMsgHisMapper, Dev
         byte[] userData = frameDto.getUserData();
         ClientAPDU clientAPDU = frameDto.getClientAPDU();
         ServerAPDU serverAPDU = frameDto.getServerAPDU();
-        String apdu = frameDto.getClientAPDU() == ClientAPDU.UNKNOWN ?
-                HexUtils.byteToHex(serverAPDU.getSign()):HexUtils.byteToHex(clientAPDU.getSign());
         ControlDomain controlDomain = frameDto.getControlDomain();
 
         DeviceMsgHis deviceMsgHis = new DeviceMsgHis();
         deviceMsgHis.setDeviceId(deviceId);
         deviceMsgHis.setDir(controlDomain.getDir());
         deviceMsgHis.setPrm(controlDomain.getPrm());
+        String apdu = frameDto.getClientAPDU() == ClientAPDU.UNKNOWN ?
+                HexUtils.byteToHex(serverAPDU.getSign()):HexUtils.byteToHex(clientAPDU.getSign());
         deviceMsgHis.setApdu(apdu);
+
         if(controlDomain.getDir() == 1 && controlDomain.getPrm() == 0){
             relaMsg.setTargetDir(0);
             relaMsg.setTargetPrm(0);
@@ -59,16 +62,26 @@ public class DeviceMsgHisServiceImpl extends ServiceImpl<DeviceMsgHisMapper, Dev
             relaMsg.setTargetDir(1);
             relaMsg.setTargetPrm(1);
         }
+        if(controlDomain.getDir() == 0 && controlDomain.getPrm() == 0){
+            relaMsg.setTargetDir(1);
+            relaMsg.setTargetPrm(0);
+        }
+        if(controlDomain.getDir() == 1 && controlDomain.getPrm() == 1){
+            relaMsg.setTargetDir(0);
+            relaMsg.setTargetPrm(1);
+        }
+
         switch (clientAPDU){
             case LINK_REQUEST:
-                relaMsg.setApdu(HexUtils.byteToHex(ServerAPDU.LINK_RESPONSE.getSign()));
+                relaMsg.setTargetApdu(HexUtils.byteToHex(ServerAPDU.LINK_RESPONSE.getSign()));
                 break;
             case GET_REQUEST:
-                relaMsg.setApdu(HexUtils.byteToHex(ServerAPDU.GET_RESPONSE.getSign()));
+                relaMsg.setTargetApdu(HexUtils.byteToHex(ServerAPDU.GET_RESPONSE.getSign()));
                 GetRequest getRequest = GetRequest.getRequestBySign(userData[1]);
                 deviceMsgHis.setApduOpera(HexUtils.byteToHex(getRequest.getSign()));
                 switch (getRequest){
                     case GET_REQUEST_NORMAL:
+                        relaMsg.setTargetApduOpera(HexUtils.byteToHex(GetResponse.GET_RESPONSE_NORMAL.getSign()));
                         byte[] oadBytes = new byte[4];
                         System.arraycopy(userData,3,oadBytes,0,4);
                         OAD oad = FrameParseUtils.parseOAD(oadBytes);
@@ -78,21 +91,18 @@ public class DeviceMsgHisServiceImpl extends ServiceImpl<DeviceMsgHisMapper, Dev
                         deviceMsgHis.setOi(oiStr);
                         deviceMsgHis.setAttrNum(attrNumStr);
                         deviceMsgHis.setAttrIndex(attrIndexStr);
-                        relaMsg.setApduOpera(HexUtils.byteToHex(GetResponse.GET_RESPONSE_NORMAL.getSign()));
-                        relaMsg.setOi(oiStr);
-                        relaMsg.setAttrNum(attrNumStr);
-                        relaMsg.setAttrIndex(attrIndexStr);
                         break;
                     case UNKNOWN:
                         throw new RuntimeException("未知GetRequest类型"+HexUtils.byteToHex(getRequest.getSign()));
                 }
                 break;
             case SET_REQUEST:
-                relaMsg.setApdu(HexUtils.byteToHex(ServerAPDU.SET_RESPONSE.getSign()));
+                relaMsg.setTargetApdu(HexUtils.byteToHex(ServerAPDU.SET_RESPONSE.getSign()));
                 SetRequest setRequest = SetRequest.getSetRequestBySign(userData[1]);
                 deviceMsgHis.setApduOpera(HexUtils.byteToHex(setRequest.getSign()));
                 switch (setRequest){
                     case SET_REQUEST_NORMAL:
+                        relaMsg.setTargetApduOpera(HexUtils.byteToHex(SetResponse.SET_RESPONSE_NORMAL.getSign()));
                         byte[] oadBytes = new byte[4];
                         System.arraycopy(userData,3,oadBytes,0,4);
                         OAD oad = FrameParseUtils.parseOAD(oadBytes);
@@ -102,10 +112,6 @@ public class DeviceMsgHisServiceImpl extends ServiceImpl<DeviceMsgHisMapper, Dev
                         deviceMsgHis.setOi(oiStr);
                         deviceMsgHis.setAttrNum(attrNumStr);
                         deviceMsgHis.setAttrIndex(attrIndexStr);
-                        relaMsg.setApduOpera(HexUtils.byteToHex(SetResponse.SET_RESPONSE_NORMAL.getSign()));
-                        relaMsg.setOi(oiStr);
-                        relaMsg.setAttrNum(attrNumStr);
-                        relaMsg.setAttrIndex(attrIndexStr);
                         break;
                     case UNKNOWN:
                         throw new RuntimeException("未知SetRequest类型"+HexUtils.byteToHex(setRequest.getSign()));
@@ -115,14 +121,15 @@ public class DeviceMsgHisServiceImpl extends ServiceImpl<DeviceMsgHisMapper, Dev
 
         switch(serverAPDU){
             case LINK_RESPONSE:
-                 relaMsg.setApduOpera(HexUtils.byteToHex(ClientAPDU.LINK_REQUEST.getSign()));
+                 relaMsg.setTargetApdu(HexUtils.byteToHex(ClientAPDU.LINK_REQUEST.getSign()));
                  break;
             case GET_RESPONSE:
-                relaMsg.setApduOpera(HexUtils.byteToHex(ClientAPDU.GET_REQUEST.getSign()));
+                relaMsg.setTargetApdu(HexUtils.byteToHex(ClientAPDU.GET_REQUEST.getSign()));
                 GetResponse getResponse = GetResponse.getResponseBySign(userData[1]);
                 deviceMsgHis.setApduOpera(HexUtils.byteToHex(getResponse.getSign()));
                 switch (getResponse){
                     case GET_RESPONSE_NORMAL:
+                        relaMsg.setTargetApduOpera(HexUtils.byteToHex(GetRequest.GET_REQUEST_NORMAL.getSign()));
                         byte[] oadBytes = new byte[4];
                         System.arraycopy(userData,3,oadBytes,0,4);
                         OAD oad = FrameParseUtils.parseOAD(oadBytes);
@@ -132,21 +139,18 @@ public class DeviceMsgHisServiceImpl extends ServiceImpl<DeviceMsgHisMapper, Dev
                         deviceMsgHis.setOi(oiStr);
                         deviceMsgHis.setAttrNum(attrNumStr);
                         deviceMsgHis.setAttrIndex(attrIndexStr);
-                        relaMsg.setApduOpera(HexUtils.byteToHex(GetRequest.GET_REQUEST_NORMAL.getSign()));
-                        relaMsg.setOi(oiStr);
-                        relaMsg.setAttrNum(attrNumStr);
-                        relaMsg.setAttrIndex(attrIndexStr);
                         break;
                     case UNKNOWN:
                         throw new RuntimeException("未知GetResponse类型"+HexUtils.byteToHex(getResponse.getSign()));
                 }
                 break;
             case SET_RESPONSE:
-                relaMsg.setApduOpera(HexUtils.byteToHex(ClientAPDU.SET_REQUEST.getSign()));
+                relaMsg.setTargetApdu(HexUtils.byteToHex(ClientAPDU.SET_REQUEST.getSign()));
                 SetResponse setResponse = SetResponse.getSetResponseBySign(userData[1]);
                 deviceMsgHis.setApduOpera(HexUtils.byteToHex(setResponse.getSign()));
                 switch (setResponse){
                     case SET_RESPONSE_NORMAL:
+                        relaMsg.setTargetApduOpera(HexUtils.byteToHex(SetRequest.SET_REQUEST_NORMAL.getSign()));
                         byte[] oadBytes = new byte[4];
                         System.arraycopy(userData,3,oadBytes,0,4);
                         OAD oad = FrameParseUtils.parseOAD(oadBytes);
@@ -156,10 +160,6 @@ public class DeviceMsgHisServiceImpl extends ServiceImpl<DeviceMsgHisMapper, Dev
                         deviceMsgHis.setOi(oiStr);
                         deviceMsgHis.setAttrNum(attrNumStr);
                         deviceMsgHis.setAttrIndex(attrIndexStr);
-                        relaMsg.setApduOpera(HexUtils.byteToHex(SetRequest.SET_REQUEST_NORMAL.getSign()));
-                        relaMsg.setOi(oiStr);
-                        relaMsg.setAttrNum(attrNumStr);
-                        relaMsg.setAttrIndex(attrIndexStr);
                         break;
                     case UNKNOWN:
                         throw new RuntimeException("未知SetResponse类型"+HexUtils.byteToHex(setResponse.getSign()));
@@ -171,7 +171,7 @@ public class DeviceMsgHisServiceImpl extends ServiceImpl<DeviceMsgHisMapper, Dev
         deviceMsgHis.setDataLength(bytes.length);
         deviceMsgHis.setCreateTime(LocalDateTime.now());
         this.save(deviceMsgHis);
-        relaMsg.setId(deviceMsgHis.getId());
+        BeanUtils.copyProperties(deviceMsgHis,relaMsg);
         deviceMsgRelaService.saveRelaMsg(relaMsg);
     }
 }

@@ -19,6 +19,7 @@ public enum AttrNum {
     public static AttrNum getAttrNumBySign(byte sign){
         AttrNum[] values = AttrNum.values();
         for(AttrNum attrNum:values) {
+            if (attrNum.sign == null) continue;
             if (attrNum.getSign() == sign) {
                 return attrNum;
             }

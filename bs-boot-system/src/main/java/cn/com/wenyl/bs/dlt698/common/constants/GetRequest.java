@@ -21,6 +21,7 @@ public enum GetRequest {
     public static GetRequest getRequestBySign(byte sign){
         GetRequest[] values = GetRequest.values();
         for(GetRequest getRequest:values) {
+            if (getRequest.sign == null) continue;
             if (getRequest.getSign() == sign) {
                 return getRequest;
             }

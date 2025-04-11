@@ -21,6 +21,7 @@ public enum SetRequest {
     public static SetRequest getSetRequestBySign(Byte sign){
         SetRequest[] values = SetRequest.values();
         for(SetRequest setRequest:values) {
+            if (setRequest.sign == null) continue;
             if (setRequest.getSign() == sign) {
                 return setRequest;
             }

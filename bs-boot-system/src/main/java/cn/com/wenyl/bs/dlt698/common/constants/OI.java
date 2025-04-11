@@ -28,6 +28,7 @@ public enum OI {
     public static OI getOIBySign(byte[] sign){
         OI[] values = OI.values();
         for(OI oi:values) {
+            if (oi.sign == null) continue;
             byte[] oiSign = oi.sign;
             if (oiSign[0] == sign[0] && oiSign[1] == sign[1]) {
                 return oi;

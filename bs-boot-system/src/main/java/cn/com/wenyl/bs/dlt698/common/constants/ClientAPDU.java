@@ -24,6 +24,7 @@ public enum ClientAPDU {
     public static ClientAPDU getClientAPDUBySign(byte sign){
         ClientAPDU[] values = ClientAPDU.values();
         for(ClientAPDU clientAPDU:values) {
+            if (clientAPDU.sign == null) continue;
             if (clientAPDU.getSign() == sign) {
                 return clientAPDU;
             }
