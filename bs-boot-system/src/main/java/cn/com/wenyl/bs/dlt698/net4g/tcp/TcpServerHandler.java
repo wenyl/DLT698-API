@@ -3,7 +3,9 @@ package cn.com.wenyl.bs.dlt698.net4g.tcp;
 import cn.com.wenyl.bs.dlt698.common.entity.dto.FrameDto;
 import cn.com.wenyl.bs.dlt698.common.service.FrameParseService;
 import cn.com.wenyl.bs.dlt698.net4g.entity.CarbonDevice;
+import cn.com.wenyl.bs.dlt698.net4g.entity.DeviceErrorMsgHis;
 import cn.com.wenyl.bs.dlt698.net4g.service.CarbonDeviceService;
+import cn.com.wenyl.bs.dlt698.net4g.service.DeviceErrorMsgHisService;
 import cn.com.wenyl.bs.dlt698.net4g.service.DeviceMsgHisService;
 import cn.com.wenyl.bs.dlt698.utils.FrameParseUtils;
 import cn.com.wenyl.bs.dlt698.utils.HexUtils;
@@ -18,7 +20,6 @@ import org.springframework.context.annotation.Scope;
 import javax.annotation.Resource;
 import java.net.InetSocketAddress;
 import java.time.LocalDateTime;
-import java.util.Arrays;
 
 @Slf4j
 @Component
@@ -32,7 +33,8 @@ public class TcpServerHandler  extends SimpleChannelInboundHandler<ByteBuf> {
     private DeviceChannelManager deviceChannelManager;
     @Resource
     private DeviceMsgHisService deviceMsgHisService;
-
+    @Resource
+    private DeviceErrorMsgHisService deviceErrorMsgHisService;
     @Override
     public void channelActive(ChannelHandlerContext ctx) {
         InetSocketAddress socketAddress = (InetSocketAddress) ctx.channel().remoteAddress();
@@ -73,12 +75,31 @@ public class TcpServerHandler  extends SimpleChannelInboundHandler<ByteBuf> {
             log.error("未知设备ip={}",deviceIp);
             return;
         }
+        FrameDto frameDto;
+        try{
+            frameDto = FrameParseUtils.getFrameDto(bytes);
+        }catch (Exception e){
+            DeviceErrorMsgHis errorMsgHis = new DeviceErrorMsgHis();
+            errorMsgHis.setByteData(HexUtils.bytesToHex(bytes));
+            errorMsgHis.setDataLength(bytes.length);
+            errorMsgHis.setCreateTime(LocalDateTime.now());
+            errorMsgHis.setErrorMsg(e.getMessage());
+            deviceErrorMsgHisService.save(errorMsgHis);
+            log.error("帧数据解析报错--{}",e.getMessage());
+            return;
+        }
         try {
             // 根据IP查询数据
-            FrameDto frameDto = FrameParseUtils.getFrameDto(bytes);
             deviceMsgHisService.save(frameDto,deviceId,bytes);
             frameParseService.frameParse(frameDto,deviceIp,bytes);
         } catch (Exception e) {
+            DeviceErrorMsgHis errorMsgHis = new DeviceErrorMsgHis();
+            errorMsgHis.setByteData(HexUtils.bytesToHex(bytes));
+            errorMsgHis.setDataLength(bytes.length);
+            errorMsgHis.setCreateTime(LocalDateTime.now());
+            errorMsgHis.setErrorMsg(e.getMessage());
+            deviceErrorMsgHisService.save(errorMsgHis);
+            log.error("帧数据保存解析解析报错--{}",e.getMessage());
             log.error("解析收到的帧数据异常，设备ID: {}, 字节内容: {}", deviceIp, HexUtils.bytesToHex(bytes), e);
         }
     }

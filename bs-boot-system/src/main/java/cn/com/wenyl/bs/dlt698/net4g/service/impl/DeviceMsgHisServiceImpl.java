@@ -15,6 +15,7 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import java.time.LocalDateTime;
@@ -35,6 +36,7 @@ public class DeviceMsgHisServiceImpl extends ServiceImpl<DeviceMsgHisMapper, Dev
     private StationDeviceMsgRelaService deviceMsgRelaService;
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public void save(FrameDto frameDto, Integer deviceId, byte[] bytes){
         log.info("开始保存帧数据");
         // 关联的消息条件

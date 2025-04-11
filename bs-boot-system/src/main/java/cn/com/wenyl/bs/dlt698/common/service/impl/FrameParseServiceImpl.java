@@ -126,8 +126,8 @@ public class FrameParseServiceImpl implements FrameParseService {
                             deviceChannelManager.removeDevice(deviceIp);
                             return;
                         default:
-
                     }
+                    break;
             }
         }
         // 碳表响应的数据
