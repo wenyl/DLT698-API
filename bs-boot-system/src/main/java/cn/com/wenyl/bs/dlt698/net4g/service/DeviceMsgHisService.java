@@ -19,6 +19,7 @@ public interface DeviceMsgHisService extends IService<DeviceMsgHis> {
      * @param frameDto 帧数据传输对象
      * @param deviceId 设备ID
      * @param bytes 帧原始数据
+     * @return  数据ID
      */
-    void save(FrameDto frameDto, Integer deviceId, byte[] bytes);
+    Integer save(FrameDto frameDto, Integer deviceId, byte[] bytes);
 }

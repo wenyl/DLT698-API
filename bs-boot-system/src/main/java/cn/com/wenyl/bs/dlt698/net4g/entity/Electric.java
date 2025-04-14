@@ -33,7 +33,7 @@ public class Electric implements Serializable {
 
     @ApiModelProperty(value = "设备ID")
     @TableField("device_id")
-    private String deviceId;
+    private Integer deviceId;
 
     @ApiModelProperty(value = "消息ID(device_msg_his表的ID)")
     @TableField("msg_id")

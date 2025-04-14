@@ -27,11 +27,6 @@ public class LinkRequestFrameParser implements BaseFrameParser<LinkRequestFrame,
     }
 
     @Override
-    public LinkRequestFrame parseFrame(byte[] frameBytes) throws RuntimeException {
-        return null;
-    }
-
-    @Override
     public LinkRequestData parseLinkUserData(byte[] userDataBytes){
         LinkRequestData linkRequestData = new LinkRequestData();
         log.info("用户完整数据{}", HexUtils.bytesToHex(userDataBytes));

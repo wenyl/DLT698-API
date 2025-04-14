@@ -37,7 +37,7 @@ public class DeviceMsgHisServiceImpl extends ServiceImpl<DeviceMsgHisMapper, Dev
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public void save(FrameDto frameDto, Integer deviceId, byte[] bytes){
+    public Integer save(FrameDto frameDto, Integer deviceId, byte[] bytes){
         log.info("开始保存帧数据");
         // 关联的消息条件
         DeviceMsgHisRela relaMsg = new DeviceMsgHisRela();
@@ -175,5 +175,6 @@ public class DeviceMsgHisServiceImpl extends ServiceImpl<DeviceMsgHisMapper, Dev
         this.save(deviceMsgHis);
         BeanUtils.copyProperties(deviceMsgHis,relaMsg);
         deviceMsgRelaService.saveRelaMsg(relaMsg);
+        return deviceMsgHis.getId();
     }
 }

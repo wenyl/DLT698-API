@@ -90,8 +90,8 @@ public class TcpServerHandler  extends SimpleChannelInboundHandler<ByteBuf> {
         }
         try {
             // 根据IP查询数据
-            deviceMsgHisService.save(frameDto,deviceId,bytes);
-            frameParseService.frameParse(frameDto,deviceIp,bytes);
+            Integer msgId = deviceMsgHisService.save(frameDto,deviceId,bytes);
+            frameParseService.frameParse(msgId,frameDto,deviceIp,bytes);
         } catch (Exception e) {
             DeviceErrorMsgHis errorMsgHis = new DeviceErrorMsgHis();
             errorMsgHis.setByteData(HexUtils.bytesToHex(bytes));

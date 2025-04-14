@@ -18,14 +18,8 @@ import org.springframework.stereotype.Service;
 @Service("setResponseNormalFrameParser")
 public class SetResponseNormalFrameParser implements BaseFrameParser<SetResponseNormalFrame,SetResponseNormalData> {
     @Override
-    public SetResponseNormalFrame parseFrame(byte[] frameBytes) throws RuntimeException {
+    public SetResponseNormalFrame parseFrame(FrameDto frameDto) throws RuntimeException {
         SetResponseNormalFrame frame  = new SetResponseNormalFrame();
-        if(!FrameParseUtils.checkFrame(frameBytes)){
-            String errorInfo = "无效帧：起始符或结束符错误,当前帧起始符--"+ HexUtils.byteToHex(frameBytes[0])+",结束符--"+HexUtils.byteToHex(frameBytes[frameBytes.length-1]);
-            log.error(errorInfo);
-            throw new RuntimeException(errorInfo);
-        }
-        FrameDto frameDto = FrameParseUtils.getFrameDto(frameBytes);
         SetResponseNormalData setResponseNormalData = this.parseLinkUserData(frameDto.getUserData());
         frame.setLengthDomain(frameDto.getLengthDomain());
         frame.setControlDomain(frameDto.getControlDomain());

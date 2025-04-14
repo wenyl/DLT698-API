@@ -11,11 +11,11 @@ import cn.com.wenyl.bs.dlt698.common.entity.dto.FrameDto;
 public interface BaseFrameParser<T extends Frame,G extends LinkUserData> {
     /**
      * 将帧字节数据解析为帧数据
-     * @param frameBytes 帧字节数据
+     * @param frameDto 解析的frame传输对象
      * @return 帧数据
      * @throws RuntimeException 解析异常
      */
-    T parseFrame(byte[] frameBytes) throws RuntimeException;
+    T parseFrame(FrameDto frameDto) throws RuntimeException;
     /**
      * 解析帧的用户链路数据
      * @param userDataBytes 用户链路数据字节信息
