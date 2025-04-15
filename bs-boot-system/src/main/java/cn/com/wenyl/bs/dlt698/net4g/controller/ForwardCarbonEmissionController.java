@@ -22,7 +22,7 @@ import javax.annotation.Resource;
  * @author ${author}
  * @since 2025-04-09
  */
-@Api(tags="正向有功电能量")
+@Api(tags="正向碳排放")
 @RestController
 @RequestMapping("/forwardCarbonEmission")
 public class ForwardCarbonEmissionController {
@@ -31,7 +31,7 @@ public class ForwardCarbonEmissionController {
     private ForwardCarbonEmissionService forwardCarbonEmissionService;
 
     @GetMapping("/getForwardCarbonEmission")
-    @ApiOperation(value="正向有功电能量-获取正向有功电能量", notes="正向有功电能量-获取正向有功电能量")
+    @ApiOperation(value="正向碳排放-上一日正向碳排放累计量", notes="正向碳排放-上一日正向碳排放累计量")
     public R<Object> getForwardCarbonEmission(@RequestParam("deviceIp") @ApiParam("碳表地址") String deviceIp) throws Exception {
         forwardCarbonEmissionService.getForwardCarbonEmission(deviceIp);
         return R.ok("操作成功");

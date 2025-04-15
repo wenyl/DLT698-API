@@ -6,7 +6,7 @@ import cn.com.wenyl.bs.dlt698.common.entity.GetRequestNormalFrame;
 import cn.com.wenyl.bs.dlt698.common.entity.GetResponseNormalData;
 import cn.com.wenyl.bs.dlt698.common.entity.GetResponseNormalFrame;
 import cn.com.wenyl.bs.dlt698.common.entity.dto.FrameDto;
-import cn.com.wenyl.bs.dlt698.common.service.FrameParseService;
+import cn.com.wenyl.bs.dlt698.common.service.ProxyRequestService;
 import cn.com.wenyl.bs.dlt698.common.service.impl.FrameBuildProcessor;
 import cn.com.wenyl.bs.dlt698.common.service.impl.GetRequestNormalFrameBuilder;
 import cn.com.wenyl.bs.dlt698.common.service.impl.GetResponseNormalFrameParser;
@@ -16,10 +16,8 @@ import cn.com.wenyl.bs.dlt698.net4g.service.CarbonDeviceService;
 import cn.com.wenyl.bs.dlt698.net4g.service.FrameParseProcessor;
 import cn.com.wenyl.bs.dlt698.net4g.service.VoltageService;
 import cn.com.wenyl.bs.dlt698.net4g.tcp.DeviceChannelManager;
-import cn.com.wenyl.bs.dlt698.net4g.tcp.TcpServerHandler;
-import cn.com.wenyl.bs.dlt698.utils.BCDUtils;
 import cn.com.wenyl.bs.dlt698.utils.FrameBuildUtils;
-import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson2.JSONArray;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.stereotype.Service;
 
@@ -46,6 +44,8 @@ public class VoltageServiceImpl extends ServiceImpl<VoltageMapper, Voltage> impl
     private DeviceChannelManager deviceChannelManager;
     @Resource
     private CarbonDeviceService carbonDeviceService;
+    @Resource
+    private ProxyRequestService proxyRequestService;
     @Override
     public void getVoltage(String deviceIp) throws Exception{
         GetRequestNormalFrameBuilder builder = (GetRequestNormalFrameBuilder)frameBuildProcessor.getFrameBuilder(GetRequestNormalFrame.class);
@@ -57,7 +57,7 @@ public class VoltageServiceImpl extends ServiceImpl<VoltageMapper, Voltage> impl
         GetRequestNormalData userData = new GetRequestNormalData(PIID.ZERO_ZERO, OI.VOLTAGE, AttrNum.ATTR_02,AttributeIndex.ZERO_ZERO.getSign(),TimeTag.NO_TIME_TAG);
         getRequestNormalFrame.setData(userData);
         byte[] bytes = builder.buildFrame(getRequestNormalFrame);
-        deviceChannelManager.sendDataToDevice(deviceIp,bytes);
+        proxyRequestService.proxyCmd(deviceIp,bytes);
     }
     @Override
     public void getVoltage(Integer deviceId,Integer msgId,FrameDto frameDto) throws Exception{
@@ -77,6 +77,7 @@ public class VoltageServiceImpl extends ServiceImpl<VoltageMapper, Voltage> impl
             voltage.setDateTime(LocalDateTime.now());
             this.save(voltage);
         }catch (Exception e){
+            log.error(e.getMessage());
             throw new RuntimeException("分项电压查询返回数据异常!");
         }
 

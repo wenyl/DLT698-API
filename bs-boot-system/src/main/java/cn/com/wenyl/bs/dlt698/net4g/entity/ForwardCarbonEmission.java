@@ -47,7 +47,7 @@ public class ForwardCarbonEmission implements Serializable {
 
     @ApiModelProperty(value = "碳排放量")
     @TableField("carbon_emission")
-    private Double carbonEmission;
+    private Integer carbonEmission;
 
     @ApiModelProperty(value = "时间")
     @TableField("date_time")

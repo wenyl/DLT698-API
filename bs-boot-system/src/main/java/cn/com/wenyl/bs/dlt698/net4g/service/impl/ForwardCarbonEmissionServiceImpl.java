@@ -6,6 +6,7 @@ import cn.com.wenyl.bs.dlt698.common.entity.GetRequestNormalFrame;
 import cn.com.wenyl.bs.dlt698.common.entity.GetResponseNormalData;
 import cn.com.wenyl.bs.dlt698.common.entity.GetResponseNormalFrame;
 import cn.com.wenyl.bs.dlt698.common.entity.dto.FrameDto;
+import cn.com.wenyl.bs.dlt698.common.service.ProxyRequestService;
 import cn.com.wenyl.bs.dlt698.common.service.impl.FrameBuildProcessor;
 import cn.com.wenyl.bs.dlt698.common.service.impl.GetRequestNormalFrameBuilder;
 import cn.com.wenyl.bs.dlt698.common.service.impl.GetResponseNormalFrameParser;
@@ -40,6 +41,8 @@ public class ForwardCarbonEmissionServiceImpl extends ServiceImpl<ForwardCarbonE
     private DeviceChannelManager deviceChannelManager;
     @Resource
     private CarbonDeviceService carbonDeviceService;
+    @Resource
+    private ProxyRequestService proxyRequestService;
     @Override
     public void getForwardCarbonEmission(String deviceIp) throws Exception {
         GetRequestNormalFrameBuilder builder = (GetRequestNormalFrameBuilder)frameBuildProcessor.getFrameBuilder(GetRequestNormalFrame.class);
@@ -50,7 +53,7 @@ public class ForwardCarbonEmissionServiceImpl extends ServiceImpl<ForwardCarbonE
         GetRequestNormalData userData = new GetRequestNormalData(PIID.ZERO_ZERO, OI.FORWARD_CARBON_EMISSION, AttrNum.ATTR_02,AttributeIndex.ZERO_ZERO.getSign(),TimeTag.NO_TIME_TAG);
         getRequestNormalFrame.setData(userData);
         byte[] bytes = builder.buildFrame(getRequestNormalFrame);
-        deviceChannelManager.sendDataToDevice(deviceIp,bytes);
+        proxyRequestService.proxyCmd(deviceIp,bytes);
     }
 
     @Override
@@ -58,7 +61,7 @@ public class ForwardCarbonEmissionServiceImpl extends ServiceImpl<ForwardCarbonE
         GetResponseNormalFrameParser parser = (GetResponseNormalFrameParser)frameParseProcessor.getFrameParser(GetResponseNormalFrame.class, GetResponseNormalData.class);
         Object obj = parser.getData(parser.parseFrame(frameDto));
         ForwardCarbonEmission emission = new ForwardCarbonEmission();
-        emission.setCarbonEmission((Double)obj);
+        emission.setCarbonEmission((Integer)obj);
         emission.setDateTime(LocalDateTime.now());
         emission.setMsgId(msgId);
         emission.setDeviceId(deviceId);

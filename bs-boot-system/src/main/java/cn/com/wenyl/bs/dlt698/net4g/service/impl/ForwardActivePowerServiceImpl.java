@@ -6,6 +6,7 @@ import cn.com.wenyl.bs.dlt698.common.entity.GetRequestNormalFrame;
 import cn.com.wenyl.bs.dlt698.common.entity.GetResponseNormalData;
 import cn.com.wenyl.bs.dlt698.common.entity.GetResponseNormalFrame;
 import cn.com.wenyl.bs.dlt698.common.entity.dto.FrameDto;
+import cn.com.wenyl.bs.dlt698.common.service.ProxyRequestService;
 import cn.com.wenyl.bs.dlt698.common.service.impl.FrameBuildProcessor;
 import cn.com.wenyl.bs.dlt698.common.service.impl.GetRequestNormalFrameBuilder;
 import cn.com.wenyl.bs.dlt698.common.service.impl.GetResponseNormalFrameParser;
@@ -16,7 +17,7 @@ import cn.com.wenyl.bs.dlt698.net4g.service.ForwardActivePowerService;
 import cn.com.wenyl.bs.dlt698.net4g.service.FrameParseProcessor;
 import cn.com.wenyl.bs.dlt698.net4g.tcp.DeviceChannelManager;
 import cn.com.wenyl.bs.dlt698.utils.FrameBuildUtils;
-import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson2.JSONArray;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.stereotype.Service;
 
@@ -41,6 +42,8 @@ public class ForwardActivePowerServiceImpl extends ServiceImpl<ForwardActivePowe
     private DeviceChannelManager deviceChannelManager;
     @Resource
     private CarbonDeviceService carbonDeviceService;
+    @Resource
+    private ProxyRequestService proxyRequestService;
     @Override
     public void getForwardActivePower(Integer deviceId, Integer msgId, FrameDto frameDto) throws Exception {
         try{
@@ -77,6 +80,6 @@ public class ForwardActivePowerServiceImpl extends ServiceImpl<ForwardActivePowe
         GetRequestNormalData userData = new GetRequestNormalData(PIID.ZERO_ZERO, OI.PAEE, AttrNum.ATTR_02,AttributeIndex.ZERO_ZERO.getSign(),TimeTag.NO_TIME_TAG);
         getRequestNormalFrame.setData(userData);
         byte[] bytes = builder.buildFrame(getRequestNormalFrame);
-        deviceChannelManager.sendDataToDevice(deviceIp,bytes);
+        proxyRequestService.proxyCmd(deviceIp,bytes);
     }
 }

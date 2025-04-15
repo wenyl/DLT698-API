@@ -24,6 +24,7 @@ import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.StringUtils;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -46,6 +47,7 @@ public class CarbonDeviceServiceImpl extends ServiceImpl<CarbonDeviceMapper, Car
     @Resource
     private DeviceChannelManager deviceChannelManager;
     @Resource
+    @Lazy
     private ProxyRequestService proxyRequestService;
     private static final byte[] TEST_ADDRESS = {(byte)0x01,(byte)0x00,(byte)0x20,(byte)0x03,(byte)0x25,(byte)0x01};
     @Override
@@ -84,12 +86,18 @@ public class CarbonDeviceServiceImpl extends ServiceImpl<CarbonDeviceMapper, Car
     public void getAddress(String deviceIp, FrameDto frameDto) throws Exception {
         GetResponseNormalFrameParser parser = (GetResponseNormalFrameParser)frameParseProcessor.getFrameParser(GetResponseNormalFrame.class, GetResponseNormalData.class);
         String address = (String)parser.getData(parser.parseFrame(frameDto));
-
+        byte[] bytes = HexUtils.hexStringToBytes(address);
+        byte[] addressBytes = new byte[bytes.length];
+        for(int i=0,j=bytes.length-1;i<addressBytes.length;i++){
+            addressBytes[i] = bytes[j];
+            j--;
+        }
+        String reverseAddress = HexUtils.bytesToHex(addressBytes);
         LambdaQueryWrapper<CarbonDevice> queryWrapper = Wrappers.lambdaQuery();
         queryWrapper.eq(CarbonDevice::getDeviceIp,deviceIp);
         CarbonDevice one = this.getOne(queryWrapper);
-        one.setAddress(address);
-        deviceChannelManager.setDeviceAddress(deviceIp,address);
+        one.setAddress(reverseAddress);
+        deviceChannelManager.setDeviceAddress(deviceIp,reverseAddress);
         this.updateById(one);
     }
 

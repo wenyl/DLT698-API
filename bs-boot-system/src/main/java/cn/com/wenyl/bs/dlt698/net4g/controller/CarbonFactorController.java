@@ -29,7 +29,6 @@ public class CarbonFactorController {
     @PutMapping("/setCarbonFactor")
     public R<Object> set1CarbonFactor(@RequestParam("deviceIp") @ApiParam("碳表地址") String deviceIp,
                                       @RequestParam("carbonFactor") @ApiParam("碳因子") Double carbonFactor) throws Exception {
-        // 先链接电表
         carbonFactorService.setCarbonFactor(deviceIp,carbonFactor);
         return R.ok("操作成功");
     }

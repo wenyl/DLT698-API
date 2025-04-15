@@ -6,6 +6,7 @@ import cn.com.wenyl.bs.dlt698.common.entity.GetRequestNormalFrame;
 import cn.com.wenyl.bs.dlt698.common.entity.GetResponseNormalData;
 import cn.com.wenyl.bs.dlt698.common.entity.GetResponseNormalFrame;
 import cn.com.wenyl.bs.dlt698.common.entity.dto.FrameDto;
+import cn.com.wenyl.bs.dlt698.common.service.ProxyRequestService;
 import cn.com.wenyl.bs.dlt698.common.service.impl.FrameBuildProcessor;
 import cn.com.wenyl.bs.dlt698.common.service.impl.GetRequestNormalFrameBuilder;
 import cn.com.wenyl.bs.dlt698.common.service.impl.GetResponseNormalFrameParser;
@@ -40,6 +41,8 @@ public class ReverseCarbonEmissionServiceImpl extends ServiceImpl<ReverseCarbonE
     private DeviceChannelManager deviceChannelManager;
     @Resource
     private CarbonDeviceService carbonDeviceService;
+    @Resource
+    private ProxyRequestService proxyRequestService;
     @Override
     public void getReverseCarbonEmission(String deviceIp) throws Exception{
         // 查询昨日碳排放累计量
@@ -52,7 +55,7 @@ public class ReverseCarbonEmissionServiceImpl extends ServiceImpl<ReverseCarbonE
         GetRequestNormalData userData = new GetRequestNormalData(PIID.ZERO_ZERO, OI.REVERSE_CARBON_EMISSION, AttrNum.ATTR_02,AttributeIndex.ZERO_ZERO.getSign(),TimeTag.NO_TIME_TAG);
         getRequestNormalFrame.setData(userData);
         byte[] bytes = builder.buildFrame(getRequestNormalFrame);
-        deviceChannelManager.sendDataToDevice(deviceIp,bytes);
+        proxyRequestService.proxyCmd(deviceIp,bytes);
     }
 
     @Override

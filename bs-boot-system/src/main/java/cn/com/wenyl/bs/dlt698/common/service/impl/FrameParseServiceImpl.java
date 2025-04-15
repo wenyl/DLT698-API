@@ -65,9 +65,17 @@ public class FrameParseServiceImpl implements FrameParseService {
         if(clientAPDU != ClientAPDU.UNKNOWN){
             switch (clientAPDU){
                 case GET_REQUEST:
-                case SET_REQUEST:
                 case CONNECT_REQUEST:
                     break;
+
+                case SET_REQUEST:
+                    SetRequest setRequest = SetRequest.getSetRequestBySign(userData[2]);
+                    switch (setRequest){
+                        case UNKNOWN:
+                            throw new RuntimeException("未知SetRequest类型"+HexUtils.byteToHex(userData[2]));
+                        case SET_REQUEST_NORMAL:
+                            break;
+                    }
                 case LINK_REQUEST:
                     LinkRequestType linkRequestType = LinkRequestType.getLinkRequestTypeBySign(userData[2]);
                     switch (linkRequestType){
@@ -122,7 +130,7 @@ public class FrameParseServiceImpl implements FrameParseService {
                                     reverseActivePowerService.getReverseActivePower(deviceChannelManager.getDeviceId(deviceIp),msgId,frameDto);
                                     break;
                                 case FORWARD_CARBON_EMISSION:
-                                    forwardCarbonEmissionService.  getForwardCarbonEmission(deviceChannelManager.getDeviceId(deviceIp),msgId,frameDto);
+                                    forwardCarbonEmissionService.getForwardCarbonEmission(deviceChannelManager.getDeviceId(deviceIp),msgId,frameDto);
                                     break;
                                 case REVERSE_CARBON_EMISSION:
                                     reverseCarbonEmissionService.getReverseCarbonEmission(deviceChannelManager.getDeviceId(deviceIp),msgId,frameDto);

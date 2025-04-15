@@ -7,6 +7,7 @@ import cn.com.wenyl.bs.dlt698.common.entity.SetResponseNormalData;
 import cn.com.wenyl.bs.dlt698.common.entity.SetResponseNormalFrame;
 import cn.com.wenyl.bs.dlt698.common.entity.dto.CarbonFactorDto;
 import cn.com.wenyl.bs.dlt698.common.entity.dto.FrameDto;
+import cn.com.wenyl.bs.dlt698.common.service.ProxyRequestService;
 import cn.com.wenyl.bs.dlt698.common.service.impl.FrameBuildProcessor;
 import cn.com.wenyl.bs.dlt698.common.service.impl.SetRequestNormalFrameBuilder;
 import cn.com.wenyl.bs.dlt698.common.service.impl.SetResponseNormalFrameParser;
@@ -19,7 +20,6 @@ import cn.com.wenyl.bs.dlt698.net4g.tcp.DeviceChannelManager;
 import cn.com.wenyl.bs.dlt698.utils.ASN1EncoderUtils;
 import cn.com.wenyl.bs.dlt698.utils.FrameBuildUtils;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import net.bytebuddy.asm.Advice;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -28,6 +28,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.ZoneId;
+import java.util.Arrays;
 import java.util.Date;
 
 /**
@@ -48,6 +49,8 @@ public class CarbonFactorServiceImpl extends ServiceImpl<CarbonFactorMapper, Car
     private DeviceChannelManager deviceChannelManager;
     @Resource
     private CarbonDeviceService carbonDeviceService;
+    @Resource
+    private ProxyRequestService proxyRequestService;
     @Override
     public void setCarbonFactor(String deviceIp, Double carbonFactor) throws Exception{
         SetRequestNormalFrameBuilder builder = (SetRequestNormalFrameBuilder)frameBuildProcessor.getFrameBuilder(SetRequestNormalFrame.class);
@@ -60,7 +63,7 @@ public class CarbonFactorServiceImpl extends ServiceImpl<CarbonFactorMapper, Car
         SetRequestNormalData userData = new SetRequestNormalData(data, PIID.ZERO_ZERO, OI.SET_CARBON_FACTOR, AttrNum.ATTR_02,AttributeIndex.ZERO_ZERO.getSign(),TimeTag.NO_TIME_TAG);
         setRequestNormalFrame.setData(userData);
         byte[] bytes = builder.buildFrame(setRequestNormalFrame);
-        deviceChannelManager.sendDataToDevice(deviceIp,bytes);
+        proxyRequestService.setProxyCmd(deviceIp,bytes,String.valueOf(carbonFactor));
     }
 
     @Override
@@ -75,7 +78,7 @@ public class CarbonFactorServiceImpl extends ServiceImpl<CarbonFactorMapper, Car
         SetRequestNormalData userData = new SetRequestNormalData(data,PIID.ZERO_ZERO,OI.SET_CARBON_FACTOR, AttrNum.ATTR_02,AttributeIndex.ZERO_ZERO.getSign(),TimeTag.NO_TIME_TAG);
         setRequestNormalFrame.setData(userData);
         byte[] bytes = builder.buildFrame(setRequestNormalFrame);
-        deviceChannelManager.sendDataToDevice(carbonFactorDto.getDeviceIp(),bytes);
+        proxyRequestService.setProxyCmd(carbonFactorDto.getDeviceIp(),bytes,Arrays.toString(carbonFactorDto.getCarbonFactor()));
     }
 
     @Override

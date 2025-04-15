@@ -55,9 +55,8 @@ public class TcpServerHandler  extends SimpleChannelInboundHandler<ByteBuf> {
                 carbonDeviceService.save(newDevice);
                 deviceId = newDevice.getId();
                 deviceChannelManager.addDevice(deviceId,deviceIp, ctx.channel());
-                deviceChannelManager.setDeviceAddress(deviceIp, HexUtils.bytesToHex(Address.SERVER_ADDRESS));
                 // 这里还要去查询碳表地址
-//                carbonDeviceService.getAddress(deviceIp);
+                carbonDeviceService.getAddress(deviceIp);
             }else{
                 deviceId = carbonDevice.getId();
                 deviceChannelManager.addDevice(deviceId,deviceIp, ctx.channel());

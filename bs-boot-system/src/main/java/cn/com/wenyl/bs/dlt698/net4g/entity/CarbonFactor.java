@@ -43,7 +43,7 @@ public class CarbonFactor implements Serializable {
 
     @ApiModelProperty(value = "电碳因子值")
     @TableField("carbon_factor")
-    private Double carbonFactor;
+    private String carbonFactor;
 
     @ApiModelProperty(value = "时间")
     @TableField("date_time")

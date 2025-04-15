@@ -52,7 +52,7 @@ public class ElectricServiceImpl extends ServiceImpl<ElectricMapper, Electric> i
         GetRequestNormalFrameBuilder builder = (GetRequestNormalFrameBuilder)frameBuildProcessor.getFrameBuilder(GetRequestNormalFrame.class);
 
         GetRequestNormalFrame getRequestNormalFrame = FrameBuildUtils.getCommonFrame(GetRequestNormalFrame.class, FunctionCode.THREE, ScramblingCodeFlag.NOT_SCRAMBLING_CODE, FrameFlag.NOT_SUB_FRAME,
-                RequestType.CLIENT_REQUEST, AddressType.SINGLE_ADDRESS, LogicAddress.ZERO, Address.SERVER_ADDRESS,
+                RequestType.CLIENT_REQUEST, AddressType.SINGLE_ADDRESS, LogicAddress.ZERO, carbonDeviceService.getDeviceAddress(deviceIp),
                 Address.CLIENT_ADDRESS);
 
         GetRequestNormalData userData = new GetRequestNormalData(PIID.ZERO_ZERO, OI.ELECTRIC_CURRENT, AttrNum.ATTR_02,AttributeIndex.ZERO_ONE.getSign(),TimeTag.NO_TIME_TAG);
