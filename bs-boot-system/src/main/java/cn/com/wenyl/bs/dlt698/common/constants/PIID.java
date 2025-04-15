@@ -9,4 +9,5 @@ public class PIID {
      */
     public static final byte ZERO_ZERO = (byte)0x00;
     public static final byte ZERO_ONE = (byte)0x01;
+    public static final byte ZERO_FIVE = (byte)0x05;
 }

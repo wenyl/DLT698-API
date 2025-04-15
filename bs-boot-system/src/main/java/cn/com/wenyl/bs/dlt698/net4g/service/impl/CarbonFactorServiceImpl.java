@@ -12,6 +12,7 @@ import cn.com.wenyl.bs.dlt698.common.service.impl.SetRequestNormalFrameBuilder;
 import cn.com.wenyl.bs.dlt698.common.service.impl.SetResponseNormalFrameParser;
 import cn.com.wenyl.bs.dlt698.net4g.entity.CarbonFactor;
 import cn.com.wenyl.bs.dlt698.net4g.mapper.CarbonFactorMapper;
+import cn.com.wenyl.bs.dlt698.net4g.service.CarbonDeviceService;
 import cn.com.wenyl.bs.dlt698.net4g.service.CarbonFactorService;
 import cn.com.wenyl.bs.dlt698.net4g.service.FrameParseProcessor;
 import cn.com.wenyl.bs.dlt698.net4g.tcp.DeviceChannelManager;
@@ -45,12 +46,14 @@ public class CarbonFactorServiceImpl extends ServiceImpl<CarbonFactorMapper, Car
     private FrameParseProcessor frameParseProcessor;
     @Resource
     private DeviceChannelManager deviceChannelManager;
+    @Resource
+    private CarbonDeviceService carbonDeviceService;
     @Override
     public void setCarbonFactor(String deviceIp, Double carbonFactor) throws Exception{
         SetRequestNormalFrameBuilder builder = (SetRequestNormalFrameBuilder)frameBuildProcessor.getFrameBuilder(SetRequestNormalFrame.class);
 
         SetRequestNormalFrame setRequestNormalFrame = FrameBuildUtils.getCommonFrame(SetRequestNormalFrame.class, FunctionCode.THREE, ScramblingCodeFlag.NOT_SCRAMBLING_CODE, FrameFlag.NOT_SUB_FRAME,
-                RequestType.CLIENT_REQUEST, AddressType.SINGLE_ADDRESS, LogicAddress.ZERO, Address.COMMON_DEVICE_ADDRESS,
+                RequestType.CLIENT_REQUEST, AddressType.SINGLE_ADDRESS, LogicAddress.ZERO, carbonDeviceService.getDeviceAddress(deviceIp),
                 Address.CLIENT_ADDRESS);
         // todo 生成要设置的信息
         byte[] data = buildSetCarbonFactorBytes(carbonFactor);
@@ -65,7 +68,7 @@ public class CarbonFactorServiceImpl extends ServiceImpl<CarbonFactorMapper, Car
         SetRequestNormalFrameBuilder builder = (SetRequestNormalFrameBuilder)frameBuildProcessor.getFrameBuilder(SetRequestNormalFrame.class);
 
         SetRequestNormalFrame setRequestNormalFrame = FrameBuildUtils.getCommonFrame(SetRequestNormalFrame.class,FunctionCode.THREE, ScramblingCodeFlag.NOT_SCRAMBLING_CODE, FrameFlag.NOT_SUB_FRAME,
-                RequestType.CLIENT_REQUEST, AddressType.SINGLE_ADDRESS,LogicAddress.ZERO, Address.COMMON_DEVICE_ADDRESS,
+                RequestType.CLIENT_REQUEST, AddressType.SINGLE_ADDRESS,LogicAddress.ZERO, carbonDeviceService.getDeviceAddress(carbonFactorDto.getDeviceIp()),
                 Address.CLIENT_ADDRESS);
         // todo 生成要设置的信息
         byte[] data = buildSetCarbonFactorBytes(carbonFactorDto.getCarbonFactor());

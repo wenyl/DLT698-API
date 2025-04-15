@@ -38,12 +38,18 @@ public class CarbonDevice implements Serializable {
     @TableField("device_ip")
     private String deviceIp;
 
-    @ApiModelProperty(value = "创建时间")
-    @TableField("create_time")
-    private LocalDateTime createTime;
 
     @ApiModelProperty(value = "设备在状态1为在线,0为离线")
     @TableField("device_status")
     private int deviceStatus = 0;
+
+    @ApiModelProperty(value = "碳表地址")
+    @TableField("address")
+    private String address;
+
+    @ApiModelProperty(value = "创建时间")
+    @TableField("create_time")
+    private LocalDateTime createTime;
+
 
 }

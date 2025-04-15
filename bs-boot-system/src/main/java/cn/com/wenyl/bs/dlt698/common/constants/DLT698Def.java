@@ -8,7 +8,6 @@ public class DLT698Def {
     // 开始和结束标识
     public static final byte START_MARK = 0x68;
     public static final byte END_MARK = 0x16;
-
     // 长度单位
     public static final String BYTE = "byte";
     public static final String KB = "kb";

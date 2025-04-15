@@ -3,6 +3,7 @@ package cn.com.wenyl.bs.dlt698.net4g.service.impl;
 import cn.com.wenyl.bs.dlt698.common.constants.*;
 import cn.com.wenyl.bs.dlt698.common.entity.ControlDomain;
 import cn.com.wenyl.bs.dlt698.common.entity.OAD;
+import cn.com.wenyl.bs.dlt698.common.entity.ProxyRequest;
 import cn.com.wenyl.bs.dlt698.common.entity.dto.FrameDto;
 import cn.com.wenyl.bs.dlt698.net4g.entity.DeviceMsgHis;
 import cn.com.wenyl.bs.dlt698.net4g.entity.dto.DeviceMsgHisRela;
@@ -38,7 +39,6 @@ public class DeviceMsgHisServiceImpl extends ServiceImpl<DeviceMsgHisMapper, Dev
     @Override
     @Transactional(rollbackFor = Exception.class)
     public Integer save(FrameDto frameDto, Integer deviceId, byte[] bytes){
-        log.info("开始保存帧数据");
         // 关联的消息条件
         DeviceMsgHisRela relaMsg = new DeviceMsgHisRela();
 
@@ -119,6 +119,27 @@ public class DeviceMsgHisServiceImpl extends ServiceImpl<DeviceMsgHisMapper, Dev
                         throw new RuntimeException("未知SetRequest类型"+HexUtils.byteToHex(setRequest.getSign()));
                 }
                 break;
+            case PROXY_REQUEST:
+                relaMsg.setTargetApdu(HexUtils.byteToHex(ServerAPDU.PROXY_RESPONSE.getSign()));
+                ProxyRequest proxyRequest = ProxyRequest.getProxyRequestBySign(userData[1]);
+                deviceMsgHis.setApduOpera(HexUtils.byteToHex(proxyRequest.getSign()));
+                switch (proxyRequest){
+                    case PROXY_TRANS_COMMAND_REQUEST:
+                        relaMsg.setTargetApduOpera(HexUtils.byteToHex(ProxyResponse.PROXY_TRANS_COMMAND_RESPONSE.getSign()));
+                        byte[] oadBytes = new byte[4];
+                        System.arraycopy(userData,3,oadBytes,0,4);
+                        OAD oad = FrameParseUtils.parseOAD(oadBytes);
+                        String oiStr = HexUtils.bytesToHex(oad.getOi().getSign());
+                        String attrNumStr = HexUtils.byteToHex(oad.getAttrNum().getSign());
+                        String attrIndexStr = HexUtils.byteToHex(oad.getAttributeIndex().getSign());
+                        deviceMsgHis.setOi(oiStr);
+                        deviceMsgHis.setAttrNum(attrNumStr);
+                        deviceMsgHis.setAttrIndex(attrIndexStr);
+                        break;
+                    case UNKNOWN:
+                        throw new RuntimeException("未知proxyRequest类型"+HexUtils.byteToHex(proxyRequest.getSign()));
+                }
+                break;
         }
 
         switch(serverAPDU){
@@ -167,6 +188,26 @@ public class DeviceMsgHisServiceImpl extends ServiceImpl<DeviceMsgHisMapper, Dev
                         throw new RuntimeException("未知SetResponse类型"+HexUtils.byteToHex(setResponse.getSign()));
                 }
                 break;
+            case PROXY_RESPONSE:
+                relaMsg.setTargetApdu(HexUtils.byteToHex(ClientAPDU.PROXY_REQUEST.getSign()));
+                ProxyResponse proxyResponse = ProxyResponse.getResponseBySign(userData[1]);
+                deviceMsgHis.setApduOpera(HexUtils.byteToHex(proxyResponse.getSign()));
+                switch(proxyResponse){
+                    case PROXY_TRANS_COMMAND_RESPONSE:
+                        relaMsg.setTargetApduOpera(HexUtils.byteToHex(ProxyRequest.PROXY_TRANS_COMMAND_REQUEST.getSign()));
+                        byte[] oadBytes = new byte[4];
+                        System.arraycopy(userData,3,oadBytes,0,4);
+                        OAD oad = FrameParseUtils.parseOAD(oadBytes);
+                        String oiStr = HexUtils.bytesToHex(oad.getOi().getSign());
+                        String attrNumStr = HexUtils.byteToHex(oad.getAttrNum().getSign());
+                        String attrIndexStr = HexUtils.byteToHex(oad.getAttributeIndex().getSign());
+                        deviceMsgHis.setOi(oiStr);
+                        deviceMsgHis.setAttrNum(attrNumStr);
+                        deviceMsgHis.setAttrIndex(attrIndexStr);
+                        break;
+                    case UNKNOWN:
+                        throw new RuntimeException("未知ProxyResponse类型"+HexUtils.byteToHex(proxyResponse.getSign()));
+                }
         }
 
         deviceMsgHis.setByteData(HexUtils.bytesToHex(bytes));

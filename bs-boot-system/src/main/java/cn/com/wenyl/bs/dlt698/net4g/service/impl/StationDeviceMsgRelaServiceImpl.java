@@ -89,7 +89,7 @@ public class StationDeviceMsgRelaServiceImpl extends ServiceImpl<StationDeviceMs
             }
             // 这是主站发起的请求，直接保存即可
             if(msgHisRela.getDir() == 0 && msgHisRela.getPrm() == 1){
-                stationDeviceMsgRela.setDeviceMsgId(msgHisRela.getDeviceId());
+                stationDeviceMsgRela.setDeviceId(msgHisRela.getDeviceId());
                 stationDeviceMsgRela.setMainStationMsgId(msgHisRela.getId());
                 stationDeviceMsgRela.setDir(0);
                 this.save(stationDeviceMsgRela);
@@ -99,7 +99,7 @@ public class StationDeviceMsgRelaServiceImpl extends ServiceImpl<StationDeviceMs
             if(msgHisRela.getDir() == 1 && msgHisRela.getPrm() == 1){
                 DeviceMsgHis targetMsg = findTargetMsg(msgHisRela);
                 if(targetMsg == null){
-                    log.error("关系存储异常,碳表响应的消息id={}找不到对应请求",msgHisRela.getId());
+                     log.error("关系存储异常,碳表响应的消息id={}找不到对应请求",msgHisRela.getId());
                     return;
                 }
                 LambdaQueryWrapper<StationDeviceMsgRela> findRela = Wrappers.lambdaQuery();
@@ -110,7 +110,7 @@ public class StationDeviceMsgRelaServiceImpl extends ServiceImpl<StationDeviceMs
                     log.error("关系存储异常,碳表响应的消息id={},主站请求的消息id={}在关系表中已经被其他碳表回复的消息绑定,关系表id={},已绑定的消息id={}",msgHisRela.getId(),targetMsg.getId(),one.getId(),one.getDeviceId());
                     return;
                 }
-                one.setDeviceId(msgHisRela.getId());
+                one.setDeviceMsgId(msgHisRela.getId());
                 this.updateById(one);
             }
         }catch (Exception e){

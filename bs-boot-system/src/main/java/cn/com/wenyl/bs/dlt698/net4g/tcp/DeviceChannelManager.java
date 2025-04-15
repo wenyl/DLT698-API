@@ -2,7 +2,6 @@ package cn.com.wenyl.bs.dlt698.net4g.tcp;
 
 import cn.com.wenyl.bs.dlt698.common.entity.dto.FrameDto;
 import cn.com.wenyl.bs.dlt698.net4g.entity.DeviceErrorMsgHis;
-import cn.com.wenyl.bs.dlt698.net4g.entity.DeviceMsgHis;
 import cn.com.wenyl.bs.dlt698.net4g.service.CarbonDeviceService;
 import cn.com.wenyl.bs.dlt698.net4g.service.DeviceErrorMsgHisService;
 import cn.com.wenyl.bs.dlt698.net4g.service.DeviceMsgHisService;
@@ -11,6 +10,7 @@ import cn.com.wenyl.bs.dlt698.utils.HexUtils;
 import io.netty.buffer.Unpooled;
 import io.netty.channel.Channel;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
@@ -20,6 +20,7 @@ import java.util.concurrent.ConcurrentHashMap;
 @Component
 public class DeviceChannelManager {
     @Resource
+    @Lazy
     private CarbonDeviceService carbonDeviceService;
     @Resource
     private DeviceMsgHisService deviceMsgHisService;
@@ -28,16 +29,27 @@ public class DeviceChannelManager {
     // 存储设备的连接信息（key: 设备ID 或 设备IP，value: Channel）
     private final ConcurrentHashMap<String, Channel> deviceChannels = new ConcurrentHashMap<>();
     private final ConcurrentHashMap<String,Integer> deviceIds = new ConcurrentHashMap<>();
+    private final ConcurrentHashMap<String,String> deviceAddress = new ConcurrentHashMap<>();
     // 添加设备连接
     public void addDevice(int deviceId,String deviceIp, Channel channel) {
         deviceChannels.put(deviceIp, channel);
         deviceIds.put(deviceIp,deviceId);
     }
 
+    // 添加设备地址
+    public void setDeviceAddress(String deviceIp,String address){
+        deviceAddress.put(deviceIp,address);
+    }
+
+    public byte[] getDeviceAddress(String deviceIp){
+        String address = deviceAddress.get(deviceIp);
+        return HexUtils.hexStringToBytes(address);
+    }
     // 移除设备连接
     public void removeDevice(String deviceIp) {
         deviceChannels.remove(deviceIp);
         deviceIds.remove(deviceIp);
+        deviceAddress.remove(deviceIp);
         isDead(deviceIp);
     }
 
@@ -53,10 +65,10 @@ public class DeviceChannelManager {
      * @param data 数据
      */
     public void sendDataToDevice(String deviceIp, byte[] data) throws RuntimeException{
-        FrameDto frameDto = FrameParseUtils.getFrameDto(data);
-        log.info("发送数据解析结果{}",frameDto);
+        FrameDto frameDto;
         Integer deviceId = this.getDeviceId(deviceIp);
         try{
+            frameDto = FrameParseUtils.getFrameDto(data);
             deviceMsgHisService.save(frameDto,deviceId,data);
             Channel deviceChannel = getDeviceChannel(deviceIp);
             if (deviceChannel != null) {
@@ -67,6 +79,7 @@ public class DeviceChannelManager {
             }
         } catch (Exception e) {
             DeviceErrorMsgHis errorMsgHis = new DeviceErrorMsgHis();
+            errorMsgHis.setDeviceId(deviceId);
             errorMsgHis.setByteData(HexUtils.bytesToHex(data));
             errorMsgHis.setDataLength(data.length);
             errorMsgHis.setCreateTime(LocalDateTime.now());

@@ -17,4 +17,11 @@ public interface FrameParseService {
      * @param bytes 设备发送的字节数据
      */
     void frameParse(Integer msgId,FrameDto frameDto,String deviceIp,byte[] bytes) throws Exception;
+
+    /**
+     * 解析接收到的byte数据
+     * @param deviceIp 设备IP
+     * @param bytes 字节数据
+     */
+    void parseBytes(String deviceIp,byte[] bytes);
 }

@@ -11,6 +11,7 @@ public enum ServerAPDU {
     CONNECT_RESPONSE((byte)0x82,130,"建立应用连接响应"),
     GET_RESPONSE((byte)0x85,133,"响应读取"),
     SET_RESPONSE((byte)0x86,134,"响应设置"),
+    PROXY_RESPONSE((byte)0x89,134,"响应代理"),
     UNKNOWN(null,-1,"未知响应");
     private final Byte sign;
     private final int signNum;

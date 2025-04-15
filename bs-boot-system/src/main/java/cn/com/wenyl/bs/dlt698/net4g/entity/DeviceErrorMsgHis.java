@@ -33,6 +33,10 @@ public class DeviceErrorMsgHis implements Serializable {
     @TableId(value = "id", type = IdType.AUTO)
     private Integer id;
 
+    @ApiModelProperty(value = "设备ID")
+    @TableField("device_id")
+    private Integer deviceId;
+
     @ApiModelProperty(value = "字节数据")
     @TableField("byte_data")
     private String byteData;

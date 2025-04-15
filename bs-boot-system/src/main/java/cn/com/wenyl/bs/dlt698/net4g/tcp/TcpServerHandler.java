@@ -1,5 +1,6 @@
 package cn.com.wenyl.bs.dlt698.net4g.tcp;
 
+import cn.com.wenyl.bs.dlt698.common.constants.Address;
 import cn.com.wenyl.bs.dlt698.common.entity.dto.FrameDto;
 import cn.com.wenyl.bs.dlt698.common.service.FrameParseService;
 import cn.com.wenyl.bs.dlt698.net4g.entity.CarbonDevice;
@@ -14,6 +15,7 @@ import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang.StringUtils;
 import org.springframework.stereotype.Component;
 import org.springframework.context.annotation.Scope;
 
@@ -37,25 +39,40 @@ public class TcpServerHandler  extends SimpleChannelInboundHandler<ByteBuf> {
     private DeviceErrorMsgHisService deviceErrorMsgHisService;
     @Override
     public void channelActive(ChannelHandlerContext ctx) {
-        InetSocketAddress socketAddress = (InetSocketAddress) ctx.channel().remoteAddress();
-        String deviceIp = socketAddress.getAddress().getHostAddress();
-        int port = socketAddress.getPort();
-        // 数据库不存在则保存这个数据
-        LambdaQueryWrapper<CarbonDevice> query = new LambdaQueryWrapper<>();
-        query.eq(CarbonDevice::getDeviceIp,deviceIp);
-        CarbonDevice carbonDevice = carbonDeviceService.getOne(query);
-        CarbonDevice newDevice = new CarbonDevice();
-        int deviceId;
-        if(carbonDevice == null){
-            newDevice.setDeviceIp(deviceIp);
-            newDevice.setCreateTime(LocalDateTime.now());
-            carbonDeviceService.save(newDevice);
-            deviceId = newDevice.getId();
-        }else{
-            deviceId = carbonDevice.getId();
+        try{
+            InetSocketAddress socketAddress = (InetSocketAddress) ctx.channel().remoteAddress();
+            String deviceIp = socketAddress.getAddress().getHostAddress();
+            int port = socketAddress.getPort();
+            // 数据库不存在则保存这个数据
+            LambdaQueryWrapper<CarbonDevice> query = new LambdaQueryWrapper<>();
+            query.eq(CarbonDevice::getDeviceIp,deviceIp);
+            CarbonDevice carbonDevice = carbonDeviceService.getOne(query);
+            CarbonDevice newDevice = new CarbonDevice();
+            int deviceId;
+            if(carbonDevice == null){
+                newDevice.setDeviceIp(deviceIp);
+                newDevice.setCreateTime(LocalDateTime.now());
+                carbonDeviceService.save(newDevice);
+                deviceId = newDevice.getId();
+                deviceChannelManager.addDevice(deviceId,deviceIp, ctx.channel());
+                deviceChannelManager.setDeviceAddress(deviceIp, HexUtils.bytesToHex(Address.SERVER_ADDRESS));
+                // 这里还要去查询碳表地址
+//                carbonDeviceService.getAddress(deviceIp);
+            }else{
+                deviceId = carbonDevice.getId();
+                deviceChannelManager.addDevice(deviceId,deviceIp, ctx.channel());
+                if(StringUtils.isEmpty(carbonDevice.getAddress())){
+                    throw new RuntimeException("碳表未设置地址信息");
+                }else{
+                    deviceChannelManager.setDeviceAddress(deviceIp,carbonDevice.getAddress());
+                }
+
+            }
+            log.info("设备链接:id={},ip={},port={}",deviceId,deviceIp,port);
+        }catch (Exception e){
+            log.error("碳表信息初始化错误,{}",e.getMessage());
         }
-        deviceChannelManager.addDevice(deviceId,deviceIp, ctx.channel());
-        log.info("设备链接:id={},ip={},port={}",deviceId,deviceIp,port);
+
     }
 
     @Override
@@ -65,43 +82,12 @@ public class TcpServerHandler  extends SimpleChannelInboundHandler<ByteBuf> {
         byte[] bytes = new byte[msg.readableBytes()];
         msg.readBytes(bytes);
         log.info("收到设备数据:{}",HexUtils.bytesToHex(bytes));
-        if(!FrameParseUtils.checkFrame(bytes)){
-            String errorInfo = "无效帧：起始符或结束符错误,当前帧起始符--"+HexUtils.byteToHex(bytes[0])+",结束符--"+HexUtils.byteToHex(bytes[bytes.length-1]);
-            log.error(errorInfo);
-            return;
-        }
-        Integer deviceId = deviceChannelManager.getDeviceId(deviceIp);
-        if(deviceId == null){
-            log.error("未知设备ip={}",deviceIp);
-            return;
-        }
-        FrameDto frameDto;
         try{
-            frameDto = FrameParseUtils.getFrameDto(bytes);
+            frameParseService.parseBytes(deviceIp,bytes);
         }catch (Exception e){
-            DeviceErrorMsgHis errorMsgHis = new DeviceErrorMsgHis();
-            errorMsgHis.setByteData(HexUtils.bytesToHex(bytes));
-            errorMsgHis.setDataLength(bytes.length);
-            errorMsgHis.setCreateTime(LocalDateTime.now());
-            errorMsgHis.setErrorMsg(e.getMessage());
-            deviceErrorMsgHisService.save(errorMsgHis);
-            log.error("帧数据解析报错--{}",e.getMessage());
-            return;
+            log.error(e.getMessage());
         }
-        try {
-            // 根据IP查询数据
-            Integer msgId = deviceMsgHisService.save(frameDto,deviceId,bytes);
-            frameParseService.frameParse(msgId,frameDto,deviceIp,bytes);
-        } catch (Exception e) {
-            DeviceErrorMsgHis errorMsgHis = new DeviceErrorMsgHis();
-            errorMsgHis.setByteData(HexUtils.bytesToHex(bytes));
-            errorMsgHis.setDataLength(bytes.length);
-            errorMsgHis.setCreateTime(LocalDateTime.now());
-            errorMsgHis.setErrorMsg(e.getMessage());
-            deviceErrorMsgHisService.save(errorMsgHis);
-            log.error("帧数据保存解析解析报错--{}",e.getMessage());
-            log.error("解析收到的帧数据异常，设备ID: {}, 字节内容: {}", deviceIp, HexUtils.bytesToHex(bytes), e);
-        }
+
     }
 
     @Override

@@ -52,6 +52,9 @@ public class FrameParseServiceImpl implements FrameParseService {
     private ReverseCarbonEmissionService reverseCarbonEmissionService;
     @Resource
     private CarbonFactorService carbonFactorService;
+    @Resource
+    private DeviceMsgHisService deviceMsgHisService;
+
     @Override
     public void frameParse(Integer msgId,FrameDto frameDto,String deviceIp,byte[] bytes) throws Exception {
         byte[] userData = frameDto.getUserData();
@@ -83,75 +86,131 @@ public class FrameParseServiceImpl implements FrameParseService {
                     break;
             }
         }
-        try{
-            // 碳表响应的数据
-            if(serverAPDU != ServerAPDU.UNKNOWN){
-                switch (serverAPDU){
-                    case LINK_RESPONSE:
-                    case CONNECT_RESPONSE:
-                        break;
-                    case GET_RESPONSE:
-                        GetResponse getResponse = GetResponse.getResponseBySign(userData[1]);
-                        switch (getResponse){
-                            case UNKNOWN:
-                                throw new RuntimeException("未知GetResponse类型"+HexUtils.byteToHex(userData[1]));
-                            case GET_RESPONSE_NORMAL:
-                                byte[] oadBytes = new byte[4];
-                                System.arraycopy(userData,3,oadBytes,0,4);
-                                OAD oad = FrameParseUtils.parseOAD(oadBytes);
-                                OI oi = oad.getOi();
-                                switch (oi){
-                                    case UNKNOWN:
-                                        break;
-                                    case ELECTRIC_CURRENT:
-                                        electricService.getElectric(deviceChannelManager.getDeviceId(deviceIp),msgId,frameDto);
-                                        break;
-                                    case VOLTAGE:
-                                        voltageService.getVoltage(deviceChannelManager.getDeviceId(deviceIp),msgId,frameDto);
-                                        break;
-                                    case PAEE:
-                                        forwardActivePowerService.getForwardActivePower(deviceChannelManager.getDeviceId(deviceIp),msgId,frameDto);
-                                        break;
-                                    case RAEE:
-                                        reverseActivePowerService.getReverseActivePower(deviceChannelManager.getDeviceId(deviceIp),msgId,frameDto);
-                                        break;
-                                    case FORWARD_CARBON_EMISSION:
-                                        forwardCarbonEmissionService.  getForwardCarbonEmission(deviceChannelManager.getDeviceId(deviceIp),msgId,frameDto);
-                                        break;
-                                    case REVERSE_CARBON_EMISSION:
-                                        reverseCarbonEmissionService.getReverseCarbonEmission(deviceChannelManager.getDeviceId(deviceIp),msgId,frameDto);
-                                        break;
-                                }
-                                break;
-                        }
-                    case SET_RESPONSE:
-                        SetResponse setResponse = SetResponse.getSetResponseBySign(userData[1]);
-                        switch (setResponse){
-                            case UNKNOWN:
-                                throw new RuntimeException("未知SetResponse类型"+HexUtils.byteToHex(userData[1]));
-                            case SET_RESPONSE_NORMAL:
-                                byte[] oadBytes = new byte[4];
-                                System.arraycopy(userData,3,oadBytes,0,4);
-                                OAD oad = FrameParseUtils.parseOAD(oadBytes);
-                                OI oi = oad.getOi();
-                                switch(oi){
-                                    case UNKNOWN:
-                                        break;
-                                    case SET_CARBON_FACTOR:
-                                        carbonFactorService.getSetResult(deviceChannelManager.getDeviceId(deviceIp),msgId,frameDto);
-                                }
-                        }
 
-                }
+        // 碳表响应的数据
+        if(serverAPDU != ServerAPDU.UNKNOWN){
+            switch (serverAPDU){
+                case LINK_RESPONSE:
+                case CONNECT_RESPONSE:
+                    break;
+                case GET_RESPONSE:
+                    GetResponse getResponse = GetResponse.getResponseBySign(userData[1]);
+                    switch (getResponse){
+                        case UNKNOWN:
+                            throw new RuntimeException("未知GetResponse类型"+HexUtils.byteToHex(userData[1]));
+                        case GET_RESPONSE_NORMAL:
+                            byte[] oadBytes = new byte[4];
+                            System.arraycopy(userData,3,oadBytes,0,4);
+                            OAD oad = FrameParseUtils.parseOAD(oadBytes);
+                            OI oi = oad.getOi();
+                            switch (oi){
+                                case UNKNOWN:
+                                    break;
+                                case MAIL_ADDRESS:
+                                    carbonDeviceService.getAddress(deviceIp,frameDto);
+                                    break;
+                                case ELECTRIC_CURRENT:
+                                    electricService.getElectric(deviceChannelManager.getDeviceId(deviceIp),msgId,frameDto);
+                                    break;
+                                case VOLTAGE:
+                                    voltageService.getVoltage(deviceChannelManager.getDeviceId(deviceIp),msgId,frameDto);
+                                    break;
+                                case PAEE:
+                                    forwardActivePowerService.getForwardActivePower(deviceChannelManager.getDeviceId(deviceIp),msgId,frameDto);
+                                    break;
+                                case RAEE:
+                                    reverseActivePowerService.getReverseActivePower(deviceChannelManager.getDeviceId(deviceIp),msgId,frameDto);
+                                    break;
+                                case FORWARD_CARBON_EMISSION:
+                                    forwardCarbonEmissionService.  getForwardCarbonEmission(deviceChannelManager.getDeviceId(deviceIp),msgId,frameDto);
+                                    break;
+                                case REVERSE_CARBON_EMISSION:
+                                    reverseCarbonEmissionService.getReverseCarbonEmission(deviceChannelManager.getDeviceId(deviceIp),msgId,frameDto);
+                                    break;
+                            }
+                            break;
+                    }
+                    break;
+                case SET_RESPONSE:
+                    SetResponse setResponse = SetResponse.getSetResponseBySign(userData[1]);
+                    switch (setResponse){
+                        case UNKNOWN:
+                            throw new RuntimeException("未知SetResponse类型"+HexUtils.byteToHex(userData[1]));
+                        case SET_RESPONSE_NORMAL:
+                            byte[] oadBytes = new byte[4];
+                            System.arraycopy(userData,3,oadBytes,0,4);
+                            OAD oad = FrameParseUtils.parseOAD(oadBytes);
+                            OI oi = oad.getOi();
+                            switch(oi){
+                                case UNKNOWN:
+                                    break;
+                                case SET_CARBON_FACTOR:
+                                    carbonFactorService.getSetResult(deviceChannelManager.getDeviceId(deviceIp),msgId,frameDto);
+                            }
+                    }
+                    break;
+                case PROXY_RESPONSE:
+                    ProxyResponse proxyResponse = ProxyResponse.getResponseBySign(userData[1]);
+                    switch (proxyResponse){
+                        case UNKNOWN:
+                            throw new RuntimeException("proxyResponse"+HexUtils.byteToHex(userData[1]));
+
+                        case PROXY_TRANS_COMMAND_RESPONSE:
+                            if(userData[7] == GetResultType.DATA.getSign()){
+                                int dataLength = userData[8];
+                                // 去掉四个FE
+                                byte[] originResponse = new byte[dataLength-4];
+                                System.arraycopy(userData,13,originResponse,0,dataLength-4);
+                                this.parseBytes(deviceIp,originResponse);
+                            }
+                    }
+                    break;
+
             }
-        }catch(Exception e){
-            DeviceErrorMsgHis msgHis = new DeviceErrorMsgHis();
-            msgHis.setErrorMsg(e.getMessage());
-            msgHis.setCreateTime(LocalDateTime.now());
-            msgHis.setByteData(HexUtils.bytesToHex(bytes));
-            msgHis.setDataLength(bytes.length);
-            deviceErrorMsgHisService.save(msgHis);
-            throw e;
+        }
+    }
+
+    @Override
+    public void parseBytes(String deviceIp, byte[] bytes){
+        Integer deviceId = deviceChannelManager.getDeviceId(deviceIp);
+        FrameDto frameDto;
+        try{
+            if(!FrameParseUtils.checkFrame(bytes)){
+                String errorInfo = "无效帧：起始符或结束符错误,当前帧起始符--"+HexUtils.byteToHex(bytes[0])+",结束符--"+HexUtils.byteToHex(bytes[bytes.length-1]);
+                log.error(errorInfo);
+                return;
+            }
+
+            if(deviceId == null){
+                log.error("未知设备ip={}",deviceIp);
+                return;
+            }
+            frameDto = FrameParseUtils.getFrameDto(bytes);
+        }catch (Exception e){
+            DeviceErrorMsgHis errorMsgHis = new DeviceErrorMsgHis();
+            errorMsgHis.setDeviceId(deviceId);
+            errorMsgHis.setByteData(HexUtils.bytesToHex(bytes));
+            errorMsgHis.setDataLength(bytes.length);
+            errorMsgHis.setCreateTime(LocalDateTime.now());
+            errorMsgHis.setErrorMsg(e.getMessage());
+            deviceErrorMsgHisService.save(errorMsgHis);
+            log.error("帧数据解析报错--{}",e.getMessage());
+            return;
+        }
+        try {
+            // 根据IP查询数据
+            Integer msgId = deviceMsgHisService.save(frameDto,deviceId,bytes);
+            this.frameParse(msgId,frameDto,deviceIp,bytes);
+        } catch (Exception e) {
+            DeviceErrorMsgHis errorMsgHis = new DeviceErrorMsgHis();
+            errorMsgHis.setDeviceId(deviceId);
+            errorMsgHis.setByteData(HexUtils.bytesToHex(bytes));
+            errorMsgHis.setDataLength(bytes.length);
+            errorMsgHis.setCreateTime(LocalDateTime.now());
+            errorMsgHis.setErrorMsg(e.getMessage());
+            deviceErrorMsgHisService.save(errorMsgHis);
+            log.error("帧数据保存解析解析报错--{}",e.getMessage());
+            log.error("解析收到的帧数据异常，设备ID: {}, 字节内容: {}", deviceIp, HexUtils.bytesToHex(bytes), e);
         }
     }
 }

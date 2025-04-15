@@ -9,7 +9,6 @@ import cn.com.wenyl.bs.dlt698.common.entity.OAD;
 import com.alibaba.fastjson2.JSONArray;
 import lombok.extern.slf4j.Slf4j;
 
-import javax.management.RuntimeMBeanException;
 import java.math.BigInteger;
 import java.nio.ByteBuffer;
 import java.util.Arrays;
@@ -303,6 +302,7 @@ public class FrameParseUtils {
         log.info("操作名--{},接口编号--{},属性编号及类型--{}", oiBySign.getDesc(), bytesToHex(oiBySign.getSign()), attrNumBySign.getDesc());
         oadData.setOi(oiBySign);
         oadData.setAttrNum(attrNumBySign);
+        oadData.setAttributeIndex(attributeIndex);
         return oadData;
     }
     public static Object getData(DataType dataType, byte[] data) throws RuntimeException{

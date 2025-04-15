@@ -12,6 +12,7 @@ import cn.com.wenyl.bs.dlt698.common.service.impl.GetRequestNormalFrameBuilder;
 import cn.com.wenyl.bs.dlt698.common.service.impl.GetResponseNormalFrameParser;
 import cn.com.wenyl.bs.dlt698.net4g.entity.Voltage;
 import cn.com.wenyl.bs.dlt698.net4g.mapper.VoltageMapper;
+import cn.com.wenyl.bs.dlt698.net4g.service.CarbonDeviceService;
 import cn.com.wenyl.bs.dlt698.net4g.service.FrameParseProcessor;
 import cn.com.wenyl.bs.dlt698.net4g.service.VoltageService;
 import cn.com.wenyl.bs.dlt698.net4g.tcp.DeviceChannelManager;
@@ -43,12 +44,14 @@ public class VoltageServiceImpl extends ServiceImpl<VoltageMapper, Voltage> impl
     private FrameParseProcessor frameParseProcessor;
     @Resource
     private DeviceChannelManager deviceChannelManager;
+    @Resource
+    private CarbonDeviceService carbonDeviceService;
     @Override
     public void getVoltage(String deviceIp) throws Exception{
         GetRequestNormalFrameBuilder builder = (GetRequestNormalFrameBuilder)frameBuildProcessor.getFrameBuilder(GetRequestNormalFrame.class);
 
         GetRequestNormalFrame getRequestNormalFrame = FrameBuildUtils.getCommonFrame(GetRequestNormalFrame.class, FunctionCode.THREE, ScramblingCodeFlag.NOT_SCRAMBLING_CODE, FrameFlag.NOT_SUB_FRAME,
-                RequestType.CLIENT_REQUEST, AddressType.SINGLE_ADDRESS, LogicAddress.ZERO, Address.COMMON_DEVICE_ADDRESS,
+                RequestType.CLIENT_REQUEST, AddressType.SINGLE_ADDRESS, LogicAddress.ZERO, carbonDeviceService.getDeviceAddress(deviceIp),
                 Address.CLIENT_ADDRESS);
 
         GetRequestNormalData userData = new GetRequestNormalData(PIID.ZERO_ZERO, OI.VOLTAGE, AttrNum.ATTR_02,AttributeIndex.ZERO_ZERO.getSign(),TimeTag.NO_TIME_TAG);
