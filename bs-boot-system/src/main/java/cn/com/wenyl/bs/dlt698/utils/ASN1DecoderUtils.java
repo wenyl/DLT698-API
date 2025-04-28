@@ -7,7 +7,7 @@ import java.nio.ByteOrder;
  * ASN1编码工具类
  */
 public class ASN1DecoderUtils {
-    private static final String[]  DAY_OF_WEEK = {"天","一","二","三","四","五","六"};
+    private static final String[]  DAY_OF_WEEK = {"天","一","二","三","四","五","六","天"};
     /**
      * 解码Long-Unsigned
      * @param data 数据

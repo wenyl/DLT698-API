@@ -3,4 +3,6 @@ spring:
     name: bs-boot-system
   profiles:
 #    active: dev
-    active: prod
+#    active: prod
+    active: docker
+#    active: jlzx

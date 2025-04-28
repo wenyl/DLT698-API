@@ -3,6 +3,7 @@ package cn.com.wenyl.bs.dlt698.net4g.service.impl;
 import cn.com.wenyl.bs.dlt698.common.entity.dto.FrameDto;
 import cn.com.wenyl.bs.dlt698.common.service.FrameParseService;
 import cn.com.wenyl.bs.dlt698.net4g.service.DeviceMsgHisService;
+import cn.com.wenyl.bs.dlt698.utils.ASN1DecoderUtils;
 import cn.com.wenyl.bs.dlt698.utils.FrameParseUtils;
 import cn.com.wenyl.bs.dlt698.utils.HexUtils;
 import org.junit.Test;
@@ -34,5 +35,11 @@ public class FrameParseServiceTest {
         FrameDto frameDto = FrameParseUtils.getFrameDto(bytes);
         Integer msgId = deviceMsgHisService.save(frameDto,deviceId,bytes);
         frameParseService.frameParse(msgId,frameDto,deviceIp,bytes);
+    }
+
+    @Test
+    public void testParse() throws Exception{
+        String hex = "07 e9 04 1b 07 10 30 0c 00 00";
+        ASN1DecoderUtils.decodeDateTime(HexUtils.hexStringToBytes(hex));
     }
 }

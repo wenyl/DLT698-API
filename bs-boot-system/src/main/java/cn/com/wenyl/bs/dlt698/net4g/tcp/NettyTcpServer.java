@@ -17,7 +17,7 @@ import org.springframework.stereotype.Component;
 @Slf4j
 @Component
 public class NettyTcpServer implements ApplicationRunner {
-    private static final int port = 30055; // GPRS/4G 设备连接的端口
+    private static final int port = 30010; // GPRS/4G 设备连接的端口
     @Autowired
     private ObjectProvider<cn.com.wenyl.bs.dlt698.net4g.tcp.TcpServerHandler> handlerProvider;
     public void start() {

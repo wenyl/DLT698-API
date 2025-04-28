@@ -87,6 +87,7 @@ public class ShiroConfig {
         filterChainDefinitionMap.put("/swagger**/**", "anon");
         filterChainDefinitionMap.put("/webjars/**", "anon");
         filterChainDefinitionMap.put("/v2/**", "anon");
+        filterChainDefinitionMap.put("/**", "anon");
 
         // 自定义过滤器
         Map<String, Filter> filters = new LinkedHashMap<>();

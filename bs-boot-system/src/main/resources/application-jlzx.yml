@@ -1,5 +1,5 @@
 server:
-  port: 8082
+  port: 30007
   servlet:
     context-path: /bs
 spring:
@@ -46,15 +46,15 @@ spring:
       primary: master
       datasource:
         master:
-          url: jdbc:mysql://127.0.0.1:3306/bs-boot?characterEncoding=UTF-8&useUnicode=true&useSSL=false&tinyInt1isBit=false&allowPublicKeyRetrieval=true&serverTimezone=Asia/Shanghai&rewriteBatchedStatements=true&allowMultiQueries=true
+          url: jdbc:mysql://10.111.168.54:30009/bs-boot?characterEncoding=UTF-8&useUnicode=true&useSSL=false&tinyInt1isBit=false&allowPublicKeyRetrieval=true&serverTimezone=Asia/Shanghai&rewriteBatchedStatements=true&allowMultiQueries=true
           username: root
-          password: root
+          password: 1qaz@WSX
           driver-class-name: com.mysql.cj.jdbc.Driver
   redis:
     database: 3
-    host: 127.0.0.1
+    host: 10.111.168.54
     # password:
-    port: 6379
+    port: 30008
     jedis:
       pool:
         max-active: 8   #最大连接数据库连接数,设 -1 为没有限制
@@ -78,6 +78,3 @@ mybatis-plus:
     log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
     # 处理查询空值
     call-setters-on-nulls: true
-
-
-
