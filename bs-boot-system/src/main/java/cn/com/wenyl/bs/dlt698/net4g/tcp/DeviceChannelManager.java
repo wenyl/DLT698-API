@@ -15,6 +15,7 @@ import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
 import java.time.LocalDateTime;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 @Slf4j
 @Component
@@ -30,6 +31,9 @@ public class DeviceChannelManager {
     private final ConcurrentHashMap<String, Channel> deviceChannels = new ConcurrentHashMap<>();
     private final ConcurrentHashMap<String,Integer> deviceIds = new ConcurrentHashMap<>();
     private final ConcurrentHashMap<String,String> deviceAddress = new ConcurrentHashMap<>();
+    public Set<String> getIps(){
+        return this.deviceIds.keySet();
+    }
     // 添加设备连接
     public void addDevice(int deviceId,String deviceIp, Channel channel) {
         deviceChannels.put(deviceIp, channel);
