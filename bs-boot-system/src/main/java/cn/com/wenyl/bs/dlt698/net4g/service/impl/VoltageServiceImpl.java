@@ -13,7 +13,6 @@ import cn.com.wenyl.bs.dlt698.common.service.impl.GetResponseNormalFrameParser;
 import cn.com.wenyl.bs.dlt698.net4g.entity.Voltage;
 import cn.com.wenyl.bs.dlt698.net4g.mapper.VoltageMapper;
 import cn.com.wenyl.bs.dlt698.net4g.service.CarbonDeviceService;
-import cn.com.wenyl.bs.dlt698.net4g.service.FrameParseProcessor;
 import cn.com.wenyl.bs.dlt698.net4g.service.VoltageService;
 import cn.com.wenyl.bs.dlt698.net4g.tcp.DeviceChannelManager;
 import cn.com.wenyl.bs.dlt698.utils.FrameBuildUtils;
@@ -23,8 +22,6 @@ import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * <p>

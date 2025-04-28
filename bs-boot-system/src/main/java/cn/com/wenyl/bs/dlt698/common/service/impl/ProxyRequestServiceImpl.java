@@ -1,7 +1,6 @@
 package cn.com.wenyl.bs.dlt698.common.service.impl;
 
 import cn.com.wenyl.bs.dlt698.common.constants.*;
-import cn.com.wenyl.bs.dlt698.common.entity.GetRequestNormalFrame;
 import cn.com.wenyl.bs.dlt698.common.entity.ProxyTransCommandRequestData;
 import cn.com.wenyl.bs.dlt698.common.entity.ProxyTransCommandRequestFrame;
 import cn.com.wenyl.bs.dlt698.common.entity.dto.FrameDto;
@@ -9,7 +8,7 @@ import cn.com.wenyl.bs.dlt698.common.service.ProxyRequestService;
 import cn.com.wenyl.bs.dlt698.net4g.entity.CarbonFactor;
 import cn.com.wenyl.bs.dlt698.net4g.service.CarbonFactorService;
 import cn.com.wenyl.bs.dlt698.net4g.service.DeviceMsgHisService;
-import cn.com.wenyl.bs.dlt698.net4g.service.FrameParseProcessor;
+import cn.com.wenyl.bs.dlt698.net4g.service.impl.FrameParseProcessor;
 import cn.com.wenyl.bs.dlt698.net4g.tcp.DeviceChannelManager;
 import cn.com.wenyl.bs.dlt698.utils.FrameBuildUtils;
 import cn.com.wenyl.bs.dlt698.utils.FrameParseUtils;

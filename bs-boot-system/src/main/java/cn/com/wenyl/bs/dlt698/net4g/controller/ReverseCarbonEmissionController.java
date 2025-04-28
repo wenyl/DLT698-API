@@ -1,15 +1,7 @@
 package cn.com.wenyl.bs.dlt698.net4g.controller;
 
 
-import cn.com.wenyl.bs.dlt698.common.constants.*;
-import cn.com.wenyl.bs.dlt698.common.entity.GetRequestNormalData;
-import cn.com.wenyl.bs.dlt698.common.entity.GetRequestNormalFrame;
-import cn.com.wenyl.bs.dlt698.common.service.impl.FrameBuildProcessor;
-import cn.com.wenyl.bs.dlt698.common.service.impl.GetRequestNormalFrameBuilder;
-import cn.com.wenyl.bs.dlt698.net4g.service.FrameParseProcessor;
 import cn.com.wenyl.bs.dlt698.net4g.service.ReverseCarbonEmissionService;
-import cn.com.wenyl.bs.dlt698.net4g.tcp.DeviceChannelManager;
-import cn.com.wenyl.bs.dlt698.utils.FrameBuildUtils;
 import cn.com.wenyl.bs.dlt698.utils.R;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;

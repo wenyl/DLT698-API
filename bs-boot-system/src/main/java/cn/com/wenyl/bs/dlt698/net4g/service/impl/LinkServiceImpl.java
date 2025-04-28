@@ -9,7 +9,6 @@ import cn.com.wenyl.bs.dlt698.common.service.impl.LinkRequestFrameParser;
 import cn.com.wenyl.bs.dlt698.common.service.impl.LinkResponseFrameBuilder;
 import cn.com.wenyl.bs.dlt698.net4g.entity.LinkRequestData;
 import cn.com.wenyl.bs.dlt698.net4g.entity.LinkRequestFrame;
-import cn.com.wenyl.bs.dlt698.net4g.service.FrameParseProcessor;
 import cn.com.wenyl.bs.dlt698.net4g.service.LinkService;
 import cn.com.wenyl.bs.dlt698.net4g.tcp.DeviceChannelManager;
 import cn.com.wenyl.bs.dlt698.utils.ASN1EncoderUtils;

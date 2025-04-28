@@ -15,7 +15,6 @@ import cn.com.wenyl.bs.dlt698.net4g.entity.CarbonFactor;
 import cn.com.wenyl.bs.dlt698.net4g.mapper.CarbonFactorMapper;
 import cn.com.wenyl.bs.dlt698.net4g.service.CarbonDeviceService;
 import cn.com.wenyl.bs.dlt698.net4g.service.CarbonFactorService;
-import cn.com.wenyl.bs.dlt698.net4g.service.FrameParseProcessor;
 import cn.com.wenyl.bs.dlt698.net4g.tcp.DeviceChannelManager;
 import cn.com.wenyl.bs.dlt698.utils.ASN1EncoderUtils;
 import cn.com.wenyl.bs.dlt698.utils.FrameBuildUtils;

@@ -1,4 +1,4 @@
-package cn.com.wenyl.bs.dlt698.net4g.service;
+package cn.com.wenyl.bs.dlt698.net4g.service.impl;
 import cn.com.wenyl.bs.dlt698.common.service.BaseFrameParser;
 import cn.com.wenyl.bs.dlt698.common.service.impl.FrameParserFactory;
 import cn.com.wenyl.bs.dlt698.common.entity.Frame;

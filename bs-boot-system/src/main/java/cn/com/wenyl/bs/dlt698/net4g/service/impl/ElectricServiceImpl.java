@@ -15,10 +15,8 @@ import cn.com.wenyl.bs.dlt698.net4g.mapper.ElectricMapper;
 import cn.com.wenyl.bs.dlt698.net4g.service.CarbonDeviceService;
 import cn.com.wenyl.bs.dlt698.net4g.service.DeviceMsgHisService;
 import cn.com.wenyl.bs.dlt698.net4g.service.ElectricService;
-import cn.com.wenyl.bs.dlt698.net4g.service.FrameParseProcessor;
 import cn.com.wenyl.bs.dlt698.net4g.tcp.DeviceChannelManager;
 import cn.com.wenyl.bs.dlt698.utils.FrameBuildUtils;
-import cn.com.wenyl.bs.dlt698.utils.FrameParseUtils;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.stereotype.Service;
 

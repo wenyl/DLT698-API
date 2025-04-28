@@ -13,7 +13,6 @@ import cn.com.wenyl.bs.dlt698.common.service.impl.GetResponseNormalFrameParser;
 import cn.com.wenyl.bs.dlt698.net4g.entity.ReverseCarbonEmission;
 import cn.com.wenyl.bs.dlt698.net4g.mapper.ReverseCarbonEmissionMapper;
 import cn.com.wenyl.bs.dlt698.net4g.service.CarbonDeviceService;
-import cn.com.wenyl.bs.dlt698.net4g.service.FrameParseProcessor;
 import cn.com.wenyl.bs.dlt698.net4g.service.ReverseCarbonEmissionService;
 import cn.com.wenyl.bs.dlt698.net4g.tcp.DeviceChannelManager;
 import cn.com.wenyl.bs.dlt698.utils.FrameBuildUtils;

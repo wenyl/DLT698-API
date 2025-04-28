@@ -14,7 +14,6 @@ import cn.com.wenyl.bs.dlt698.net4g.entity.ForwardCarbonEmission;
 import cn.com.wenyl.bs.dlt698.net4g.mapper.ForwardCarbonEmissionMapper;
 import cn.com.wenyl.bs.dlt698.net4g.service.CarbonDeviceService;
 import cn.com.wenyl.bs.dlt698.net4g.service.ForwardCarbonEmissionService;
-import cn.com.wenyl.bs.dlt698.net4g.service.FrameParseProcessor;
 import cn.com.wenyl.bs.dlt698.net4g.tcp.DeviceChannelManager;
 import cn.com.wenyl.bs.dlt698.utils.FrameBuildUtils;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;

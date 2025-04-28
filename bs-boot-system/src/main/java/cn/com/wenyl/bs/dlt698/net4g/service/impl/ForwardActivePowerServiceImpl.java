@@ -14,7 +14,6 @@ import cn.com.wenyl.bs.dlt698.net4g.entity.ForwardActivePower;
 import cn.com.wenyl.bs.dlt698.net4g.mapper.ForwardActivePowerMapper;
 import cn.com.wenyl.bs.dlt698.net4g.service.CarbonDeviceService;
 import cn.com.wenyl.bs.dlt698.net4g.service.ForwardActivePowerService;
-import cn.com.wenyl.bs.dlt698.net4g.service.FrameParseProcessor;
 import cn.com.wenyl.bs.dlt698.net4g.tcp.DeviceChannelManager;
 import cn.com.wenyl.bs.dlt698.utils.FrameBuildUtils;
 import com.alibaba.fastjson2.JSONArray;

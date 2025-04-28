@@ -3,14 +3,10 @@ package cn.com.wenyl.bs.dlt698.common.service.impl;
 import cn.com.wenyl.bs.dlt698.common.entity.ProxyTransCommandRequestData;
 import cn.com.wenyl.bs.dlt698.common.entity.ProxyTransCommandRequestFrame;
 import cn.com.wenyl.bs.dlt698.common.service.BaseFrameBuilder;
-import cn.com.wenyl.bs.dlt698.net4g.service.FrameParseProcessor;
-import cn.com.wenyl.bs.dlt698.net4g.tcp.DeviceChannelManager;
 import cn.com.wenyl.bs.dlt698.utils.FrameBuildUtils;
-import cn.com.wenyl.bs.dlt698.utils.HexUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
-import javax.annotation.Resource;
 import java.nio.ByteBuffer;
 @Slf4j
 @Service
